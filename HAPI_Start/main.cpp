@@ -2,7 +2,7 @@
 	HAPI Start
 	----------
 	This solution contains an already set up HAPI project and this main file
-	
+
 	The directory structure and main files are:
 
 	HAPI_Start - contains the Visual Studio solution file (.sln)
@@ -16,16 +16,53 @@
 	https://scm-intranet.tees.ac.uk/users/u0018197/hapi.html
 */
 
-// Include the HAPI header to get access to all of HAPIs interfaces
+#include "Global.h"
 #include <HAPI_lib.h>
+#include <iostream>
 
-// HAPI itself is wrapped in the HAPISPACE namespace
-using namespace HAPISPACE;
-
-// Every HAPI program has a HAPI_Main as an entry point
-// When this function exits the program will close down
-void HAPI_Main()
+void blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* texture, Vector2i screenSize, Vector2i position, Vector2i textureSize)
 {
+	HAPISPACE::BYTE* screenPnter = screen + (position.x + position.y * screenSize.x) * BYTES_PER_PIXEL;
+	HAPISPACE::BYTE* texturePnter = texture;
 
+	for (int y = 0; y < textureSize.y; y++)
+	{
+		memcpy(screenPnter, texturePnter, textureSize.x * BYTES_PER_PIXEL);
+		// Move texture pointer to next line
+		texturePnter += textureSize.x * BYTES_PER_PIXEL;
+		// Move screen pointer to next line
+		screenPnter += screenSize.x * BYTES_PER_PIXEL;
+	}
 }
 
+//BYTE 1 byte, 8 bits
+//WORD 2 bytes, 16 bits
+//DWORD 4 bytes, 32 bits
+//memset – sets all bytes in a block of memory to a provided value
+//memcpy – copies bytes from one memory address to another
+
+void HAPI_Main()
+{
+	Vector2i textureSize;
+	Vector2i windowSize(640, 480);
+	HAPISPACE::BYTE* texture = nullptr;
+	HAPISPACE::BYTE* screen = nullptr;
+	if (!HAPI.Initialise(windowSize.x, windowSize.y, "HAPI_WINDOW", HAPISPACE::eDefaults))
+	{
+		std::cout << "Cannot initialize HAPI\n";
+		return;
+	}
+
+	if (!HAPI.LoadTexture(DATA_DIRECTORY + "playerSprite.tga", &texture, textureSize.x, textureSize.y))
+	{
+		std::cout << "Couldn't load texture\n";
+	}
+
+
+	while (HAPI.Update())
+	{
+
+	}
+
+	delete[] texture;
+}
