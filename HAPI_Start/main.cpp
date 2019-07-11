@@ -20,9 +20,20 @@
 #include <HAPI_lib.h>
 #include <iostream>
 
-void blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* texture, Vector2i screenSize, Vector2i position, Vector2i textureSize)
+void clearScreenToBlack(Vector2i windowSize)
 {
-	HAPISPACE::BYTE* screenPnter = screen + (position.x + position.y * screenSize.x) * BYTES_PER_PIXEL;
+	HAPISPACE::BYTE* screen = HAPI.GetScreenPointer();
+	for (int i = 0; i < windowSize.x * windowSize.y * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
+	{
+		screen[i + 0] = 0;
+		screen[i + 1] = 0;
+		screen[i + 2] = 0;
+	}
+}
+
+void blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* texture, Vector2i windowSize, Vector2i position, Vector2i textureSize)
+{
+	HAPISPACE::BYTE* screenPnter = screen + (position.x + position.y * windowSize.x) * BYTES_PER_PIXEL;
 	HAPISPACE::BYTE* texturePnter = texture;
 
 	for (int y = 0; y < textureSize.y; y++)
@@ -31,7 +42,7 @@ void blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* texture, Vector2i screenSize
 		// Move texture pointer to next line
 		texturePnter += textureSize.x * BYTES_PER_PIXEL;
 		// Move screen pointer to next line
-		screenPnter += screenSize.x * BYTES_PER_PIXEL;
+		screenPnter += windowSize.x * BYTES_PER_PIXEL;
 	}
 }
 
@@ -61,7 +72,9 @@ void HAPI_Main()
 
 	while (HAPI.Update())
 	{
+		clearScreenToBlack(windowSize);
 
+		blit(HAPI.GetScreenPointer(), texture, windowSize, { 100, 100 }, textureSize);
 	}
 
 	delete[] texture;
