@@ -31,6 +31,42 @@ void clearScreenToBlack(Vector2i windowSize)
 	}
 }
 
+void clipBlit(HAPISPACE::BYTE* destination, Rectangle destRect, HAPISPACE::BYTE* source, Rectangle sourceRect, int posX, int posY)
+{
+	//The next steps(see the lecture slides for more detail) are to translate the rectangle into screen space.This will require we have a Translate function in our rectangle class.
+
+	//	// Translate to screen space
+
+	//	clippedRect.Translate(posX, posY);
+
+	//// Do the clipping
+
+	//clippedRect.ClipTo(destRect);
+
+	//// Translate back into source space
+
+	//clippedRect.Translate(-posX, -posY);
+
+	//One further step is to clamp the screen position to 0 in case of negative values e.g.
+
+	//	if (posX < 0) posX = 0;
+
+	//// TODO: same for posY
+}
+
+bool isViewable(Rectangle windowRect, Rectangle textureRect)
+{
+	if (textureRect.m_position.x + textureRect.m_size.x > windowRect.m_position.x &&
+		textureRect.m_position.x < windowRect.m_position.x + windowRect.m_size.x &&
+		textureRect.m_position.y + textureRect.m_size.y > windowRect.m_position.y &&
+		textureRect.m_position.y - 1 < windowRect.m_position.y + windowRect.m_size.y)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* texture, Vector2i windowSize, Vector2i position, Vector2i textureSize)
 {
 	HAPISPACE::BYTE* screenPnter = screen + (position.x + position.y * windowSize.x) * BYTES_PER_PIXEL;
@@ -38,11 +74,208 @@ void blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* texture, Vector2i windowSize
 
 	for (int y = 0; y < textureSize.y; y++)
 	{
+		//BYTE alpha=texturePnter[3];
+		HAPISPACE::BYTE alphaValue = texturePnter[3];
+		if (alphaValue == 0)
+		{
+			continue;
+		}
 		memcpy(screenPnter, texturePnter, textureSize.x * BYTES_PER_PIXEL);
 		// Move texture pointer to next line
 		texturePnter += textureSize.x * BYTES_PER_PIXEL;
 		// Move screen pointer to next line
 		screenPnter += windowSize.x * BYTES_PER_PIXEL;
+	}
+}
+
+void blitAlpha(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* texture, Vector2i windowSize, Vector2i position, Vector2i textureSize)
+{
+	HAPISPACE::BYTE* screenPnter = screen + (position.x + position.y * windowSize.x) * BYTES_PER_PIXEL;
+	const int endOfLineScreenIncrement = (windowSize.x - textureSize.x) * 4;
+	for (int y = 0; y < textureSize.y; ++y)
+	{
+		for (int x = 0; x < textureSize.x * 4; x += 4)
+		{
+			const HAPISPACE::BYTE blue = texture[0];
+			const HAPISPACE::BYTE green = texture[1];   
+			const HAPISPACE::BYTE red = texture[2];
+			const HAPISPACE::BYTE alpha = texture[3];
+			const float mod = alpha / 255;
+			screen[0] = (HAPISPACE::BYTE)(mod*blue + (1.0f - mod) * screen[0]);
+			screen[1] = (HAPISPACE::BYTE)(mod*green + (1.0f - mod) * screen[1]);
+			screen[2] = (HAPISPACE::BYTE)(mod*red + (1.0f - mod) * screen[2]);
+
+			screen += 4;
+			texture += 4;
+		}
+		screen += endOfLineScreenIncrement;
+	}
+}
+
+	//HAPISPACE::BYTE *screen = HAPI.GetScreenPointer();
+	//HAPISPACE::BYTE *screenPnter = screen + (x + y * windowWidth) * 4;
+	//unsigned int frameOffsetX = 0;
+	//if (frameNumber % m_NumberOfFramesX != 0)
+	//{
+	//	frameOffsetX = (frameNumber % m_NumberOfFramesX) - 1;
+	//}
+	//else
+	//{
+	//	frameOffsetX = m_NumberOfFramesX - 1;
+	//}
+	//unsigned int frameOffsetY = 0;
+	//frameOffsetY = (int)std::floor((frameNumber - 1) / m_NumberOfFramesX);
+	//unsigned int texOffset = 0;
+	//if (textureLoaded)
+	//{
+	//	texOffset = ((m_FrameWidth * frameOffsetX) + (m_FrameHeight * frameOffsetY) * m_TextureWidth) * 4;
+	//}
+	//HAPISPACE::BYTE *texturePnter = texture + texOffset;
+	//for (int y = 0; y < m_FrameHeight; y++)
+	//{
+	//	memcpy(screenPnter, texturePnter, m_FrameWidth * 4);
+	//	if (textureLoaded)
+	//	{
+	//		texturePnter += m_TextureWidth * 4;
+	//	}
+	//	screenPnter += windowWidth * 4;
+	//}
+
+void render(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSize, Vector2i windowSize)
+{
+	//Is texture in bounds of screen
+	if (position.x >= 0 && position.y >= 0 && position.x + textureSize.x <= windowSize.x &&
+		position.y + textureSize.y <= windowSize.y)
+	{
+		HAPISPACE::BYTE* screenPointer = HAPI.GetScreenPointer() + 
+			(position.x + position.y * windowSize.x) * BYTES_PER_PIXEL;
+
+		HAPISPACE::BYTE* texturePointer = texture;
+		for (int y = 0; y < textureSize.y; y++)
+		{
+			memcpy(screenPointer, texturePointer, textureSize.x * BYTES_PER_PIXEL);
+
+			texturePointer += textureSize.x * BYTES_PER_PIXEL;
+			screenPointer += windowSize.x * BYTES_PER_PIXEL;
+		}
+	}
+	//Texture partially out of screen
+	else
+	{
+	}
+}
+
+void renderByPixel(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSize, Vector2i windowSize)
+{
+	//if (x >= 0 && y >= 0 && x + m_FrameWidth <= windowWidth && y + m_FrameHeight <= windowHeight)
+	Rectangle windowRect(Vector2i(0, 0), windowSize);
+	Rectangle textureRect(position, textureSize);
+	if (!isViewable(windowRect, textureRect))
+	{
+		return;
+	}
+
+	textureRect.clipTo(windowRect);
+	int offset = (textureRect.m_position.x + textureRect.m_position.y * windowSize.x) * BYTES_PER_PIXEL;
+
+	int textureOffset = (((textureRect.m_position.x - position.x)) +
+		((textureRect.m_position.y - position.y)) * textureSize.x) * BYTES_PER_PIXEL;
+
+	HAPISPACE::BYTE* texturePointer = texture + textureOffset;
+	HAPISPACE::BYTE* screenPointer = HAPI.GetScreenPointer() + offset;
+
+	for (int y = textureRect.m_position.y; y < textureRect.m_position.y + textureRect.m_size.y; y++)
+	{
+		for (int x = textureRect.m_position.x; x < textureRect.m_position.x + textureRect.m_size.x; x++)
+		{
+			//if (texturePointer[3] == 255)
+			//{
+			//	*(HAPISPACE::HAPI_TColour*)screenPointer = *(HAPISPACE::HAPI_TColour*)texturePointer;
+			//}
+			//else if (texturePointer[3] == 0)
+			//{
+
+			//}
+			//else
+			//{
+			//	//pnter[0] = pnter[0] + ((texturepnter[3] * (texturepnter[0] - pnter[0])) >> 8);
+			//	//pnter[1] = pnter[1] + ((texturepnter[3] * (texturepnter[1] - pnter[1])) >> 8);
+			//	//pnter[2] = pnter[2] + ((texturepnter[3] * (texturepnter[2] - pnter[2])) >> 8);
+
+			//	screenPointer[0] = screenPointer[0] + ((texturePointer[3] * (texturePointer[0] - screenPointer[0])) >> 8);
+			//	screenPointer[1] = screenPointer[1] + ((texturePointer[3] * (texturePointer[1] - screenPointer[1])) >> 8);
+			//	screenPointer[2] = screenPointer[2] + ((texturePointer[3] * (texturePointer[2] - screenPointer[2])) >> 8);
+			//}
+			screenPointer += BYTES_PER_PIXEL;
+			texturePointer += BYTES_PER_PIXEL;
+
+			//pnter += (screenRect.right - texRect.Width()) * 4;
+			//if (textureLoaded)
+			//{
+			//	texturepnter += (m_TextureWidth - texRect.Width()) * 4;
+			//}
+
+
+		}
+		screenPointer += (windowRect.m_size.x - textureRect.m_size.x) * BYTES_PER_PIXEL;
+		texturePointer += (textureSize.x - textureRect.m_size.x) * BYTES_PER_PIXEL;
+	}
+}
+
+void renderAlpha(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSize, Vector2i windowSize)
+{
+	//if (x >= 0 && y >= 0 && x + m_FrameWidth <= windowWidth && y + m_FrameHeight <= windowHeight)
+	Rectangle windowRect(Vector2i(0, 0), windowSize);
+	Rectangle textureRect(position, textureSize);
+	if (!isViewable(windowRect, textureRect))
+	{
+		return;
+	}
+
+	textureRect.clipTo(windowRect);
+	int offset = (textureRect.m_position.x + textureRect.m_position.y * windowSize.x) * BYTES_PER_PIXEL;
+
+	int textureOffset = (((textureRect.m_position.x - position.x)) +
+		((textureRect.m_position.y - position.y)) * textureSize.x) * BYTES_PER_PIXEL;
+
+	HAPISPACE::BYTE* texturePointer = texture + textureOffset;
+	HAPISPACE::BYTE* screenPointer = HAPI.GetScreenPointer() + offset;
+
+	for (int y = textureRect.m_position.y; y < textureRect.m_position.y + textureRect.m_size.y; y++)
+	{
+		for (int x = textureRect.m_position.x; x < textureRect.m_position.x + textureRect.m_size.x; x++)
+		{
+			if (texturePointer[3] == 255)
+			{
+				*(HAPISPACE::HAPI_TColour*)screenPointer = *(HAPISPACE::HAPI_TColour*)texturePointer;
+			}
+			else if (texturePointer[3] == 0)
+			{
+
+			}
+			else
+			{
+				//pnter[0] = pnter[0] + ((texturepnter[3] * (texturepnter[0] - pnter[0])) >> 8);
+				//pnter[1] = pnter[1] + ((texturepnter[3] * (texturepnter[1] - pnter[1])) >> 8);
+				//pnter[2] = pnter[2] + ((texturepnter[3] * (texturepnter[2] - pnter[2])) >> 8);
+
+				screenPointer[0] = screenPointer[0] + ((texturePointer[3] * (texturePointer[0] - screenPointer[0])) >> 8);
+				screenPointer[1] = screenPointer[1] + ((texturePointer[3] * (texturePointer[1] - screenPointer[1])) >> 8);
+				screenPointer[2] = screenPointer[2] + ((texturePointer[3] * (texturePointer[2] - screenPointer[2])) >> 8);
+			}
+			screenPointer += BYTES_PER_PIXEL;
+			texturePointer += BYTES_PER_PIXEL;
+
+			//pnter += (screenRect.right - texRect.Width()) * 4;
+			//if (textureLoaded)
+			//{
+			//	texturepnter += (m_TextureWidth - texRect.Width()) * 4;
+			//}
+
+
+		}
+		screenPointer += (windowRect.m_size.x - textureRect.m_size.x) * BYTES_PER_PIXEL;
+		texturePointer += (textureSize.x - textureRect.m_size.x) * BYTES_PER_PIXEL;
 	}
 }
 
@@ -56,6 +289,8 @@ void HAPI_Main()
 {
 	Vector2i textureSize;
 	Vector2i windowSize(640, 480);
+	Vector2i moveSpeed(1, 1);
+	Vector2i position(100, 100);
 	HAPISPACE::BYTE* texture = nullptr;
 	HAPISPACE::BYTE* screen = nullptr;
 	if (!HAPI.Initialise(windowSize.x, windowSize.y, "HAPI_WINDOW", HAPISPACE::eDefaults))
@@ -69,12 +304,31 @@ void HAPI_Main()
 		std::cout << "Couldn't load texture\n";
 	}
 
-
 	while (HAPI.Update())
 	{
 		clearScreenToBlack(windowSize);
 
-		blit(HAPI.GetScreenPointer(), texture, windowSize, { 100, 100 }, textureSize);
+		const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData(); 
+		if (keyData.scanCode[HK_LEFT])
+		{
+			position.x -= moveSpeed.x;
+		}
+		else if (keyData.scanCode[HK_RIGHT])
+		{
+			position.x += moveSpeed.x;
+		}
+		else if (keyData.scanCode[HK_UP])
+		{
+			position.y -= moveSpeed.y;
+		}
+		else if (keyData.scanCode[HK_DOWN])
+		{
+			position.y += moveSpeed.y;
+		}
+
+		//render(texture, position, textureSize, windowSize);
+		renderAlpha(texture, position, textureSize, windowSize);
+		//renderByPixel(texture, position, textureSize, windowSize);
 	}
 
 	delete[] texture;

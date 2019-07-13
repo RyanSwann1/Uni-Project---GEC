@@ -19,7 +19,13 @@ struct Rectangle
 	Rectangle(Vector2i startingPosition, Vector2i startingSize);
 
 	void clipTo(Rectangle rect);
+	void translate(int x, int y);
+	
+	int m_left;
+	int m_top;
+	int m_width;
+	int m_height;
 
-	Vector2i m_position;
-	Vector2i m_size;
+	//Vector2i m_position;
+	//Vector2i m_size;
 };
