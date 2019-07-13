@@ -15,17 +15,16 @@ struct Vector2i
 
 struct Rectangle
 {
-	Rectangle();
-	Rectangle(Vector2i startingPosition, Vector2i startingSize);
+	Rectangle(int left = 0, int right = 0, int top = 0, int m_bottom = 0);
+
+	int getWidth() const;
+	int getHeight() const;
 
 	void clipTo(Rectangle rect);
 	void translate(int x, int y);
 	
 	int m_left;
+	int m_right;
 	int m_top;
-	int m_width;
-	int m_height;
-
-	//Vector2i m_position;
-	//Vector2i m_size;
+	int m_bottom;
 };

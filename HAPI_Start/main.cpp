@@ -56,10 +56,10 @@ void clipBlit(HAPISPACE::BYTE* destination, Rectangle destRect, HAPISPACE::BYTE*
 
 bool isViewable(Rectangle windowRect, Rectangle textureRect)
 {
-	if (textureRect.m_position.x + textureRect.m_size.x > windowRect.m_position.x &&
-		textureRect.m_position.x < windowRect.m_position.x + windowRect.m_size.x &&
-		textureRect.m_position.y + textureRect.m_size.y > windowRect.m_position.y &&
-		textureRect.m_position.y - 1 < windowRect.m_position.y + windowRect.m_size.y)
+	if(textureRect.m_right > windowRect.m_left &&
+		textureRect.m_left < windowRect.m_right &&
+		textureRect.m_top < windowRect.m_bottom &&
+		textureRect.m_bottom > windowRect.m_top)
 	{
 		return true;
 	}
@@ -168,25 +168,25 @@ void render(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSize, V
 void renderByPixel(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSize, Vector2i windowSize)
 {
 	//if (x >= 0 && y >= 0 && x + m_FrameWidth <= windowWidth && y + m_FrameHeight <= windowHeight)
-	Rectangle windowRect(Vector2i(0, 0), windowSize);
-	Rectangle textureRect(position, textureSize);
+	Rectangle windowRect(0, windowSize.x, 0, windowSize.y);
+	Rectangle textureRect(position.x, position.x + textureSize.x, position.y, position.y + textureSize.y);
 	if (!isViewable(windowRect, textureRect))
 	{
 		return;
 	}
 
 	textureRect.clipTo(windowRect);
-	int offset = (textureRect.m_position.x + textureRect.m_position.y * windowSize.x) * BYTES_PER_PIXEL;
+	int offset = (textureRect.m_left + textureRect.m_top * windowSize.x) * BYTES_PER_PIXEL;
 
-	int textureOffset = (((textureRect.m_position.x - position.x)) +
-		((textureRect.m_position.y - position.y)) * textureSize.x) * BYTES_PER_PIXEL;
+	int textureOffset = (((textureRect.m_left - position.x)) +
+		((textureRect.m_top - position.y)) * textureSize.x) * BYTES_PER_PIXEL;
 
 	HAPISPACE::BYTE* texturePointer = texture + textureOffset;
 	HAPISPACE::BYTE* screenPointer = HAPI.GetScreenPointer() + offset;
 
-	for (int y = textureRect.m_position.y; y < textureRect.m_position.y + textureRect.m_size.y; y++)
+	for (int y = textureRect.m_top; y < textureRect.m_bottom; y++)
 	{
-		for (int x = textureRect.m_position.x; x < textureRect.m_position.x + textureRect.m_size.x; x++)
+		for (int x = textureRect.m_left; x < textureRect.m_right; x++)
 		{
 			//if (texturePointer[3] == 255)
 			//{
@@ -217,52 +217,58 @@ void renderByPixel(HAPISPACE::BYTE* texture, Vector2i position, Vector2i texture
 
 
 		}
-		screenPointer += (windowRect.m_size.x - textureRect.m_size.x) * BYTES_PER_PIXEL;
-		texturePointer += (textureSize.x - textureRect.m_size.x) * BYTES_PER_PIXEL;
+		screenPointer += (windowRect.getWidth() - textureRect.getWidth()) * BYTES_PER_PIXEL;
+		texturePointer += (textureSize.x - textureRect.getWidth()) * BYTES_PER_PIXEL;
 	}
 }
 
 void renderAlpha(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSize, Vector2i windowSize)
 {
 	//if (x >= 0 && y >= 0 && x + m_FrameWidth <= windowWidth && y + m_FrameHeight <= windowHeight)
-	Rectangle windowRect(Vector2i(0, 0), windowSize);
-	Rectangle textureRect(position, textureSize);
+	Rectangle windowRect(0, windowSize.x, 0, windowSize.y);
+	Rectangle textureRect(position.x, position.x + textureSize.x, position.y, position.y + textureSize.y);
 	if (!isViewable(windowRect, textureRect))
 	{
 		return;
 	}
 
 	textureRect.clipTo(windowRect);
-	int offset = (textureRect.m_position.x + textureRect.m_position.y * windowSize.x) * BYTES_PER_PIXEL;
+	int offset = (textureRect.m_left + textureRect.m_top * windowSize.x) * BYTES_PER_PIXEL;
 
-	int textureOffset = (((textureRect.m_position.x - position.x)) +
-		((textureRect.m_position.y - position.y)) * textureSize.x) * BYTES_PER_PIXEL;
+	int textureOffset = (((textureRect.m_left - position.x)) +
+		((textureRect.m_top - position.y)) * textureSize.x) * BYTES_PER_PIXEL;
 
 	HAPISPACE::BYTE* texturePointer = texture + textureOffset;
 	HAPISPACE::BYTE* screenPointer = HAPI.GetScreenPointer() + offset;
 
-	for (int y = textureRect.m_position.y; y < textureRect.m_position.y + textureRect.m_size.y; y++)
+	for (int y = textureRect.m_top; y < textureRect.m_bottom; y++)
 	{
-		for (int x = textureRect.m_position.x; x < textureRect.m_position.x + textureRect.m_size.x; x++)
+		for (int x = textureRect.m_left; x < textureRect.m_right; x++)
 		{
 			if (texturePointer[3] == 255)
 			{
 				*(HAPISPACE::HAPI_TColour*)screenPointer = *(HAPISPACE::HAPI_TColour*)texturePointer;
 			}
-			else if (texturePointer[3] == 0)
+			else if (texturePointer[3] > 1)
 			{
-
-			}
-			else
-			{
-				//pnter[0] = pnter[0] + ((texturepnter[3] * (texturepnter[0] - pnter[0])) >> 8);
-				//pnter[1] = pnter[1] + ((texturepnter[3] * (texturepnter[1] - pnter[1])) >> 8);
-				//pnter[2] = pnter[2] + ((texturepnter[3] * (texturepnter[2] - pnter[2])) >> 8);
-
 				screenPointer[0] = screenPointer[0] + ((texturePointer[3] * (texturePointer[0] - screenPointer[0])) >> 8);
 				screenPointer[1] = screenPointer[1] + ((texturePointer[3] * (texturePointer[1] - screenPointer[1])) >> 8);
 				screenPointer[2] = screenPointer[2] + ((texturePointer[3] * (texturePointer[2] - screenPointer[2])) >> 8);
 			}
+			//else if (texturePointer[3] == 0)
+			//{
+
+			//}
+			//else
+			//{
+			//	//pnter[0] = pnter[0] + ((texturepnter[3] * (texturepnter[0] - pnter[0])) >> 8);
+			//	//pnter[1] = pnter[1] + ((texturepnter[3] * (texturepnter[1] - pnter[1])) >> 8);
+			//	//pnter[2] = pnter[2] + ((texturepnter[3] * (texturepnter[2] - pnter[2])) >> 8);
+
+			//	screenPointer[0] = screenPointer[0] + ((texturePointer[3] * (texturePointer[0] - screenPointer[0])) >> 8);
+			//	screenPointer[1] = screenPointer[1] + ((texturePointer[3] * (texturePointer[1] - screenPointer[1])) >> 8);
+			//	screenPointer[2] = screenPointer[2] + ((texturePointer[3] * (texturePointer[2] - screenPointer[2])) >> 8);
+			//}
 			screenPointer += BYTES_PER_PIXEL;
 			texturePointer += BYTES_PER_PIXEL;
 
@@ -274,8 +280,8 @@ void renderAlpha(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSi
 
 
 		}
-		screenPointer += (windowRect.m_size.x - textureRect.m_size.x) * BYTES_PER_PIXEL;
-		texturePointer += (textureSize.x - textureRect.m_size.x) * BYTES_PER_PIXEL;
+		screenPointer += (windowRect.getWidth() - textureRect.getWidth()) * BYTES_PER_PIXEL;
+		texturePointer += (textureSize.x - textureRect.getWidth()) * BYTES_PER_PIXEL;
 	}
 }
 
