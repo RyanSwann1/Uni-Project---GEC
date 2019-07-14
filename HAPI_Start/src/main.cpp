@@ -18,6 +18,7 @@
 
 #include "Global.h"
 #include <HAPI_lib.h>
+#include "Utilities/XMLParser.h"
 #include <iostream>
 
 void clearScreenToBlack(Vector2i windowSize)
@@ -164,6 +165,57 @@ void render(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSize, V
 	{
 	}
 }
+//
+//void Texture::BlitAlpha(HAPISPACE::BYTE* screen, Vector2i screenSize, const Vector2i& pos, const Rect& area) const
+//{
+//	const BYTE* currentTexturePixel = m_texture;
+//	int offset = ((int)area.Left + (m_width * (int)area.Top));
+//	currentTexturePixel += offset * 4;
+//	const Vector2i center_screen = screenSize / 2;
+//
+//	const int width = (int)area.Right - (int)area.Left;
+//	const int height = (int)area.Bottom - (int)area.Top;
+//
+//	BYTE* currentScreenPixel = screen + (std::clamp(pos.x, 0, screenSize.x) + std::clamp(pos.y, 0, screenSize.y) * screenSize.x) * 4;
+//	int endOfLineScreenIncrement = (screenSize.x - width) * 4;
+//
+//	for (int i = 0; i < (width*height * 4); i += 4)
+//	{
+//		if (i != 0 && i % (width * 4) == 0)
+//		{
+//			currentScreenPixel += endOfLineScreenIncrement;
+//			//add the rest of the sprite width to get to the next line of the texture
+//			currentTexturePixel += (m_width - width) * 4;
+//		}
+//
+//		//Get screen and texture pointer
+//		BYTE blue = currentTexturePixel[0];
+//		BYTE green = currentTexturePixel[1];
+//		BYTE red = currentTexturePixel[2];
+//		BYTE alpha = currentTexturePixel[3];
+//
+//		if (alpha == (BYTE)0)
+//		{
+//			//do nothing
+//		}
+//		else if (alpha == (BYTE)255)
+//		{
+//			//set screen pixel to texture
+//			currentScreenPixel[0] = currentTexturePixel[0];
+//			currentScreenPixel[1] = currentTexturePixel[1];
+//			currentScreenPixel[2] = currentTexturePixel[2];
+//		}
+//		else
+//		{
+//			currentScreenPixel[0] = currentScreenPixel[0] + ((alpha*(blue - currentScreenPixel[0])) >> 8);
+//			currentScreenPixel[1] = currentScreenPixel[1] + ((alpha*(green - currentScreenPixel[1])) >> 8);
+//			currentScreenPixel[2] = currentScreenPixel[2] + ((alpha*(red - currentScreenPixel[2])) >> 8);
+//		}
+//
+//		currentScreenPixel += 4;
+//		currentTexturePixel += 4;
+//	}
+//}
 
 void renderByPixel(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSize, Vector2i windowSize)
 {
@@ -293,22 +345,34 @@ void renderAlpha(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSi
 
 void HAPI_Main()
 {
+
 	Vector2i textureSize;
-	Vector2i windowSize(640, 480);
+	Vector2i windowSize(800, 600);
 	Vector2i moveSpeed(1, 1);
 	Vector2i position(100, 100);
 	HAPISPACE::BYTE* texture = nullptr;
+	HAPISPACE::BYTE* playerTexture = nullptr;
+	Vector2i playerTextureSize;
+	Vector2i playerTexturePosition;
 	HAPISPACE::BYTE* screen = nullptr;
+	HAPI.SetShowFPS(true, 50, 50);
+
 	if (!HAPI.Initialise(windowSize.x, windowSize.y, "HAPI_WINDOW", HAPISPACE::eDefaults))
 	{
 		std::cout << "Cannot initialize HAPI\n";
 		return;
 	}
-
-	if (!HAPI.LoadTexture(DATA_DIRECTORY + "playerSprite.tga", &texture, textureSize.x, textureSize.y))
+	if (!HAPI.LoadTexture(DATA_DIRECTORY + "playerSprite.tga", &playerTexture, playerTextureSize.x, playerTextureSize.y))
 	{
 		std::cout << "Couldn't load texture\n";
 	}
+
+	if (!HAPI.LoadTexture(DATA_DIRECTORY + "Selector.PNG", &texture, textureSize.x, textureSize.y))
+	{
+		std::cout << "Couldn't load texture\n";
+	}
+
+	auto& mouseData = HAPI.GetMouseData();
 
 	while (HAPI.Update())
 	{
@@ -332,8 +396,11 @@ void HAPI_Main()
 			position.y += moveSpeed.y;
 		}
 
-		//render(texture, position, textureSize, windowSize);
-		renderAlpha(texture, position, textureSize, windowSize);
+		render(texture, position, textureSize, windowSize);
+		//render(playerTexture, playerTexturePosition, playerTextureSize, windowSize);
+		//renderAlpha(playerTexture, playerTexturePosition, playerTextureSize, windowSize);
+		//renderAlpha(texture, position, textureSize, windowSize);
+		
 		//renderByPixel(texture, position, textureSize, windowSize);
 	}
 
