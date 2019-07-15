@@ -17,9 +17,34 @@
 */
 
 #include "Global.h"
-#include <HAPI_lib.h>
+#include "HAPI_lib.h"
 #include "Utilities/XMLParser.h"
 #include <iostream>
+
+//void render()
+//{
+//	//if(isInScreen())
+//	{
+//		//ifAlpha()
+//		{
+//		//by pixel
+//		}
+		else
+		{
+		//fast blit() - line by line renderin
+		}
+//
+//	}
+//}
+
+/*
+	rectangle texture
+	rectangle screen
+	if(screen.completelyContains(texture) && !alpha)
+		fastBlit
+	else
+		blit
+*/
 
 void clearScreenToBlack(Vector2i windowSize)
 {
@@ -68,19 +93,16 @@ bool isViewable(Rectangle windowRect, Rectangle textureRect)
 	return false;
 }
 
-void blit(HAPISPACE::BYTE* screen, HAPISPACE::BYTE* texture, Vector2i windowSize, Vector2i position, Vector2i textureSize)
+void blit(HAPISPACE::BYTE* texture, Vector2i windowSize, Vector2i position, Vector2i textureSize)
 {
-	HAPISPACE::BYTE* screenPnter = screen + (position.x + position.y * windowSize.x) * BYTES_PER_PIXEL;
+	HAPISPACE::BYTE* screenPnter = HAPI.GetScreenPointer() + (position.x + position.y * windowSize.x) * BYTES_PER_PIXEL;
 	HAPISPACE::BYTE* texturePnter = texture;
 
 	for (int y = 0; y < textureSize.y; y++)
 	{
 		//BYTE alpha=texturePnter[3];
 		HAPISPACE::BYTE alphaValue = texturePnter[3];
-		if (alphaValue == 0)
-		{
-			continue;
-		}
+
 		memcpy(screenPnter, texturePnter, textureSize.x * BYTES_PER_PIXEL);
 		// Move texture pointer to next line
 		texturePnter += textureSize.x * BYTES_PER_PIXEL;
@@ -307,30 +329,9 @@ void renderAlpha(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSi
 				screenPointer[1] = screenPointer[1] + ((texturePointer[3] * (texturePointer[1] - screenPointer[1])) >> 8);
 				screenPointer[2] = screenPointer[2] + ((texturePointer[3] * (texturePointer[2] - screenPointer[2])) >> 8);
 			}
-			//else if (texturePointer[3] == 0)
-			//{
 
-			//}
-			//else
-			//{
-			//	//pnter[0] = pnter[0] + ((texturepnter[3] * (texturepnter[0] - pnter[0])) >> 8);
-			//	//pnter[1] = pnter[1] + ((texturepnter[3] * (texturepnter[1] - pnter[1])) >> 8);
-			//	//pnter[2] = pnter[2] + ((texturepnter[3] * (texturepnter[2] - pnter[2])) >> 8);
-
-			//	screenPointer[0] = screenPointer[0] + ((texturePointer[3] * (texturePointer[0] - screenPointer[0])) >> 8);
-			//	screenPointer[1] = screenPointer[1] + ((texturePointer[3] * (texturePointer[1] - screenPointer[1])) >> 8);
-			//	screenPointer[2] = screenPointer[2] + ((texturePointer[3] * (texturePointer[2] - screenPointer[2])) >> 8);
-			//}
 			screenPointer += BYTES_PER_PIXEL;
 			texturePointer += BYTES_PER_PIXEL;
-
-			//pnter += (screenRect.right - texRect.Width()) * 4;
-			//if (textureLoaded)
-			//{
-			//	texturepnter += (m_TextureWidth - texRect.Width()) * 4;
-			//}
-
-
 		}
 		screenPointer += (windowRect.getWidth() - textureRect.getWidth()) * BYTES_PER_PIXEL;
 		texturePointer += (textureSize.x - textureRect.getWidth()) * BYTES_PER_PIXEL;
@@ -396,12 +397,12 @@ void HAPI_Main()
 			position.y += moveSpeed.y;
 		}
 
-		render(texture, position, textureSize, windowSize);
+		//render(texture, position, textureSize, windowSize);
 		//render(playerTexture, playerTexturePosition, playerTextureSize, windowSize);
-		//renderAlpha(playerTexture, playerTexturePosition, playerTextureSize, windowSize);
+		//renderAlpha(playerTexture, position, playerTextureSize, windowSize);
 		//renderAlpha(texture, position, textureSize, windowSize);
-		
-		//renderByPixel(texture, position, textureSize, windowSize);
+		blit(playerTexture, windowSize, position, playerTextureSize);
+		renderByPixel(playerTexture, position, playerTextureSize, windowSize);
 	}
 
 	delete[] texture;
