@@ -29,10 +29,10 @@
 //		{
 //		//by pixel
 //		}
-		else
-		{
+		//else
+		//{
 		//fast blit() - line by line renderin
-		}
+		//}
 //
 //	}
 //}
