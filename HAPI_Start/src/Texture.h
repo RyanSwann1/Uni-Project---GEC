@@ -7,12 +7,13 @@ class Texture
 {
 public:
 	Texture();
+	~Texture();
 	Texture(const Texture&) = delete;
 	Texture& operator=(const Texture&) = delete;
 	Texture(Texture&&) = delete;
 	Texture&& operator=(Texture&&) = delete;
 
-	bool containsAlpha() const;
+	bool isAlpha() const;
 	bool load(const std::string& fileName);
 	HAPISPACE::BYTE* getTexture();
 	int getWidth() const;

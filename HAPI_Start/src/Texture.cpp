@@ -9,7 +9,12 @@ Texture::Texture()
 	m_alpha(false)
 {}
 
-bool Texture::containsAlpha() const
+Texture::~Texture()
+{
+	delete[] m_texture;
+}
+
+bool Texture::isAlpha() const
 {
 	return m_alpha;
 }

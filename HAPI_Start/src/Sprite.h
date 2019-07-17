@@ -2,16 +2,14 @@
 
 #include "Global.h"
 
-struct Texture;
+class Texture;
 struct Window;
 struct Sprite
 {
-	Sprite(Texture& texture, Vector2i startingPosition, Vector2i startingSize);
+	Sprite(Texture& texture, Vector2i startingSize);
 
-	Rectangle getRect() const;
-	void draw(Window& window) const;
+	void draw(Window& window, Vector2i position) const;
 
 	Texture& m_texture;
-	Vector2i m_position;
 	Vector2i m_size;
 };
