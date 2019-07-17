@@ -20,6 +20,9 @@
 #include "HAPI_lib.h"
 #include "Utilities/XMLParser.h"
 #include <iostream>
+#include "Window.h"
+#include "Texture.h"
+#include "Sprite.h"
 
 //void render()
 //{
@@ -346,64 +349,56 @@ void renderAlpha(HAPISPACE::BYTE* texture, Vector2i position, Vector2i textureSi
 
 void HAPI_Main()
 {
-
-	Vector2i textureSize;
-	Vector2i windowSize(800, 600);
-	Vector2i moveSpeed(1, 1);
-	Vector2i position(100, 100);
-	HAPISPACE::BYTE* texture = nullptr;
-	HAPISPACE::BYTE* playerTexture = nullptr;
-	Vector2i playerTextureSize;
-	Vector2i playerTexturePosition;
-	HAPISPACE::BYTE* screen = nullptr;
-	HAPI.SetShowFPS(true, 50, 50);
-
-	if (!HAPI.Initialise(windowSize.x, windowSize.y, "HAPI_WINDOW", HAPISPACE::eDefaults))
+	Window window;
+	if (!window.initialize())
 	{
 		std::cout << "Cannot initialize HAPI\n";
 		return;
 	}
-	if (!HAPI.LoadTexture(DATA_DIRECTORY + "playerSprite.tga", &playerTexture, playerTextureSize.x, playerTextureSize.y))
+
+	Texture texture1;
+	if (!texture1.load("playerSprite.tga"))
 	{
-		std::cout << "Couldn't load texture\n";
+		std::cout << "Cannot load texture\n";
+		return;
 	}
 
-	if (!HAPI.LoadTexture(DATA_DIRECTORY + "Selector.PNG", &texture, textureSize.x, textureSize.y))
-	{
-		std::cout << "Couldn't load texture\n";
-	}
+	Sprite playerSprite(texture1, { 5, 5 });
+	Vector2i playerPosition(100, 100);
+	Vector2i moveSpeed(1, 1);
+
 
 	auto& mouseData = HAPI.GetMouseData();
 
 	while (HAPI.Update())
 	{
-		clearScreenToBlack(windowSize);
+		window.clearToBlack();
 
 		const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData(); 
 		if (keyData.scanCode[HK_LEFT])
 		{
-			position.x -= moveSpeed.x;
+			playerPosition.x -= moveSpeed.x;
 		}
 		else if (keyData.scanCode[HK_RIGHT])
 		{
-			position.x += moveSpeed.x;
+			playerPosition.x += moveSpeed.x;
 		}
 		else if (keyData.scanCode[HK_UP])
 		{
-			position.y -= moveSpeed.y;
+			playerPosition.y -= moveSpeed.y;
 		}
 		else if (keyData.scanCode[HK_DOWN])
 		{
-			position.y += moveSpeed.y;
+			playerPosition.y += moveSpeed.y;
 		}
+
+		playerSprite.draw(window, playerPosition);
 
 		//render(texture, position, textureSize, windowSize);
 		//render(playerTexture, playerTexturePosition, playerTextureSize, windowSize);
 		//renderAlpha(playerTexture, position, playerTextureSize, windowSize);
 		//renderAlpha(texture, position, textureSize, windowSize);
-		blit(playerTexture, windowSize, position, playerTextureSize);
-		renderByPixel(playerTexture, position, playerTextureSize, windowSize);
+		//blit(playerTexture, windowSize, position, playerTextureSize);
+		//renderByPixel(playerTexture, position, playerTextureSize, windowSize);
 	}
-
-	delete[] texture;
 }
