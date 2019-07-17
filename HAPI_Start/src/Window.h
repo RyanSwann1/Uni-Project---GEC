@@ -14,10 +14,11 @@ struct Window
 
 	bool isSpriteFullyContained(Vector2i position, Vector2i size) const;
 	bool isSpriteViewable(Rectangle windowRect, Rectangle textureRect) const;
-	bool init();
+	bool initialize();
 
 	void clearToBlack();
-	void blit(const Sprite& sprite);
+	void blit(const Sprite& sprite, Vector2i position);
+	void fastBlit(const Sprite& sprite, Vector2i position);
 
 	HAPISPACE::BYTE* m_window;
 	Vector2i m_size;
