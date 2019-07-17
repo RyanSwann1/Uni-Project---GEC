@@ -9,11 +9,16 @@ Texture::Texture()
 	m_alpha(false)
 {}
 
+bool Texture::containsAlpha() const
+{
+	return m_alpha;
+}
+
 bool Texture::load(const std::string & fileName)
 {
 	assert(!m_texture);
 
-	bool textureLoaded = HAPI.LoadTexture(fileName, &m_texture, m_width, m_height);
+	bool textureLoaded = HAPI.LoadTexture(DATA_DIRECTORY + fileName, &m_texture, m_width, m_height);
 	if (!textureLoaded)
 	{
 		return false;
@@ -31,4 +36,20 @@ bool Texture::load(const std::string & fileName)
 	}
 
 	return true;
+}
+
+HAPISPACE::BYTE * Texture::getTexture()
+{
+	assert(m_texture);
+	return m_texture;
+}
+
+int Texture::getWidth() const
+{
+	return m_width;
+}
+
+int Texture::getHeight() const
+{
+	return m_height;
 }
