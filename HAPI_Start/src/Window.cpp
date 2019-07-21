@@ -18,7 +18,7 @@ bool Window::isSpriteFullyContained(Vector2i position, Vector2i size) const
 		position.y + size.y < m_size.y;
 }
 
-bool Window::isSpriteViewable(Rectangle windowRect, Rectangle textureRect) const
+bool Window::isSpritePartiallyContained(Rectangle windowRect, Rectangle textureRect) const
 {
 	return textureRect.m_right > windowRect.m_left &&
 		textureRect.m_left < windowRect.m_right &&
@@ -29,7 +29,10 @@ bool Window::isSpriteViewable(Rectangle windowRect, Rectangle textureRect) const
 bool Window::initialize()
 {
 	assert(!m_window);
-	HAPI.Initialise(m_size.x, m_size.y, "HAPI_WINDOW", HAPISPACE::eDefaults);
+	if (!HAPI.Initialise(m_size.x, m_size.y, "HAPI_WINDOW", HAPISPACE::eDefaults))
+	{
+		return false;
+	}
 	HAPI.SetShowFPS(true, FPS_DISPLAY_POSITION.x, FPS_DISPLAY_POSITION.y);
 	m_window = HAPI.GetScreenPointer();
 	
@@ -61,14 +64,14 @@ void Window::blit(const Sprite& sprite, Vector2i position)
 	}
 }
 
-void Window::fastBlit(const Sprite & sprite, Vector2i position)
+void Window::blitAlpha(const Sprite & sprite, Vector2i position)
 {
 	//if (x >= 0 && y >= 0 && x + m_FrameWidth <= windowWidth && y + m_FrameHeight <= windowHeight)
 	Rectangle windowRect(0, m_size.x, 0, m_size.y);
 	Rectangle textureRect(position.x, position.x + sprite.m_texture.getWidth(), 
 		position.y, position.y + sprite.m_texture.getHeight());
 	
-	if (!isSpriteViewable(windowRect, textureRect))
+	if (!isSpritePartiallyContained(windowRect, textureRect))
 	{
 		return;
 	}

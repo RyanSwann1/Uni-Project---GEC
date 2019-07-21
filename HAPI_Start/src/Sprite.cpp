@@ -15,6 +15,6 @@ void Sprite::draw(Window & window, Vector2i position) const
 	}
 	else
 	{
-		window.fastBlit(*this, position);
+		window.blitAlpha(*this, position);
 	}
 }
