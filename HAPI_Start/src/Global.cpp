@@ -29,6 +29,16 @@ int Rectangle::getHeight() const
 	return m_bottom - m_top;
 }
 
+int Rectangle::getRight() const
+{
+	return m_left + m_right;
+}
+
+int Rectangle::getBottom() const
+{
+	return m_top + m_bottom;
+}
+
 void Rectangle::clipTo(Rectangle rect)
 {
 	m_left = std::max(m_left, rect.m_left);
