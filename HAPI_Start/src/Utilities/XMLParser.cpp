@@ -2,21 +2,43 @@
 #include "Base64.h"
 #include "tinyxml.h"
 #include <assert.h>
-#include "../Global.h"
 #include <vector>
 #include "../Level.h"
+#include "../Texture.h"
 
 std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, Vector2i levelSize);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, Vector2i levelSize);
 std::vector<Vector2i> parseEntityPath(const TiXmlElement & rootElement, int tileSize);
 
+void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns, const std::string& fileName)
+{
+	TiXmlDocument file;
+	bool fileLoaded = file.LoadFile(DATA_DIRECTORY + fileName);
+	assert(fileLoaded);
+
+	const auto& rootElement = file.RootElement();
+	for (const auto* tileSheetElement = rootElement->FirstChildElement();
+		tileSheetElement != nullptr; tileSheetElement = tileSheetElement->NextSiblingElement())
+	{
+		if (tileSheetElement->Value() != std::string("tileset"))
+		{
+			continue;
+		}
+
+		tileSheetElement->FirstChildElement()->Attribute("width", &textureSize.x);
+		tileSheetElement->FirstChildElement()->Attribute("height", &textureSize.y);
+		tileSheetElement->Attribute("tilewidth", &tileSize);
+		columns = textureSize.x / tileSize;
+	}
+}
+
 Level XMLParser::parseLevel(const std::string& levelName)
 {
-	TiXmlDocument mapFile;
-	bool mapLoaded = mapFile.LoadFile(DATA_DIRECTORY + levelName);
+	TiXmlDocument file;
+	bool mapLoaded = file.LoadFile(DATA_DIRECTORY + levelName);
 	assert(mapLoaded);
 
-	const auto& rootElement = mapFile.RootElement();
+	const auto& rootElement = file.RootElement();
 	int tileSize = 0;
 	Vector2i levelSize;
 	rootElement->Attribute("width", &levelSize.x);
