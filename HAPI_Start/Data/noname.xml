@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<TextureAtlas imagePath="noname_surface.png">
+	<SubTexture name="tilesheet.png_0" x="0" y="0" width="1472" height="832">
+		<Collider>
+			<Rectangle name="BoundingRect" type="0" left="0" right="1472" top="0" bottom="832" />
+			<Circle name="BoundingCircle" type="0" radius="845.430054" y="416.000000" x="736.000000" />
+		</Collider>
+	</SubTexture>
+</TextureAtlas>
