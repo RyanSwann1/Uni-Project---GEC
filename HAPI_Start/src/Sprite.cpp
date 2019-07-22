@@ -8,6 +8,11 @@ Sprite::Sprite(Texture & texture, Vector2i startingPosition, int tileID)
 	tileID(tileID)
 {}
 
+bool Sprite::isAlpha() const
+{
+	return texture.getFrame(tileID).alpha;
+}
+
 Frame Sprite::getFrame() const
 {
 	return texture.getFrame(tileID);

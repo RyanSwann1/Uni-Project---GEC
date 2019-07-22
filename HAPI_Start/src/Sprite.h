@@ -8,6 +8,7 @@ struct Sprite
 {
 	Sprite(Texture& texture, Vector2i startingPosition, int tileID);
 
+	bool isAlpha() const;
 	Frame getFrame() const;
 	Rectangle getFrameRect() const;
 
