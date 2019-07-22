@@ -4,24 +4,25 @@
 #include "Global.h"
 
 struct Sprite;
-struct Window
+class Window
 {
+public:
 	Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	Window(Window&&) = delete;
 	Window&& operator=(Window&&) = delete;
 
-	bool isSpriteFullyContained(Vector2i position, Vector2i size) const;
-	bool isSpritePartiallyContained(Rectangle windowRect, Rectangle textureRect) const;
 	bool initialize();
-
-	void render(const Sprite& sprite);
-
+	void render(const Sprite& sprite) const;
 	void clearToBlack();
-	void blit(const Sprite& sprite);
-	void blitAlpha(const Sprite& sprite);
 
+private:
 	HAPISPACE::BYTE* m_window;
 	Vector2i m_size;
+
+	void blit(const Sprite& sprite) const;
+	void blitAlpha(const Sprite& sprite) const;
+	bool isSpriteFullyContained(const Sprite& sprite) const;
+	bool isSpriteViewable(Rectangle windowRect, Rectangle textureRect) const;
 };

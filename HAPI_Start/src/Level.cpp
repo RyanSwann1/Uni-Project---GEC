@@ -20,7 +20,7 @@ void TileLayer::render(Window & window, Vector2i levelSize, Texture& tileSheet) 
 				Vector2i position(x * tileSheet.getTileSize(), y * tileSheet.getTileSize());
 				Sprite sprite(tileSheet, position, tileID);
 				window.render(sprite);
-				return;
+				//return;
 			}
 		}
 	}
@@ -40,4 +40,4 @@ void Level::render(Window & window, Texture& tileSheet)
 	{
 		tileLayer.render(window, m_levelSize, tileSheet);
 	}
-}
+} 

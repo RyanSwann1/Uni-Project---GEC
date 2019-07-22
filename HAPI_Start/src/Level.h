@@ -4,7 +4,7 @@
 #include "Global.h"
 
 class Texture;
-struct Window;
+class Window;
 struct TileLayer
 {
 	TileLayer(std::vector<std::vector<int>>&& tileData);
