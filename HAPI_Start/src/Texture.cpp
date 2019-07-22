@@ -43,26 +43,15 @@ Rectangle Texture::getFrameRect(int tileID) const
 bool Texture::load(const std::string& xmlFileName, const std::string& textureFileName)
 {
 	assert(!m_texture);
+
 	XMLParser::parseTexture(m_tileSize, m_textureSize, m_columns, xmlFileName);
 	bool textureLoaded = HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y);
-	loadInFrames();
-	if (!textureLoaded)
+	if (textureLoaded)
 	{
-		return false;
+		loadInFrames();
 	}
 
-	//const HAPISPACE::BYTE* currentTexturePixel = m_texture;
-	//for (int i = 0; i < (m_width * m_height * BYTES_PER_PIXEL); i += BYTES_PER_PIXEL)
-	//{
-	//	if (currentTexturePixel[3] < 255)
-	//	{
-	//		m_alpha = true;
-	//	}
-	//	
-	//	currentTexturePixel += BYTES_PER_PIXEL;
-	//}
-
-	return true;
+	return textureLoaded;
 }
 
 HAPISPACE::BYTE * Texture::getTexture()
@@ -84,17 +73,18 @@ void Texture::loadInFrames()
 	{
 		Rectangle frameRect = getFrameRect(frameID);
 		bool frameHasAlpha = false;
-		HAPISPACE::BYTE* currentPixel = m_texture + frameID * m_tileSize;
+		HAPISPACE::BYTE* currentPixel = m_texture + frameID * m_tileSize * BYTES_PER_PIXEL;
 
-		//for (int i = frameID * m_tileSize; i < frameRect.getRight() * frameRect.getBottom() * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
-		//{
-		//	*currentPixel = m_texture[i];
+		for (int i = frameID * m_tileSize; i < frameRect.getRight() * frameRect.getBottom() * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
+		{
+			*currentPixel = m_texture[i];
 
-		//	if (currentPixel[3] < 255)
-		//	{
-		//		frameHasAlpha = true;
-		//	}
-		//}
+			if (currentPixel[3] < 255)
+			{
+				frameHasAlpha = true;
+				break;
+			}
+		}
 
 		//for (int i = frameID * m_tileSize; i < frameRect.getRight() * frameRect.getBottom() * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
 		//{
