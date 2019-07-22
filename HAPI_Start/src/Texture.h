@@ -3,13 +3,14 @@
 #include "HAPI_lib.h"
 #include <string>
 #include "Global.h"
+#include <vector>
 
 struct Frame
 {
-	Frame(int y, int x, bool alpha = false);
+	Frame(int x, int y, bool alpha = false);
 
-	int y;
 	int x;
+	int y;
 	bool alpha;
 };
 
@@ -18,13 +19,14 @@ class Texture
 public:
 	Texture();
 	~Texture();
-	//Texture(const Texture&) = delete;
-	//Texture& operator=(const Texture&) = delete;
-	//Texture(Texture&&) = delete;
-	//Texture&& operator=(Texture&&) = delete;
+	Texture(const Texture&) = delete;
+	Texture& operator=(const Texture&) = delete;
+	Texture(Texture&&) = delete;
+	Texture&& operator=(Texture&&) = delete;
 
+	Frame getFrame(int ID) const;
+	int getTileSize() const;
 	Rectangle getFrameRect(int tileID) const;
-	bool isAlpha() const;
 	bool load(const std::string& xmlFileName, const std::string& textureFileName);
 	HAPISPACE::BYTE* getTexture();
 	Vector2i getSize() const;
@@ -35,7 +37,6 @@ private:
 	Vector2i m_textureSize;
 	int m_columns;
 	int m_tileSize;
-	bool m_alpha;
 
 	void loadInFrames();
 	bool isFrameAlpha(int ID) const;

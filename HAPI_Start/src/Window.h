@@ -16,9 +16,11 @@ struct Window
 	bool isSpritePartiallyContained(Rectangle windowRect, Rectangle textureRect) const;
 	bool initialize();
 
+	void render(const Sprite& sprite);
+
 	void clearToBlack();
-	void blit(const Sprite& sprite, Vector2i position);
-	void blitAlpha(const Sprite& sprite, Vector2i position);
+	void blit(const Sprite& sprite);
+	void blitAlpha(const Sprite& sprite);
 
 	HAPISPACE::BYTE* m_window;
 	Vector2i m_size;

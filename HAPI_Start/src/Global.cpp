@@ -14,9 +14,9 @@ Vector2i::Vector2i(int x, int y)
 
 Rectangle::Rectangle(int left, int right, int top, int bottom)
 	: m_left(left),
-	m_right(right),
+	m_right(left + right),
 	m_top(top),
-	m_bottom(bottom)
+	m_bottom(top + bottom)
 {}
 
 int Rectangle::getWidth() const
@@ -31,12 +31,17 @@ int Rectangle::getHeight() const
 
 int Rectangle::getRight() const
 {
-	return m_left + m_right;
+	return m_right;
 }
 
 int Rectangle::getBottom() const
 {
-	return m_top + m_bottom;
+	return m_bottom;
+}
+
+int Rectangle::getTop() const
+{
+	return m_top;
 }
 
 void Rectangle::clipTo(Rectangle rect)

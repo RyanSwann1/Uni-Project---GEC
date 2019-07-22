@@ -21,6 +21,8 @@ struct Rectangle
 	int getHeight() const;
 	int getRight() const;
 	int getBottom() const;
+	int getTop() const;
+
 
 	void clipTo(Rectangle rect);
 	void translate(int x, int y);

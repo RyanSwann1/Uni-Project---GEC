@@ -1,20 +1,19 @@
 #include "Sprite.h"
-#include "Window.h"
 #include "Texture.h"
 
-Sprite::Sprite(Texture& texture, Vector2i startingSize)
-	: m_texture(texture),
-	m_size(startingSize)
+Sprite::Sprite(Texture & texture, Vector2i startingPosition, int tileID)
+	: texture(texture),
+	position(startingPosition),
+	size(texture.getTileSize(), texture.getTileSize()),
+	tileID(tileID)
 {}
 
-void Sprite::draw(Window & window, Vector2i position) const
+Frame Sprite::getFrame() const
 {
-	if (window.isSpriteFullyContained(position, m_size) && !m_texture.isAlpha())
-	{
-		window.blit(*this, position);
-	}
-	else
-	{
-		window.blitAlpha(*this, position);
-	}
+	return texture.getFrame(tileID);
+}
+
+Rectangle Sprite::getFrameRect() const
+{
+	return texture.getFrameRect(tileID);
 }

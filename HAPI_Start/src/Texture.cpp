@@ -4,9 +4,9 @@
 #include "Utilities/XMLParser.h"
 
 //Frame Details
-Frame::Frame(int y, int x, bool alpha)
-	: y(y),
-	x(x),
+Frame::Frame(int x, int y, bool alpha)
+	: x(x),
+	y(y),
 	alpha(alpha)
 {}
 
@@ -21,15 +21,23 @@ Texture::~Texture()
 	delete[] m_texture;
 }
 
-Rectangle Texture::getFrameRect(int tileID) const
+Frame Texture::getFrame(int ID) const
 {
-	return Rectangle(tileID % m_columns * m_tileSize, m_tileSize, 
-		tileID / m_columns * m_tileSize, m_tileSize);
+	assert(ID < m_frames.size());
+	return m_frames[ID];
 }
 
-bool Texture::isAlpha() const
+int Texture::getTileSize() const
 {
-	return m_alpha;
+	return m_tileSize;
+}
+
+Rectangle Texture::getFrameRect(int tileID) const
+{
+	//Frame frame = getFrame(tileID);
+	//return Rectangle(frame.x, frame.x + m_tileSize, frame.y, frame.y + m_tileSize);
+
+	return Rectangle(tileID % m_columns * m_tileSize, m_tileSize, tileID / m_columns * m_tileSize, m_tileSize);
 }
 
 bool Texture::load(const std::string& xmlFileName, const std::string& textureFileName)
@@ -76,18 +84,27 @@ void Texture::loadInFrames()
 	{
 		Rectangle frameRect = getFrameRect(frameID);
 		bool frameHasAlpha = false;
-		int offset = frameID * m_tileSize;
-		HAPISPACE::BYTE* currentPixel = m_texture + offset;
+		HAPISPACE::BYTE* currentPixel = m_texture + frameID * m_tileSize;
 
-		for (int i = frameID * m_tileSize; i < frameRect.getRight() * frameRect.getBottom() * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
-		{
-			*currentPixel = m_texture[i];
-			
-			if (currentPixel[3] < 255)
-			{
-				frameHasAlpha = true;
-			}
-		}
+		//for (int i = frameID * m_tileSize; i < frameRect.getRight() * frameRect.getBottom() * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
+		//{
+		//	*currentPixel = m_texture[i];
+
+		//	if (currentPixel[3] < 255)
+		//	{
+		//		frameHasAlpha = true;
+		//	}
+		//}
+
+		//for (int i = frameID * m_tileSize; i < frameRect.getRight() * frameRect.getBottom() * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
+		//{
+		//	*currentPixel = m_texture[i];
+		//	
+		//	if (currentPixel[3] < 255)
+		//	{
+		//		frameHasAlpha = true;
+		//	}
+		//}
 
 		m_frames.emplace_back(frameRect.m_left, frameRect.m_top, frameHasAlpha);
 	}

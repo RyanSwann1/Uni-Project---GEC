@@ -23,6 +23,7 @@
 #include "Window.h"
 #include "Texture.h"
 #include "Sprite.h"
+#include "Level.h"
 
 /*
 	rectangle texture
@@ -48,16 +49,19 @@ void HAPI_Main()
 		return;
 	}
 
-	Texture texture1;
-	if (!texture1.load("playerSprite.tga"))
-	{
-		std::cout << "Cannot load texture\n";
-		return;
-	}
+	//Texture texture1;
+	//if (!texture1.load("playerSprite.tga"))
+	//{
+	//	std::cout << "Cannot load texture\n";
+	//	return;
+	//}
 
-	Sprite playerSprite(texture1, { 5, 5 });
+	//Sprite playerSprite(texture1, { 5, 5 });
 	Vector2i playerPosition(100, 100);
 	Vector2i moveSpeed(1, 1);
+	Texture texture;
+	texture.load("mapOne.tmx", "tilesheet.png");
+	Level level1(XMLParser::parseLevel("MapOne.tmx"));
 
 
 	auto& mouseData = HAPI.GetMouseData();
@@ -65,6 +69,7 @@ void HAPI_Main()
 	while (HAPI.Update())
 	{
 		window.clearToBlack();
+		level1.render(window, texture);
 
 		const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData(); 
 		if (keyData.scanCode[HK_LEFT])
@@ -84,13 +89,6 @@ void HAPI_Main()
 			playerPosition.y += moveSpeed.y;
 		}
 
-		playerSprite.draw(window, playerPosition);
-
-		//render(texture, position, textureSize, windowSize);
-		//render(playerTexture, playerTexturePosition, playerTextureSize, windowSize);
-		//renderAlpha(playerTexture, position, playerTextureSize, windowSize);
-		//renderAlpha(texture, position, textureSize, windowSize);
-		//blit(playerTexture, windowSize, position, playerTextureSize);
-		//renderByPixel(playerTexture, position, playerTextureSize, windowSize);
+		//playerSprite.draw(window, playerPosition);
 	}
 }

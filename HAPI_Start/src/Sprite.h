@@ -3,13 +3,16 @@
 #include "Global.h"
 
 class Texture;
-struct Window;
+struct Frame;
 struct Sprite
 {
-	Sprite(Texture& texture, Vector2i startingSize);
+	Sprite(Texture& texture, Vector2i startingPosition, int tileID);
 
-	void draw(Window& window, Vector2i position) const;
+	Frame getFrame() const;
+	Rectangle getFrameRect() const;
 
-	Texture& m_texture;
-	Vector2i m_size;
+	Texture& texture;
+	Vector2i position;
+	Vector2i size;
+	int tileID;
 };

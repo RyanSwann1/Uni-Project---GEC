@@ -12,10 +12,21 @@ Window::Window()
 
 bool Window::isSpriteFullyContained(Vector2i position, Vector2i size) const
 {
-	return position.x > 0 &&
+	if (position.x >= 0 &&
 		position.x + size.x < m_size.x &&
-		position.y > 0 &&
-		position.y + size.y < m_size.y;
+		position.y >= 0 &&
+		position.y + size.y < m_size.y)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	//return position.x >= 0 &&
+	//	position.x + size.x < m_size.x &&
+	//	position.y >= 0 &&
+	//	position.y + size.y < m_size.y;
 }
 
 bool Window::isSpritePartiallyContained(Rectangle windowRect, Rectangle textureRect) const
@@ -39,6 +50,18 @@ bool Window::initialize()
 	return true;
 }
 
+void Window::render(const Sprite & sprite)
+{
+	if (isSpriteFullyContained(sprite.position, sprite.size))
+	{
+		blit(sprite);
+	}
+	else
+	{
+		blitAlpha(sprite);
+	}
+}
+
 void Window::clearToBlack()
 {
 	for (int i = 0; i < m_size.x * m_size.y * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
@@ -49,61 +72,74 @@ void Window::clearToBlack()
 	}
 }
 
-void Window::blit(const Sprite& sprite, Vector2i position)
+void Window::blit(const Sprite& sprite)
 {
-	HAPISPACE::BYTE* screenPnter = m_window + (position.x + position.y * m_size.x) * BYTES_PER_PIXEL;
-	HAPISPACE::BYTE* texturePnter = sprite.m_texture.getTexture();
+	HAPISPACE::BYTE* screenPnter = m_window + (sprite.position.x * sprite.position.y) * BYTES_PER_PIXEL;
+	Frame frame = sprite.getFrame();
+	int offset = (sprite.getFrame().x * sprite.getFrame().y) * BYTES_PER_PIXEL;
+	HAPISPACE::BYTE* texturePnter = sprite.texture.getTexture() + offset;
+	Rectangle frameRect = sprite.getFrameRect();
 
-	for (int y = 0; y < sprite.m_texture.getHeight(); y++)
+	for (int y = 0; y < frameRect.getHeight(); ++y)
 	{
-		memcpy(screenPnter, texturePnter, sprite.m_texture.getWidth() * BYTES_PER_PIXEL);
+		memcpy(screenPnter, texturePnter, frameRect.getWidth() * BYTES_PER_PIXEL);
+
 		// Move texture pointer to next line
-		texturePnter += sprite.m_texture.getWidth() * BYTES_PER_PIXEL;
+		texturePnter += sprite.texture.getSize().x * BYTES_PER_PIXEL;
 		// Move screen pointer to next line
 		screenPnter += m_size.x * BYTES_PER_PIXEL;
 	}
+
+	//for (int y = 0; y < sprite.texture.getSize().y; y++)
+	//{
+	//	memcpy(screenPnter, texturePnter, sprite.texture.getSize().x * BYTES_PER_PIXEL);
+	//	// Move texture pointer to next line
+	//	texturePnter += sprite.texture.getSize().x * BYTES_PER_PIXEL;
+	//	// Move screen pointer to next line
+	//	screenPnter += m_size.x * BYTES_PER_PIXEL;
+	//}
 }
 
-void Window::blitAlpha(const Sprite & sprite, Vector2i position)
+void Window::blitAlpha(const Sprite & sprite)
 {
-	//if (x >= 0 && y >= 0 && x + m_FrameWidth <= windowWidth && y + m_FrameHeight <= windowHeight)
-	Rectangle windowRect(0, m_size.x, 0, m_size.y);
-	Rectangle textureRect(position.x, position.x + sprite.m_texture.getWidth(), 
-		position.y, position.y + sprite.m_texture.getHeight());
-	
-	if (!isSpritePartiallyContained(windowRect, textureRect))
-	{
-		return;
-	}
+	////if (x >= 0 && y >= 0 && x + m_FrameWidth <= windowWidth && y + m_FrameHeight <= windowHeight)
+	//Rectangle windowRect(0, m_size.x, 0, m_size.y);
+	//Rectangle textureRect(position.x, position.x + sprite.m_texture.getSize().x, 
+	//	position.y, position.y + sprite.m_texture.getSize().y);
+	//
+	//if (!isSpritePartiallyContained(windowRect, textureRect))
+	//{
+	//	return;
+	//}
 
-	textureRect.clipTo(windowRect);
-	int offset = (textureRect.m_left + textureRect.m_top * m_size.x) * BYTES_PER_PIXEL;
+	//textureRect.clipTo(windowRect);
+	//int offset = (textureRect.m_left + textureRect.m_top * m_size.x) * BYTES_PER_PIXEL;
 
-	int textureOffset = (((textureRect.m_left - position.x)) +
-		((textureRect.m_top - position.y)) * sprite.m_texture.getWidth()) * BYTES_PER_PIXEL;
+	//int textureOffset = (((textureRect.m_left - position.x)) +
+	//	((textureRect.m_top - position.y)) * sprite.m_texture.getSize().x) * BYTES_PER_PIXEL;
 
-	HAPISPACE::BYTE* texturePointer = sprite.m_texture.getTexture() + textureOffset;
-	HAPISPACE::BYTE* screenPointer = HAPI.GetScreenPointer() + offset;
+	//HAPISPACE::BYTE* texturePointer = sprite.m_texture.getTexture() + textureOffset;
+	//HAPISPACE::BYTE* screenPointer = HAPI.GetScreenPointer() + offset;
 
-	for (int y = textureRect.m_top; y < textureRect.m_bottom; y++)
-	{
-		for (int x = textureRect.m_left; x < textureRect.m_right; x++)
-		{
-			if (texturePointer[3] == 255)
-			{
-				*(HAPISPACE::HAPI_TColour*)screenPointer = *(HAPISPACE::HAPI_TColour*)texturePointer;
-			}
-			else if (texturePointer[3] > 1)
-			{
-				screenPointer[0] = screenPointer[0] + ((texturePointer[3] * (texturePointer[0] - screenPointer[0])) >> 8);
-				screenPointer[1] = screenPointer[1] + ((texturePointer[3] * (texturePointer[1] - screenPointer[1])) >> 8);
-				screenPointer[2] = screenPointer[2] + ((texturePointer[3] * (texturePointer[2] - screenPointer[2])) >> 8);
-			}
+	//for (int y = textureRect.m_top; y < textureRect.m_bottom; y++)
+	//{
+	//	for (int x = textureRect.m_left; x < textureRect.m_right; x++)
+	//	{
+	//		if (texturePointer[3] == 255)
+	//		{
+	//			*(HAPISPACE::HAPI_TColour*)screenPointer = *(HAPISPACE::HAPI_TColour*)texturePointer;
+	//		}
+	//		else if (texturePointer[3] > 1)
+	//		{
+	//			screenPointer[0] = screenPointer[0] + ((texturePointer[3] * (texturePointer[0] - screenPointer[0])) >> 8);
+	//			screenPointer[1] = screenPointer[1] + ((texturePointer[3] * (texturePointer[1] - screenPointer[1])) >> 8);
+	//			screenPointer[2] = screenPointer[2] + ((texturePointer[3] * (texturePointer[2] - screenPointer[2])) >> 8);
+	//		}
 
-			screenPointer += BYTES_PER_PIXEL;
-			texturePointer += BYTES_PER_PIXEL;
-		}
-		screenPointer += (windowRect.getWidth() - textureRect.getWidth()) * BYTES_PER_PIXEL;
-		texturePointer += (sprite.m_texture.getWidth() - textureRect.getWidth()) * BYTES_PER_PIXEL;
-	}
+	//		screenPointer += BYTES_PER_PIXEL;
+	//		texturePointer += BYTES_PER_PIXEL;
+	//	}
+	//	screenPointer += (windowRect.getWidth() - textureRect.getWidth()) * BYTES_PER_PIXEL;
+	//	texturePointer += (sprite.m_texture.getSize().x - textureRect.getWidth()) * BYTES_PER_PIXEL;
+	//}
 }
