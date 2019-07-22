@@ -44,6 +44,15 @@ int Rectangle::getTop() const
 	return m_top;
 }
 
+bool Rectangle::intersect(Rectangle rect)
+{
+	if (std::max(m_left, rect.m_left) <= std::min(m_right, rect.m_right) 
+		&& std::max(m_top, rect.m_top) <= std::min(m_bottom, rect.m_bottom))
+		return true;
+
+	return false;
+}
+
 void Rectangle::clipTo(Rectangle rect)
 {
 	m_left = std::max(m_left, rect.m_left);

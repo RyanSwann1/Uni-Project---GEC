@@ -23,7 +23,7 @@ struct Rectangle
 	int getBottom() const;
 	int getTop() const;
 
-
+	bool intersect(Rectangle rect);
 	void clipTo(Rectangle rect);
 	void translate(int x, int y);
 	
