@@ -47,6 +47,4 @@ private:
 	std::vector<TurretPlacement> m_turretPlacements;
 	std::vector<Vector2i> m_entityPath; 
 	Vector2i m_levelSize;
-
-	void reset();
 };

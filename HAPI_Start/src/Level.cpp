@@ -123,11 +123,3 @@ void Level::render(Window & window, Texture& tileSheet)
 		turretPlacement.render(window);
 	}
 }
-
-void Level::reset()
-{
-	m_tileLayers.clear();
-	m_turretPlacements.clear();
-	m_entityPath.clear();
-	m_levelSize = Vector2i();
-}

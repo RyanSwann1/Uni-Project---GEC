@@ -14,6 +14,7 @@
 //memcpy – copies bytes from one memory address to another
 
 //https://en.cppreference.com/w/cpp/language/delete
+//https://en.cppreference.com/w/cpp/language/rule_of_three
 
 void HAPI_Main()
 {
@@ -39,20 +40,20 @@ void HAPI_Main()
 	}
 
 	auto& mouseData = HAPI.GetMouseData();
-	Rectangle mouseRect(mouseData.x, texture->getTileSize(), mouseData.y, texture->getTileSize());
 	Sprite mouseRectSprite(*texture, Vector2i(50, 50), 15);
 	Vector2i mousePosition(mouseData.x, mouseData.y);
+	Vector2i mouseRectPosition;
 	const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData();
 
 	while (HAPI.Update())
 	{	
-		mousePosition.x = (mouseData.x / texture->getTileSize()) * texture->getTileSize();
-		mousePosition.y = (mouseData.y / texture->getTileSize()) * texture->getTileSize();
-		mouseRectSprite.setPosition(mousePosition);
+		mouseRectPosition.x = (mouseData.x / texture->getTileSize()) * texture->getTileSize();
+		mouseRectPosition.y = (mouseData.y / texture->getTileSize()) * texture->getTileSize();
+		mouseRectSprite.setPosition(mouseRectPosition);
 
 		if (mouseData.leftButtonDown)
 		{
-			level->addTurretAtPosition(mousePosition, TurretType::Cannon);
+			level->addTurretAtPosition(mouseRectPosition, TurretType::Cannon);
 		}
 
 		window->clearToBlack();

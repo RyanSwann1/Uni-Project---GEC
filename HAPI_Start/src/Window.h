@@ -10,7 +10,7 @@ class Window
 public:
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
-	Window(Window&& orig);
+	Window(Window&&);
 	Window&& operator=(Window&&) = delete;
 
 	static std::unique_ptr<Window> create();
