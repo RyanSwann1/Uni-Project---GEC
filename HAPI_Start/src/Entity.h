@@ -2,6 +2,7 @@
 
 #include "Sprite.h"
 #include <vector>
+#include "Timer.h"
 
 enum class TurretType
 {
@@ -38,8 +39,10 @@ class Entity
 public:
 	Entity(Texture& tileSheet, int tileID, const std::vector<Vector2i>& entityPath);
 
+	bool isActive() const;
+
 	void activate();
-	void update();
+	void update(float deltaTime);
 	void render(const Window& window);
 
 private:
@@ -47,4 +50,5 @@ private:
 	Vector2i m_position;
 	Sprite m_sprite;
 	bool m_active;
+	Timer m_movementTimer;
 };
