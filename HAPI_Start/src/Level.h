@@ -45,6 +45,8 @@ private:
 	Level();
 	std::vector<TileLayer> m_tileLayers;
 	std::vector<TurretPlacement> m_turretPlacements;
-	std::vector<Vector2i> m_entityPath; 
+	std::vector<Entity> m_entities;
 	Vector2i m_levelSize;
+
+	//void addEntity()
 };

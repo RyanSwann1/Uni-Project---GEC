@@ -78,7 +78,6 @@ void Level::TurretPlacement::render(const Window & window) const
 Level::Level()
 	: m_tileLayers(),
 	m_turretPlacements(),
-	m_entityPath(),
 	m_levelSize()
 {}
 
@@ -86,12 +85,18 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, Texture& 
 {
 	Level level;
 	std::vector<Vector2i> turretPlacementPositions;
-	if (XMLParser::parseLevel(levelName, level.m_levelSize, level.m_tileLayers, level.m_entityPath, turretPlacementPositions))
+	std::vector<Vector2i> entityPath;
+	if (XMLParser::parseLevel(levelName, level.m_levelSize, level.m_tileLayers, entityPath, turretPlacementPositions))
 	{
 		level.m_turretPlacements.reserve(turretPlacementPositions.size());
 		for (auto position : turretPlacementPositions)
 		{
 			level.m_turretPlacements.emplace_back(position, tileSheet);
+		}
+
+		for (int i = 0; i < 20; ++i)
+		{
+			level.m_entities.emplace_back(tileSheet, static_cast<int>(EntityID::SOILDER_GREEN), entityPath);
 		}
 
 		return std::make_unique<Level>(std::move(level));
