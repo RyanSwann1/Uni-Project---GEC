@@ -25,6 +25,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Utilities\Base64.cpp" />
     <ClCompile Include="src\Utilities\tinyxml.cpp" />
     <ClCompile Include="src\Utilities\tinyxmlerror.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\Sprite.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Utilities\Base64.h" />
     <ClInclude Include="src\Utilities\tinyxml.h" />
     <ClInclude Include="src\Utilities\XMLParser.h" />
