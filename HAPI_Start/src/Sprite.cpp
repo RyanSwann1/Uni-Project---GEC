@@ -3,7 +3,8 @@
 #include <assert.h>
 
 Sprite::Sprite(Texture & tileSheet)
-	: m_texture(&tileSheet)
+	: m_texture(&tileSheet),
+	m_size(tileSheet.getTileSize(), tileSheet.getTileSize())
 {}
 
 Sprite::Sprite(Texture & texture, Vector2i startingPosition, int tileID)

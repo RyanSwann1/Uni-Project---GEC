@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "Sprite.h"
 #include "Level.h"
+#include <string>
 
 //BYTE 1 byte, 8 bits
 //WORD 2 bytes, 16 bits
@@ -45,7 +46,8 @@ void HAPI_Main()
 	Vector2i mouseRectPosition;
 	const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData();
 	float frameStart = HAPI.GetTime();
-	float lastFrameStart = 0;
+	float lastFrameStart = HAPI.GetTime();
+	float deltaTime = 0;
 	while (HAPI.Update())
 	{	
 		frameStart = HAPI.GetTime();
@@ -58,11 +60,18 @@ void HAPI_Main()
 			level->addTurretAtPosition(mouseRectPosition, TurretType::Cannon);
 		}
 
-		level->update(static_cast<float>(frameStart - lastFrameStart) / 1000.f);
 
+		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
+
+
+		level->update(deltaTime, *texture.get());
+		
 		window->clearToBlack();
+		
+	
 		level->render(*window, *texture);
 		window->render(mouseRectSprite);
+		HAPI.RenderText(100, 100, HAPISPACE::HAPI_TColour::RED, std::to_string(deltaTime), 35);
 
 		lastFrameStart = frameStart;
 	}

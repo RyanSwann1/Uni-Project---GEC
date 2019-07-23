@@ -41,9 +41,8 @@ public:
 
 	bool isActive() const;
 
-	void activate();
 	void update(float deltaTime);
-	void render(const Window& window);
+	void render(const Window& window) const;
 
 private:
 	std::vector<Vector2i> m_entityPath;

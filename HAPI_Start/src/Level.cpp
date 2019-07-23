@@ -6,7 +6,7 @@
 #include <assert.h>
 #include "Utilities/XMLParser.h"
 
-constexpr float TIME_BETWEEN_ENTITY_SPAWN = 2.5f;
+constexpr float TIME_BETWEEN_ENTITY_SPAWN = 1.0f;
 constexpr int MAX_ENTITY_SPAWN_COUNT = 20;
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
@@ -118,12 +118,20 @@ void Level::addTurretAtPosition(Vector2i position, TurretType turretType)
 
 void Level::update(float deltaTime, Texture& tileSheet)
 {
+	for (auto& entity : m_entities)
+	{
+		entity.update(deltaTime);
+	}
+	//m_elaspedTime += deltaTime;
+	//std::cout << m_elaspedTime << "\n";
 	m_spawnTimer.update(deltaTime);
 	if (m_spawnTimer.isExpired())
 	{
 		m_spawnTimer.reset();
 		spawnNextEntity(tileSheet);
 	}
+
+	handleInactiveEntities();
 }
 
 void Level::render(Window & window, Texture& tileSheet)
@@ -137,6 +145,11 @@ void Level::render(Window & window, Texture& tileSheet)
 	{
 		turretPlacement.render(window);
 	}
+
+	for (const auto& entity : m_entities)
+	{
+		entity.render(window);
+	}
 }
 
 void Level::spawnNextEntity(Texture& tileSheet)
@@ -145,5 +158,20 @@ void Level::spawnNextEntity(Texture& tileSheet)
 	if (m_spawnedEntityCount < MAX_ENTITY_SPAWN_COUNT)
 	{
 		m_entities.emplace_back(tileSheet, static_cast<int>(EntityID::SOILDER_GREEN), m_entityPath);
+	}
+}
+
+void Level::handleInactiveEntities()
+{
+	for (auto iter = m_entities.begin(); iter != m_entities.end();)
+	{
+		if (!iter->isActive())
+		{
+			iter = m_entities.erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
 	}
 }

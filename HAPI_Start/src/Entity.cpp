@@ -27,8 +27,8 @@ void Turret::setPosition(Vector2i position)
 Entity::Entity(Texture & tileSheet, int tileID, const std::vector<Vector2i>& entityPath)
 	: m_entityPath(entityPath),
 	m_sprite(tileSheet),
-	m_active(false),
-	m_movementTimer(1.0f)
+	m_active(true),
+	m_movementTimer(0.5f, true)
 {
 	m_sprite.setID(tileID);
 	m_position = m_entityPath.back();
@@ -39,14 +39,6 @@ Entity::Entity(Texture & tileSheet, int tileID, const std::vector<Vector2i>& ent
 bool Entity::isActive() const
 {
 	return m_active;
-}
-
-void Entity::activate()
-{
-	assert(!m_active);
-	m_active = true;
-	m_movementTimer.activate();
-
 }
 
 void Entity::update(float deltaTime)
@@ -68,7 +60,7 @@ void Entity::update(float deltaTime)
 	}
 }
 
-void Entity::render(const Window & window)
+void Entity::render(const Window & window) const
 {
 	if (m_active)
 	{

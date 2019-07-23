@@ -1,7 +1,7 @@
 #include "Timer.h"
 
 Timer::Timer(float expirationTime, bool active)
-	: m_expirationTime(.0f),
+	: m_expirationTime(expirationTime),
 	m_elaspedTime(0.0f),
 	m_active(active)
 {}
