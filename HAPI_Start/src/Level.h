@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Global.h"
+#include "Entity.h"
 
 class Texture;
 class Window;
@@ -16,14 +17,34 @@ struct TileLayer
 
 class Level
 {
-public:
-	Level(Vector2i levelSize, int tileSize, const std::vector<TileLayer>& tileLayers, const std::vector<Vector2i>& entityPath);
+	class TurretPlacement
+	{
+	public:
+		TurretPlacement(Vector2i position);
+		
+		Vector2i getPosition() const;
+		bool isActive() const;
+		void setTurret(TurretType turretType, Vector2i position);
 
+	private:
+		bool m_active;
+		Vector2i m_position;
+		Turret m_turret;
+	};
+
+public:
+
+	static std::unique_ptr<Level> loadLevel(const std::string& levelName);
+	
+	void addTurret(Vector2i position, TurretType turretType);
 	void render(Window& window, Texture& tileSheet);
 
 private:
+	Level();
 	std::vector<TileLayer> m_tileLayers;
-	std::vector<Vector2i> m_entityPath;
+	std::vector<TurretPlacement> m_turrets;
+	std::vector<Vector2i> m_entityPath; 
 	Vector2i m_levelSize;
-	int m_tileSize;
+
+	void reset();
 };
