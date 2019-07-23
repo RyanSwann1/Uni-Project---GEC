@@ -7,15 +7,15 @@ const Vector2i FPS_DISPLAY_POSITION{ 50, 50 };
 
 Window::Window()
 	: m_window(nullptr),
-	m_size(1000, 1000)
+	m_windowSize(1280, 1088)
 {}
 
 bool Window::isSpriteFullyContained(const Sprite& sprite) const
 {
-	return sprite.position.x >= 0 &&
-		sprite.position.x + sprite.size.x < m_size.x &&
-		sprite.position.y >= 0 &&
-		sprite.position.y + sprite.size.y < m_size.y;
+	return sprite.getPosition().x >= 0 &&
+		sprite.getPosition().x + sprite.getSize().x < m_windowSize.x &&
+		sprite.getPosition().y >= 0 &&
+		sprite.getPosition().y + sprite.getSize().y < m_windowSize.y;
 }
 
 bool Window::isSpriteViewable(Rectangle windowRect, Rectangle textureRect) const
@@ -26,10 +26,35 @@ bool Window::isSpriteViewable(Rectangle windowRect, Rectangle textureRect) const
 		textureRect.m_bottom > windowRect.m_top;
 }
 
-bool Window::initialize()
+Window::Window(Window && orig)
+{
+	m_window = orig.m_window;
+	m_windowSize = orig.m_windowSize;
+	orig.m_window = nullptr;
+}
+
+std::unique_ptr<Window> Window::create()
+{
+	Window window;
+	if (window.createWindow())
+	{
+		return std::make_unique<Window>(std::move(window));
+	}
+	else
+	{
+		return std::unique_ptr<Window>();
+	}
+}
+
+Vector2i Window::getSize() const
+{
+	return m_windowSize;
+}
+
+bool Window::createWindow()
 {
 	assert(!m_window);
-	if (!HAPI.Initialise(m_size.x, m_size.y, "HAPI_WINDOW", HAPISPACE::eDefaults))
+	if (!HAPI.Initialise(m_windowSize.x, m_windowSize.y, "HAPI_WINDOW", HAPISPACE::eDefaults))
 	{
 		return false;
 	}
@@ -53,7 +78,7 @@ void Window::render(const Sprite & sprite) const
 
 void Window::clearToBlack()
 {
-	for (int i = 0; i < m_size.x * m_size.y * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
+	for (int i = 0; i < m_windowSize.x * m_windowSize.y * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
 	{
 		m_window[i + 0] = 0;
 		m_window[i + 1] = 0;
@@ -63,9 +88,9 @@ void Window::clearToBlack()
 
 void Window::blit(const Sprite& sprite) const
 {
-	HAPISPACE::BYTE* screenPnter = m_window + (sprite.position.x + (sprite.position.y * m_size.x)) * BYTES_PER_PIXEL;
-	int textureOffset = (sprite.getFrame().x + (sprite.texture.getSize().x) * sprite.getFrame().y) * BYTES_PER_PIXEL;
-	HAPISPACE::BYTE* texturePnter = sprite.texture.getTexture() + textureOffset;
+	HAPISPACE::BYTE* screenPnter = m_window + (sprite.getPosition().x + (sprite.getPosition().y * m_windowSize.x)) * BYTES_PER_PIXEL;
+	int textureOffset = (sprite.getFrame().x + (sprite.getTexture().getSize().x) * sprite.getFrame().y) * BYTES_PER_PIXEL;
+	HAPISPACE::BYTE* texturePnter = sprite.getTexture().getTexture() + textureOffset;
 	Rectangle frameRect = sprite.getFrameRect();
 
 	for (int y = 0; y < frameRect.getHeight(); ++y)
@@ -73,17 +98,17 @@ void Window::blit(const Sprite& sprite) const
 		memcpy(screenPnter, texturePnter, frameRect.getWidth() * BYTES_PER_PIXEL);
 
 		// Move texture pointer to next line
-		texturePnter += sprite.texture.getSize().x * BYTES_PER_PIXEL;
+		texturePnter += sprite.getTexture().getSize().x * BYTES_PER_PIXEL;
 		// Move screen pointer to next line
-		screenPnter += m_size.x * BYTES_PER_PIXEL;
+		screenPnter += m_windowSize.x * BYTES_PER_PIXEL;
 	}
 }
 
 void Window::blitAlpha(const Sprite & sprite) const
 {
-	Rectangle windowRect(0, m_size.x, 0, m_size.y);
-	Rectangle spriteRect(sprite.position.x, sprite.texture.getTileSize(), sprite.position.y, 
-		sprite.texture.getTileSize());
+	Rectangle windowRect(0, m_windowSize.x, 0, m_windowSize.y);
+	Rectangle spriteRect(sprite.getPosition().x, sprite.getTexture().getTileSize(), sprite.getPosition().y, 
+		sprite.getTexture().getTileSize());
 
 	if (!spriteRect.intersect(windowRect))
 	{
@@ -92,9 +117,9 @@ void Window::blitAlpha(const Sprite & sprite) const
 
 	spriteRect.clipTo(windowRect);
 
-	int textureOffset = (sprite.getFrame().x + (sprite.texture.getSize().x) * sprite.getFrame().y) * BYTES_PER_PIXEL;
-	HAPISPACE::BYTE* texturePointer = sprite.texture.getTexture() + textureOffset;
-	HAPISPACE::BYTE* screenPointer = m_window + (sprite.position.x + (sprite.position.y * m_size.x)) * BYTES_PER_PIXEL;
+	int textureOffset = (sprite.getFrame().x + (sprite.getTexture().getSize().x) * sprite.getFrame().y) * BYTES_PER_PIXEL;
+	HAPISPACE::BYTE* texturePointer = sprite.getTexture().getTexture() + textureOffset;
+	HAPISPACE::BYTE* screenPointer = m_window + (sprite.getPosition().x + (sprite.getPosition().y * m_windowSize.x)) * BYTES_PER_PIXEL;
 
 	for (int y = spriteRect.m_top; y < spriteRect.m_bottom; y++)
 	{
@@ -116,6 +141,6 @@ void Window::blitAlpha(const Sprite & sprite) const
 		}
 
 		screenPointer += (windowRect.getWidth() - spriteRect.getWidth()) * BYTES_PER_PIXEL;
-		texturePointer += (sprite.texture.getSize().x - spriteRect.getWidth()) * BYTES_PER_PIXEL;
+		texturePointer += (sprite.getTexture().getSize().x - spriteRect.getWidth()) * BYTES_PER_PIXEL;
 	}
 }
