@@ -49,6 +49,18 @@ bool XMLParser::parseLevel(const std::string & levelName, Vector2i & levelSize, 
 
 	parseTileLayers(*rootElement, levelSize, tileLayers);
 	parseObjectLayer(*rootElement, tileSize, "Entity Path Layer", entityPath);
+
+	//Reverse the entity path
+	std::vector<Vector2i> reversedEntityPath;
+	reversedEntityPath.reserve(entityPath.size());
+	for (int i = entityPath.size() - 1; i >= 0; --i)
+	{
+		reversedEntityPath.push_back(entityPath[i]);
+	}
+
+	entityPath = reversedEntityPath;
+
+
 	parseObjectLayer(*rootElement, tileSize, "Building Placement Layer", buildingPlacementPosition);
 
 	return true;

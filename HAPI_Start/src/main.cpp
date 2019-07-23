@@ -40,7 +40,7 @@ void HAPI_Main()
 	}
 
 	auto& mouseData = HAPI.GetMouseData();
-	Sprite mouseRectSprite(*texture, Vector2i(50, 50), 15);
+	Sprite mouseRectSprite(*texture, Vector2i(), 15);
 	Vector2i mousePosition(mouseData.x, mouseData.y);
 	Vector2i mouseRectPosition;
 	const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData();
