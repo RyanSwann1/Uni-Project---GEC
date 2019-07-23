@@ -18,7 +18,18 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	delete[] m_texture;
+	delete m_texture;
+}
+
+Texture::Texture(Texture && other)
+{
+	m_texture = other.m_texture;
+	m_frames = std::move(other.m_frames);
+	m_textureSize = other.m_textureSize;
+	m_columns = other.m_columns;
+	m_tileSize = other.m_tileSize;
+
+	other.m_texture = nullptr;
 }
 
 Frame Texture::getFrame(int ID) const
@@ -34,27 +45,23 @@ int Texture::getTileSize() const
 
 Rectangle Texture::getFrameRect(int tileID) const
 {
-	//Frame frame = getFrame(tileID);
-	//return Rectangle(frame.x, frame.x + m_tileSize, frame.y, frame.y + m_tileSize);
-
 	return Rectangle(tileID % m_columns * m_tileSize, m_tileSize, tileID / m_columns * m_tileSize, m_tileSize);
 }
 
-bool Texture::load(const std::string& xmlFileName, const std::string& textureFileName)
+std::unique_ptr<Texture> Texture::load(const std::string& xmlFileName, const std::string& textureFileName)
 {
-	assert(!m_texture);
-
-	XMLParser::parseTexture(m_tileSize, m_textureSize, m_columns, xmlFileName);
-	bool textureLoaded = HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y);
-	if (textureLoaded)
+	Texture texture;
+	if (texture.loadTexture(xmlFileName, textureFileName))
 	{
-		loadInFrames();
+		return std::make_unique<Texture>(std::move(texture));
 	}
-
-	return textureLoaded;
+	else
+	{
+		return std::unique_ptr<Texture>();
+	}
 }
 
-HAPISPACE::BYTE * Texture::getTexture()
+HAPISPACE::BYTE * Texture::getTexture() const 
 {
 	assert(m_texture);
 	return m_texture;
@@ -86,18 +93,20 @@ void Texture::loadInFrames()
 			}
 		}
 
-		//for (int i = frameID * m_tileSize; i < frameRect.getRight() * frameRect.getBottom() * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
-		//{
-		//	*currentPixel = m_texture[i];
-		//	
-		//	if (currentPixel[3] < 255)
-		//	{
-		//		frameHasAlpha = true;
-		//	}
-		//}
-
 		m_frames.emplace_back(frameRect.m_left, frameRect.m_top, frameHasAlpha);
 	}
+}
+
+bool Texture::loadTexture(const std::string & xmlFileName, const std::string & textureFileName)
+{
+	XMLParser::parseTexture(m_tileSize, m_textureSize, m_columns, xmlFileName);
+	if (!HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y))
+	{
+		return false;
+	}
+	loadInFrames();
+	
+	return true;
 }
 
 bool Texture::isFrameAlpha(int ID) const

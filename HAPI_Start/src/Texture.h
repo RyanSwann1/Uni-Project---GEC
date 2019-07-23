@@ -1,9 +1,10 @@
 #pragma once
 
 #include "HAPI_lib.h"
-#include <string>
 #include "Global.h"
+#include <string>
 #include <vector>
+#include <memory>
 
 struct Frame
 {
@@ -17,27 +18,29 @@ struct Frame
 class Texture
 {
 public:
-	Texture();
 	~Texture();
 	Texture(const Texture&) = delete;
 	Texture& operator=(const Texture&) = delete;
-	Texture(Texture&&) = delete;
+	Texture(Texture&&);
 	Texture&& operator=(Texture&&) = delete;
 
+	static std::unique_ptr<Texture> load(const std::string& xmlFileName, const std::string& textureFileName);
+	
 	Frame getFrame(int ID) const;
 	int getTileSize() const;
-	Rectangle getFrameRect(int tileID) const;
-	bool load(const std::string& xmlFileName, const std::string& textureFileName);
-	HAPISPACE::BYTE* getTexture();
+	Rectangle getFrameRect(int tileID) const;	
+	HAPISPACE::BYTE* getTexture() const;
 	Vector2i getSize() const;
 
 private:
+	Texture();
 	HAPISPACE::BYTE* m_texture;
 	std::vector<Frame> m_frames;
 	Vector2i m_textureSize;
 	int m_columns;
 	int m_tileSize;
 
-	void loadInFrames();
 	bool isFrameAlpha(int ID) const;
+	void loadInFrames();
+	bool loadTexture(const std::string& xmlFileName, const std::string& textureFileName);
 };
