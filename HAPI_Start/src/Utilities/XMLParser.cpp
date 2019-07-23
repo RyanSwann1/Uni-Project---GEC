@@ -6,9 +6,9 @@
 #include "../Level.h"
 #include "../Texture.h"
 
-std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, Vector2i levelSize);
+std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, Vector2i levelSize, std::vector<TileLayer>& tileLayers);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, Vector2i levelSize);
-std::vector<Vector2i> parseEntityPath(const TiXmlElement & rootElement, int tileSize);
+std::vector<Vector2i> parseObjectLayer(const TiXmlElement & rootElement, int tileSize, const std::string& layerName, std::vector<Vector2i>& objects);
 
 void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns, const std::string& fileName)
 {
@@ -32,45 +32,52 @@ void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns,
 	}
 }
 
-Level XMLParser::parseLevel(const std::string& levelName)
+bool XMLParser::parseLevel(const std::string & levelName, Vector2i & levelSize, std::vector<TileLayer>& tileLayers, 
+	std::vector<Vector2i>& entityPath, std::vector<Vector2i>& buildingPlacementPosition)
 {
 	TiXmlDocument file;
-	bool mapLoaded = file.LoadFile(DATA_DIRECTORY + levelName);
-	assert(mapLoaded);
+	if (!file.LoadFile(DATA_DIRECTORY + levelName))
+	{
+		return false;
+	}
 
 	const auto& rootElement = file.RootElement();
 	int tileSize = 0;
-	Vector2i levelSize;
 	rootElement->Attribute("width", &levelSize.x);
 	rootElement->Attribute("height", &levelSize.y);
 	rootElement->Attribute("tilewidth", &tileSize);
 
-	return Level(levelSize, tileSize, parseTileLayers(*rootElement, levelSize), parseEntityPath(*rootElement, tileSize));
+	parseTileLayers(*rootElement, levelSize, tileLayers);
+	parseObjectLayer(*rootElement, tileSize, "Entity Path Layer", entityPath);
+	parseObjectLayer(*rootElement, tileSize, "Building Placement Layer", buildingPlacementPosition);
+
+	return true;
 }
 
-std::vector<Vector2i> parseEntityPath(const TiXmlElement & rootElement, int tileSize)
+std::vector<Vector2i> parseObjectLayer(const TiXmlElement & rootElement, int tileSize, const std::string& layerName, std::vector<Vector2i>& objects)
 {
-	std::vector<Vector2i> entityPath;
+	assert(objects.empty());
+
 	for (const auto* entityElementRoot = rootElement.FirstChildElement(); entityElementRoot != nullptr; entityElementRoot = entityElementRoot->NextSiblingElement())
 	{
-		if (entityElementRoot->Value() != std::string("objectgroup") || entityElementRoot->Attribute("name") != std::string("Entity Layer"))
+		if (entityElementRoot->Value() != std::string("objectgroup") || entityElementRoot->Attribute("name") != layerName)
 		{
 			continue;
 		}
 
 		for (const auto* entityElement = entityElementRoot->FirstChildElement(); entityElement != nullptr; entityElement = entityElement->NextSiblingElement())
 		{
-			Vector2i startingPosition;
-			entityElement->Attribute("x", &startingPosition.x);
-			entityElement->Attribute("y", &startingPosition.y);
-			startingPosition.y -= tileSize; //Tiled Hack
+			Vector2i position;
+			entityElement->Attribute("x", &position.x);
+			entityElement->Attribute("y", &position.y);
+			position.y -= tileSize; //Tiled Hack
 
-			entityPath.emplace_back(startingPosition.x, startingPosition.y);
+			objects.emplace_back(position.x, position.y);
 		}
 	}
 
-	assert(!entityPath.empty());
-	return entityPath;
+	assert(!objects.empty());
+	return objects;
 }
 
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, Vector2i levelSize)
@@ -111,9 +118,9 @@ std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElem
 	return tileData;
 }
 
-std::vector<TileLayer> parseTileLayers(const TiXmlElement & rootElement, Vector2i levelSize)
+std::vector<TileLayer> parseTileLayers(const TiXmlElement & rootElement, Vector2i levelSize, std::vector<TileLayer>& tileLayers)
 {
-	std::vector<TileLayer> tileLayers;
+	assert(tileLayers.empty());
 	for (const auto* tileLayerElement = rootElement.FirstChildElement();
 		tileLayerElement != nullptr; tileLayerElement = tileLayerElement->NextSiblingElement())
 	{

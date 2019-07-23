@@ -12,11 +12,16 @@ Vector2i::Vector2i(int x, int y)
 	y(y)
 {}
 
-Rectangle::Rectangle(int left, int right, int top, int bottom)
+bool Vector2i::operator==(Vector2i other)
+{
+	return x == other.x && y == other.y;
+}
+
+Rectangle::Rectangle(int left, int width, int top, int height)
 	: m_left(left),
-	m_right(left + right),
+	m_right(left + width),
 	m_top(top),
-	m_bottom(top + bottom)
+	m_bottom(top + height)
 {}
 
 int Rectangle::getWidth() const

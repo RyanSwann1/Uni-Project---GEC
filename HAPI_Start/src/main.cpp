@@ -1,21 +1,3 @@
-/*
-	HAPI Start
-	----------
-	This solution contains an already set up HAPI project and this main file
-
-	The directory structure and main files are:
-
-	HAPI_Start - contains the Visual Studio solution file (.sln)
-		HAPI_Start - contains the Visual Studio HAPI_APP project file (.vcxproj) and source code
-			HAPI - the directory with all the HAPI library files
-			Data - a place to put your data files with a few sample ones provided
-
-	Additionally in the top directory there is a batch file for creating a redistributable Demo folder
-
-	For help using HAPI:
-	https://scm-intranet.tees.ac.uk/users/u0018197/hapi.html
-*/
-
 #include "Global.h"
 #include "HAPI_lib.h"
 #include "Utilities/XMLParser.h"
@@ -25,70 +7,60 @@
 #include "Sprite.h"
 #include "Level.h"
 
-/*
-	rectangle texture
-	rectangle screen
-	if(screen.completelyContains(texture) && !alpha)
-		fastBlit
-	else
-		blit
-*/
-
 //BYTE 1 byte, 8 bits
 //WORD 2 bytes, 16 bits
 //DWORD 4 bytes, 32 bits
 //memset – sets all bytes in a block of memory to a provided value
 //memcpy – copies bytes from one memory address to another
 
+//https://en.cppreference.com/w/cpp/language/delete
+
 void HAPI_Main()
 {
-	Window window;
-	if (!window.initialize())
+	std::unique_ptr<Window> window = Window::create();
+	if (!window)
 	{
-		std::cout << "Cannot initialize HAPI\n";
+		std::cout << "Failed to create window\n";
 		return;
 	}
 
-	//Texture texture1;
-	//if (!texture1.load("playerSprite.tga"))
-	//{
-	//	std::cout << "Cannot load texture\n";
-	//	return;
-	//}
+	std::unique_ptr<Texture> texture = Texture::load("mapOne.tmx", "tilesheet.png");
+	if (!texture)
+	{
+		std::cout << "Tilesheet not loaded\n";
+		return;
+	}
 
-	//Sprite playerSprite(texture1, { 5, 5 });
-	Vector2i playerPosition(100, 100);
-	Vector2i moveSpeed(1, 1);
-	Texture texture;
-	texture.load("mapOne.tmx", "tilesheet.png");
-	Level level1(XMLParser::parseLevel("MapOne.tmx"));
-
+	std::unique_ptr<Level> level = Level::loadLevel("mapOne.tmx");
+	if (!level)
+	{
+		std::cout << "Couldn't load level\n";
+		return;
+	}
 
 	auto& mouseData = HAPI.GetMouseData();
+	Rectangle mouseRect(mouseData.x, texture->getTileSize(), mouseData.y, texture->getTileSize());
+	Sprite mouseRectSprite(*texture, Vector2i(50, 50), 15);
+	Vector2i mousePosition(mouseData.x, mouseData.y);
+	const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData();
+	
+	/*Turret turretCannon(static_cast<int>(EntityID::TURRET_BASE), 
+		static_cast<int>(EntityID::TURRET_HEAD), texture, mousePosition);*/
 
 	while (HAPI.Update())
-	{
-		window.clearToBlack();
-		level1.render(window, texture);
+	{	
+		mousePosition.x = (mouseData.x / texture->getTileSize()) * texture->getTileSize();
+		mousePosition.y = (mouseData.y / texture->getTileSize()) * texture->getTileSize();
+		mouseRectSprite.setPosition(mousePosition);
 
-		const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData(); 
-		if (keyData.scanCode[HK_LEFT])
+		if (mouseData.leftButtonDown)
 		{
-			playerPosition.x -= moveSpeed.x;
-		}
-		else if (keyData.scanCode[HK_RIGHT])
-		{
-			playerPosition.x += moveSpeed.x;
-		}
-		else if (keyData.scanCode[HK_UP])
-		{
-			playerPosition.y -= moveSpeed.y;
-		}
-		else if (keyData.scanCode[HK_DOWN])
-		{
-			playerPosition.y += moveSpeed.y;
+
 		}
 
-		//playerSprite.draw(window, playerPosition);
+		window->clearToBlack();
+		level->render(*window, *texture);
+		//turretCannon.render(*window);
+		window->render(mouseRectSprite);
 	}
 }

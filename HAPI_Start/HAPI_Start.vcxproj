@@ -19,14 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\Global.cpp" />
     <ClCompile Include="src\Level.cpp" />
-    <ClCompile Include="src\main.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Utilities\Base64.cpp" />
@@ -37,6 +33,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\Global.h" />
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\Sprite.h" />

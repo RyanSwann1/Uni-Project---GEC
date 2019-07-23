@@ -4,10 +4,24 @@
 const std::string DATA_DIRECTORY = "Data//";
 constexpr int BYTES_PER_PIXEL = 4;
 
+enum class TurretType
+{
+	Cannon = 0,
+	Missle
+};
+
+enum class EntityID
+{
+	TURRET_BASE = 180,
+	TURRET_HEAD = 249
+};
+
 struct Vector2i
 {
 	Vector2i();
 	Vector2i(int x, int y);
+	bool operator==(Vector2i other);
+
 
 	int x;
 	int y;
@@ -15,7 +29,7 @@ struct Vector2i
 
 struct Rectangle
 {
-	Rectangle(int left = 0, int right = 0, int top = 0, int m_bottom = 0);
+	Rectangle(int left = 0, int width = 0, int top = 0, int height = 0);
 
 	int getWidth() const;
 	int getHeight() const;
