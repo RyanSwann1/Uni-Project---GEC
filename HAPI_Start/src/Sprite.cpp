@@ -2,9 +2,9 @@
 #include "Texture.h"
 #include <assert.h>
 
-Sprite::Sprite()
-{
-}
+Sprite::Sprite(Texture & tileSheet)
+	: m_texture(&tileSheet)
+{}
 
 Sprite::Sprite(Texture & texture, Vector2i startingPosition, int tileID)
 	: m_texture(&texture),
@@ -44,6 +44,11 @@ Rectangle Sprite::getFrameRect() const
 {
 	assert(m_texture);
 	return m_texture->getFrameRect(m_tileID);
+}
+
+void Sprite::setID(int tileID)
+{
+	m_tileID = tileID;
 }
 
 void Sprite::setPosition(Vector2i position)

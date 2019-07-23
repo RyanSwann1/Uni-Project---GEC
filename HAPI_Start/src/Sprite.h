@@ -7,8 +7,8 @@ struct Frame;
 class Sprite
 {
 public:
-	Sprite();
-	Sprite(Texture& texture, Vector2i startingPosition, int tileID);
+	Sprite(Texture& tileSheet);
+	Sprite(Texture& tileSheet, Vector2i startingPosition, int tileID);
 
 	Vector2i getSize() const;
 	Vector2i getPosition() const;
@@ -17,6 +17,7 @@ public:
 	Frame getFrame() const;
 	Rectangle getFrameRect() const;
 
+	void setID(int tileID);
 	void setPosition(Vector2i position);
 
 private:

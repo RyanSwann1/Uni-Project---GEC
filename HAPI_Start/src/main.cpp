@@ -31,7 +31,7 @@ void HAPI_Main()
 		return;
 	}
 
-	std::unique_ptr<Level> level = Level::loadLevel("mapOne.tmx");
+	std::unique_ptr<Level> level = Level::loadLevel("mapOne.tmx", *texture);
 	if (!level)
 	{
 		std::cout << "Couldn't load level\n";
@@ -43,9 +43,6 @@ void HAPI_Main()
 	Sprite mouseRectSprite(*texture, Vector2i(50, 50), 15);
 	Vector2i mousePosition(mouseData.x, mouseData.y);
 	const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData();
-	
-	/*Turret turretCannon(static_cast<int>(EntityID::TURRET_BASE), 
-		static_cast<int>(EntityID::TURRET_HEAD), texture, mousePosition);*/
 
 	while (HAPI.Update())
 	{	
@@ -55,12 +52,11 @@ void HAPI_Main()
 
 		if (mouseData.leftButtonDown)
 		{
-
+			level->addTurretAtPosition(mousePosition, TurretType::Cannon);
 		}
 
 		window->clearToBlack();
 		level->render(*window, *texture);
-		//turretCannon.render(*window);
 		window->render(mouseRectSprite);
 	}
 }

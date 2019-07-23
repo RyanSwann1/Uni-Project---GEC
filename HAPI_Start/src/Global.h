@@ -4,17 +4,6 @@
 const std::string DATA_DIRECTORY = "Data//";
 constexpr int BYTES_PER_PIXEL = 4;
 
-enum class TurretType
-{
-	Cannon = 0,
-	Missle
-};
-
-enum class EntityID
-{
-	TURRET_BASE = 180,
-	TURRET_HEAD = 249
-};
 
 struct Vector2i
 {

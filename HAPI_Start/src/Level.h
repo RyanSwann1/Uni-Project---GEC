@@ -20,11 +20,13 @@ class Level
 	class TurretPlacement
 	{
 	public:
-		TurretPlacement(Vector2i position);
+		TurretPlacement(Vector2i position, Texture& tileSheet);
 		
 		Vector2i getPosition() const;
 		bool isActive() const;
 		void setTurret(TurretType turretType, Vector2i position);
+
+		void render(const Window& window) const;
 
 	private:
 		bool m_active;
@@ -34,15 +36,15 @@ class Level
 
 public:
 
-	static std::unique_ptr<Level> loadLevel(const std::string& levelName);
+	static std::unique_ptr<Level> loadLevel(const std::string& levelName, Texture& tileSheet);
 	
-	void addTurret(Vector2i position, TurretType turretType);
+	void addTurretAtPosition(Vector2i position, TurretType turretType);
 	void render(Window& window, Texture& tileSheet);
 
 private:
 	Level();
 	std::vector<TileLayer> m_tileLayers;
-	std::vector<TurretPlacement> m_turrets;
+	std::vector<TurretPlacement> m_turretPlacements;
 	std::vector<Vector2i> m_entityPath; 
 	Vector2i m_levelSize;
 

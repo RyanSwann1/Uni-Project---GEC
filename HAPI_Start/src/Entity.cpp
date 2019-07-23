@@ -1,17 +1,12 @@
 #include "Entity.h"
 #include "Window.h"
 
-Turret::Turret()
+Turret::Turret(Texture & tileSheet)
 	: m_position(),
-	m_base(),
-	m_head()
-{}
-
-Turret::Turret(int baseID, int headID, Texture & tileSheet, Vector2i startingPosition)
-	: m_position(startingPosition),
-	m_base(tileSheet, startingPosition, baseID),
-	m_head(tileSheet, startingPosition, headID)
-{}
+	m_base(tileSheet),
+	m_head(tileSheet)
+{
+}
 
 void Turret::render(const Window & window) const
 {

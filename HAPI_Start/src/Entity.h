@@ -8,12 +8,19 @@ enum class TurretType
 	Missle
 };
 
+enum class EntityID
+{
+	TURRET_CANNON_BASE = 180,
+	TURRET_CANNON_HEAD = 249,
+	TURRET_MISSLE_BASE = 181,
+	TURRET_MISSLE_HEAD = 204
+};
+
 class Window;
 class Texture;
 struct Turret
 {
-	Turret();
-	Turret(int baseID, int headID, Texture& tileSheet, Vector2i startingPosition);
+	Turret(Texture& tileSheet);
 
 	void render(const Window& window) const;
 
