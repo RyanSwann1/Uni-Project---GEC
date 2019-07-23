@@ -44,9 +44,11 @@ void HAPI_Main()
 	Vector2i mousePosition(mouseData.x, mouseData.y);
 	Vector2i mouseRectPosition;
 	const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData();
-
+	float frameStart = HAPI.GetTime();
+	float lastFrameStart = 0;
 	while (HAPI.Update())
 	{	
+		frameStart = HAPI.GetTime();
 		mouseRectPosition.x = (mouseData.x / texture->getTileSize()) * texture->getTileSize();
 		mouseRectPosition.y = (mouseData.y / texture->getTileSize()) * texture->getTileSize();
 		mouseRectSprite.setPosition(mouseRectPosition);
@@ -56,8 +58,12 @@ void HAPI_Main()
 			level->addTurretAtPosition(mouseRectPosition, TurretType::Cannon);
 		}
 
+		level->update(static_cast<float>(frameStart - lastFrameStart) / 1000.f);
+
 		window->clearToBlack();
 		level->render(*window, *texture);
 		window->render(mouseRectSprite);
+
+		lastFrameStart = frameStart;
 	}
 }

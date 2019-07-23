@@ -116,6 +116,11 @@ void Level::addTurretAtPosition(Vector2i position, TurretType turretType)
 	}
 }
 
+void Level::update(float deltaTime)
+{
+	m_timeElasped += deltaTime;
+}
+
 void Level::render(Window & window, Texture& tileSheet)
 {
 	for (const auto& tileLayer : m_tileLayers)

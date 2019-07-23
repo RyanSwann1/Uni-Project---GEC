@@ -39,6 +39,8 @@ public:
 	static std::unique_ptr<Level> loadLevel(const std::string& levelName, Texture& tileSheet);
 	
 	void addTurretAtPosition(Vector2i position, TurretType turretType);
+	
+	void update(float deltaTime);
 	void render(Window& window, Texture& tileSheet);
 
 private:
@@ -47,6 +49,7 @@ private:
 	std::vector<TurretPlacement> m_turretPlacements;
 	std::vector<Entity> m_entities;
 	Vector2i m_levelSize;
+	float m_timeElasped = 0;
 
 	//void addEntity()
 };
