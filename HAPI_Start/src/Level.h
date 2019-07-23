@@ -3,6 +3,7 @@
 #include <vector>
 #include "Global.h"
 #include "Entity.h"
+#include "Timer.h"
 
 class Texture;
 class Window;
@@ -40,17 +41,19 @@ public:
 	
 	void addTurretAtPosition(Vector2i position, TurretType turretType);
 	
-	void update(float deltaTime);
+	void update(float deltaTime, Texture& tileSheet);
 	void render(Window& window, Texture& tileSheet);
 
 private:
 	Level();
 	std::vector<TileLayer> m_tileLayers;
+	std::vector<Vector2i> m_entityPath;
 	std::vector<TurretPlacement> m_turretPlacements;
 	std::vector<Entity> m_entities;
 	Vector2i m_levelSize;
-	float m_timeElasped = 0;
+	Timer m_spawnTimer;
+	int m_spawnedEntityCount;
 
 
-	//void addEntity()
+	void spawnNextEntity(Texture& tileSheet);
 };

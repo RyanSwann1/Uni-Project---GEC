@@ -6,6 +6,8 @@
 #include <assert.h>
 #include "Utilities/XMLParser.h"
 
+constexpr float TIME_BETWEEN_ENTITY_SPAWN = 2.5f;
+constexpr int MAX_ENTITY_SPAWN_COUNT = 20;
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
 	: m_tileData(std::move(tileData))
@@ -77,16 +79,18 @@ void Level::TurretPlacement::render(const Window & window) const
 //Level
 Level::Level()
 	: m_tileLayers(),
+	m_entityPath(),
 	m_turretPlacements(),
-	m_levelSize()
+	m_levelSize(),
+	m_spawnTimer(TIME_BETWEEN_ENTITY_SPAWN, true),
+	m_spawnedEntityCount(0)
 {}
 
 std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, Texture& tileSheet)
 {
 	Level level;
 	std::vector<Vector2i> turretPlacementPositions;
-	std::vector<Vector2i> entityPath;
-	if (XMLParser::parseLevel(levelName, level.m_levelSize, level.m_tileLayers, entityPath, turretPlacementPositions))
+	if (XMLParser::parseLevel(levelName, level.m_levelSize, level.m_tileLayers, level.m_entityPath, turretPlacementPositions))
 	{
 		level.m_turretPlacements.reserve(turretPlacementPositions.size());
 		for (auto position : turretPlacementPositions)
@@ -94,11 +98,7 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, Texture& 
 			level.m_turretPlacements.emplace_back(position, tileSheet);
 		}
 
-		for (int i = 0; i < 20; ++i)
-		{
-			level.m_entities.emplace_back(tileSheet, static_cast<int>(EntityID::SOILDER_GREEN), entityPath);
-		}
-
+		level.m_entities.reserve(static_cast<size_t>(MAX_ENTITY_SPAWN_COUNT));
 		return std::make_unique<Level>(std::move(level));
 	}
 	else
@@ -116,9 +116,14 @@ void Level::addTurretAtPosition(Vector2i position, TurretType turretType)
 	}
 }
 
-void Level::update(float deltaTime)
+void Level::update(float deltaTime, Texture& tileSheet)
 {
-	m_timeElasped += deltaTime;
+	m_spawnTimer.update(deltaTime);
+	if (m_spawnTimer.isExpired())
+	{
+		m_spawnTimer.reset();
+		spawnNextEntity(tileSheet);
+	}
 }
 
 void Level::render(Window & window, Texture& tileSheet)
@@ -131,5 +136,14 @@ void Level::render(Window & window, Texture& tileSheet)
 	for (const auto& turretPlacement : m_turretPlacements)
 	{
 		turretPlacement.render(window);
+	}
+}
+
+void Level::spawnNextEntity(Texture& tileSheet)
+{
+	++m_spawnedEntityCount;
+	if (m_spawnedEntityCount < MAX_ENTITY_SPAWN_COUNT)
+	{
+		m_entities.emplace_back(tileSheet, static_cast<int>(EntityID::SOILDER_GREEN), m_entityPath);
 	}
 }
