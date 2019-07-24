@@ -8,6 +8,7 @@
 
 constexpr float TIME_BETWEEN_ENTITY_SPAWN = 1.0f;
 constexpr int MAX_ENTITY_SPAWN_COUNT = 2;
+
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
 	: m_tileData(std::move(tileData))
@@ -67,7 +68,7 @@ void Level::TurretPlacement::setTurret(TurretType turretType, Vector2i position)
 	}
 }
 
-void Level::TurretPlacement::update(const std::vector<Entity>& entities, float deltaTime)
+void Level::TurretPlacement::update(const std::vector<Unit>& entities, float deltaTime)
 {
 	if (m_active)
 	{
@@ -86,18 +87,18 @@ void Level::TurretPlacement::render(const Window & window) const
 //Level
 Level::Level()
 	: m_tileLayers(),
-	m_entityPath(),
+	m_unitMovementPath(),
 	m_turretPlacements(),
 	m_levelSize(),
 	m_spawnTimer(TIME_BETWEEN_ENTITY_SPAWN, true),
-	m_spawnedEntityCount(0)
+	m_spawnedUnitCount(0)
 {}
 
 std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 {
 	Level level;
 	std::vector<Vector2i> turretPlacementPositions;
-	if (XMLParser::parseLevel(levelName, level.m_levelSize, level.m_tileLayers, level.m_entityPath, turretPlacementPositions))
+	if (XMLParser::parseLevel(levelName, level.m_levelSize, level.m_tileLayers, level.m_unitMovementPath, turretPlacementPositions))
 	{
 		level.m_turretPlacements.reserve(turretPlacementPositions.size());
 		for (auto position : turretPlacementPositions)
@@ -105,7 +106,7 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 			level.m_turretPlacements.emplace_back(position);
 		}
 
-		level.m_entities.reserve(static_cast<size_t>(MAX_ENTITY_SPAWN_COUNT));
+		level.m_units.reserve(static_cast<size_t>(MAX_ENTITY_SPAWN_COUNT));
 		return std::make_unique<Level>(std::move(level));
 	}
 	else
@@ -127,19 +128,19 @@ void Level::update(float deltaTime)
 {
 	for (auto& turret : m_turretPlacements)
 	{
-		turret.update(m_entities, deltaTime);
+		turret.update(m_units, deltaTime);
 	}
 
-	for (auto& entity : m_entities)
+	for (auto& unit : m_units)
 	{
-		entity.update(deltaTime);
+		unit.update(deltaTime);
 	}
 
 	m_spawnTimer.update(deltaTime);
 	if (m_spawnTimer.isExpired())
 	{
 		m_spawnTimer.reset();
-		spawnNextEntity();
+		spawnNextUnit();
 	}
 
 	handleInactiveEntities();
@@ -157,28 +158,28 @@ void Level::render(Window & window)
 		turretPlacement.render(window);
 	}
 
-	for (const auto& entity : m_entities)
+	for (const auto& unit : m_units)
 	{
-		entity.render(window);
+		unit.render(window);
 	}
 }
 
-void Level::spawnNextEntity()
+void Level::spawnNextUnit()
 {
-	++m_spawnedEntityCount;
-	if (m_spawnedEntityCount < MAX_ENTITY_SPAWN_COUNT)
+	++m_spawnedUnitCount;
+	if (m_spawnedUnitCount < MAX_ENTITY_SPAWN_COUNT)
 	{
-		m_entities.emplace_back(static_cast<int>(EntityID::SOILDER_GREEN), m_entityPath);
+		m_units.emplace_back(static_cast<int>(EntityID::SOILDER_GREEN), m_unitMovementPath);
 	}
 }
 
 void Level::handleInactiveEntities()
 {
-	for (auto iter = m_entities.begin(); iter != m_entities.end();)
+	for (auto iter = m_units.begin(); iter != m_units.end();)
 	{
 		if (!iter->isActive())
 		{
-			iter = m_entities.erase(iter);
+			iter = m_units.erase(iter);
 		}
 		else
 		{

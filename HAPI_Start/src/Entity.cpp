@@ -24,7 +24,7 @@ void Turret::render(const Window & window) const
 	window.render(m_head);
 }
 
-void Turret::update(const std::vector<Entity>& entities, float deltaTime)
+void Turret::update(const std::vector<Unit>& entities, float deltaTime)
 {
 	for (const auto& entity : entities)
 	{
@@ -44,48 +44,48 @@ void Turret::setPosition(Vector2i position)
 }
 
 //Entity
-Entity::Entity(int tileID, const std::vector<Vector2i>& entityPath)
-	: m_entityPath(entityPath),
-	m_position(entityPath.back()),
+Unit::Unit(int tileID, const std::vector<Vector2i>& movementPath)
+	: m_movementPath(movementPath),
+	m_position(movementPath.back()),
 	m_sprite(),
 	m_active(true),
 	m_speed(2.0f)
 {
-	m_entityPath.pop_back();
-	m_moveDirection = Math::getDirectionTowards(m_position, m_entityPath.back());
+	m_movementPath.pop_back();
+	m_moveDirection = Math::getDirectionTowards(m_position, m_movementPath.back());
 	m_sprite.setID(tileID);
 	m_sprite.setPosition(m_position);
 }
 
-Vector2i Entity::getPosition() const
+Vector2i Unit::getPosition() const
 {
 	return m_position;
 }
 
-bool Entity::isActive() const
+bool Unit::isActive() const
 {
 	return m_active;
 }
 
-void Entity::update(float deltaTime)
+void Unit::update(float deltaTime)
 {
 	//Move to destination
 	bool reachedDestination = false;
 	switch (m_moveDirection)
 	{
-	case EntityMoveDirection::Up:
+	case UnitMoveDirection::Up:
 		m_position.y -= m_speed;
 		m_sprite.setPosition(m_position);
-		if (m_position.y <= m_entityPath.back().y)
+		if (m_position.y <= m_movementPath.back().y)
 		{
 			reachedDestination = true;
 		}
 		break;
 
-	case EntityMoveDirection::Right:
+	case UnitMoveDirection::Right:
 		m_position.x += m_speed;
 		m_sprite.setPosition(m_position);
-		if (m_position.x >= m_entityPath.back().x)
+		if (m_position.x >= m_movementPath.back().x)
 		{
 			reachedDestination = true;
 		}
@@ -95,19 +95,19 @@ void Entity::update(float deltaTime)
 	//Assign new destination
 	if (reachedDestination)
 	{
-		m_position = m_entityPath.back();
-		m_entityPath.pop_back();
-		if (m_entityPath.empty())
+		m_position = m_movementPath.back();
+		m_movementPath.pop_back();
+		if (m_movementPath.empty())
 		{
 			m_active = false;
 			return;
 		}
 
-		m_moveDirection = Math::getDirectionTowards(m_position, m_entityPath.back());
+		m_moveDirection = Math::getDirectionTowards(m_position, m_movementPath.back());
 	}
 }
 
-void Entity::render(const Window & window) const
+void Unit::render(const Window & window) const
 {
 	window.render(m_sprite);	
 }
