@@ -17,6 +17,15 @@ bool Vector2i::operator==(Vector2i other)
 	return x == other.x && y == other.y;
 }
 
+Vector2i Vector2i::operator-(Vector2i other)
+{
+	Vector2i v;
+	v.x = x - other.x;
+	v.y = y - other.y;
+
+	return v;
+}
+
 Rectangle::Rectangle(int left, int width, int top, int height)
 	: m_left(left),
 	m_right(left + width),

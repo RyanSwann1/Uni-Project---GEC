@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include <vector>
 #include "Timer.h"
+#include <array>
 
 enum class TurretType
 {
@@ -19,15 +20,23 @@ enum class EntityID
 	SOILDER_GREEN = 245
 };
 
+enum class EntityMoveDirection
+{
+	Left = 0,
+	Right,
+	Up,
+	Down
+};
+
 class Window;
 class Texture;
 struct Turret
 {
 	Turret(Texture& tileSheet);
 
-	void render(const Window& window) const;
-
 	void setPosition(Vector2i position);
+
+	void render(const Window& window) const;
 
 	Vector2i m_position;
 	Sprite m_base;
@@ -49,5 +58,6 @@ private:
 	Vector2i m_position;
 	Sprite m_sprite;
 	bool m_active;
-	Timer m_movementTimer;
+	float m_speed;
+	EntityMoveDirection m_moveDirection;
 };

@@ -60,18 +60,12 @@ void HAPI_Main()
 			level->addTurretAtPosition(mouseRectPosition, TurretType::Cannon);
 		}
 
-
 		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
-
-
 		level->update(deltaTime, *texture.get());
 		
 		window->clearToBlack();
-		
-	
 		level->render(*window, *texture);
 		window->render(mouseRectSprite);
-		HAPI.RenderText(100, 100, HAPISPACE::HAPI_TColour::RED, std::to_string(deltaTime), 35);
 
 		lastFrameStart = frameStart;
 	}

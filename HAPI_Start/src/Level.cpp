@@ -122,8 +122,7 @@ void Level::update(float deltaTime, Texture& tileSheet)
 	{
 		entity.update(deltaTime);
 	}
-	//m_elaspedTime += deltaTime;
-	//std::cout << m_elaspedTime << "\n";
+
 	m_spawnTimer.update(deltaTime);
 	if (m_spawnTimer.isExpired())
 	{

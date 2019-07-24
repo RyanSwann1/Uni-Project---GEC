@@ -53,8 +53,6 @@ private:
 	Vector2i m_levelSize;
 	Timer m_spawnTimer;
 	int m_spawnedEntityCount;
-	float m_elaspedTime = 0;
-
 
 	void spawnNextEntity(Texture& tileSheet);
 	void handleInactiveEntities();

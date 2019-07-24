@@ -10,6 +10,7 @@ struct Vector2i
 	Vector2i();
 	Vector2i(int x, int y);
 	bool operator==(Vector2i other);
+	Vector2i operator-(Vector2i other);
 
 
 	int x;

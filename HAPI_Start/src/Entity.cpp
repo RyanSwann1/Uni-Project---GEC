@@ -1,14 +1,14 @@
 #include "Entity.h"
 #include "Window.h"
 #include <assert.h>
+#include "Utilities/Math.h"
 
 //Turret
 Turret::Turret(Texture & tileSheet)
 	: m_position(),
 	m_base(tileSheet),
 	m_head(tileSheet)
-{
-}
+{}
 
 void Turret::render(const Window & window) const
 {
@@ -26,14 +26,15 @@ void Turret::setPosition(Vector2i position)
 //Entity
 Entity::Entity(Texture & tileSheet, int tileID, const std::vector<Vector2i>& entityPath)
 	: m_entityPath(entityPath),
+	m_position(entityPath.back()),
 	m_sprite(tileSheet),
 	m_active(true),
-	m_movementTimer(0.5f, true)
+	m_speed(2.0f)
 {
-	m_sprite.setID(tileID);
-	m_position = m_entityPath.back();
-	m_sprite.setPosition(m_entityPath.back());
 	m_entityPath.pop_back();
+	m_moveDirection = Math::getDirectionTowards(m_position, m_entityPath.back());
+	m_sprite.setID(tileID);
+	m_sprite.setPosition(m_position);
 }
 
 bool Entity::isActive() const
@@ -43,27 +44,45 @@ bool Entity::isActive() const
 
 void Entity::update(float deltaTime)
 {
-	if (m_active)
+	//Move to destination
+	bool reachedDestination = false;
+	switch (m_moveDirection)
 	{
-		m_movementTimer.update(deltaTime);
-		if (m_movementTimer.isExpired())
+	case EntityMoveDirection::Up:
+		m_position.y -= m_speed;
+		m_sprite.setPosition(m_position);
+		if (m_position.y <= m_entityPath.back().y)
 		{
-			m_movementTimer.reset();
-			m_position = m_entityPath.back();
-			m_sprite.setPosition(m_entityPath.back());
-			m_entityPath.pop_back();
-			if (m_entityPath.empty())
-			{
-				m_active = false;
-			}
+			reachedDestination = true;
 		}
+		break;
+
+	case EntityMoveDirection::Right:
+		m_position.x += m_speed;
+		m_sprite.setPosition(m_position);
+		if (m_position.x >= m_entityPath.back().x)
+		{
+			reachedDestination = true;
+		}
+		break;
+	}
+	
+	//Assign new destination
+	if (reachedDestination)
+	{
+		m_position = m_entityPath.back();
+		m_entityPath.pop_back();
+		if (m_entityPath.empty())
+		{
+			m_active = false;
+			return;
+		}
+
+		m_moveDirection = Math::getDirectionTowards(m_position, m_entityPath.back());
 	}
 }
 
 void Entity::render(const Window & window) const
 {
-	if (m_active)
-	{
-		window.render(m_sprite);
-	}
+	window.render(m_sprite);	
 }
