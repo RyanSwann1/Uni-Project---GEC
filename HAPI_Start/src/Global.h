@@ -12,9 +12,18 @@ struct Vector2i
 	bool operator==(Vector2i other);
 	Vector2i operator-(Vector2i other);
 
-
 	int x;
 	int y;
+};
+
+struct Vector2f
+{
+	Vector2f();
+	Vector2f(float x, float y);
+	Vector2f operator-(Vector2f);
+
+	float x;
+	float y;
 };
 
 struct Rectangle

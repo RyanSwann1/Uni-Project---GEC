@@ -27,6 +27,7 @@ class Level
 		bool isActive() const;
 		void setTurret(TurretType turretType, Vector2i position);
 
+		void update(const std::vector<Entity>& entities, float deltaTime);
 		void render(const Window& window) const;
 
 	private:

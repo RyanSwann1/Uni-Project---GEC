@@ -7,13 +7,26 @@
 Turret::Turret(Texture & tileSheet)
 	: m_position(),
 	m_base(tileSheet),
-	m_head(tileSheet)
+	m_head(tileSheet),
+	m_attackRange(250.0)
 {}
 
 void Turret::render(const Window & window) const
 {
 	window.render(m_base);
 	window.render(m_head);
+}
+
+void Turret::update(const std::vector<Entity>& entities, float deltaTime)
+{
+	for (const auto& entity : entities)
+	{
+		if (Math::isWithinRange(m_position, entity.getPosition(), m_attackRange))
+		{
+			Vector2f dir = Math::getDirection(m_position, entity.getPosition());
+
+		}
+	}
 }
 
 void Turret::setPosition(Vector2i position)
@@ -35,6 +48,11 @@ Entity::Entity(Texture & tileSheet, int tileID, const std::vector<Vector2i>& ent
 	m_moveDirection = Math::getDirectionTowards(m_position, m_entityPath.back());
 	m_sprite.setID(tileID);
 	m_sprite.setPosition(m_position);
+}
+
+Vector2i Entity::getPosition() const
+{
+	return m_position;
 }
 
 bool Entity::isActive() const

@@ -82,3 +82,22 @@ void Rectangle::translate(int x, int y)
 	m_top += y;
 	m_bottom += y;
 }
+
+Vector2f::Vector2f()
+	: x(0),
+	y(0)
+{}
+
+Vector2f::Vector2f(float x, float y)
+	:x(x),
+	y(y)
+{}
+
+Vector2f Vector2f::operator-(Vector2f other)
+{
+	Vector2f v;
+	v.x = x - other.x;
+	v.y = y - other.y;
+
+	return v;
+}

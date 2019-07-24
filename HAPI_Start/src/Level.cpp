@@ -7,7 +7,7 @@
 #include "Utilities/XMLParser.h"
 
 constexpr float TIME_BETWEEN_ENTITY_SPAWN = 1.0f;
-constexpr int MAX_ENTITY_SPAWN_COUNT = 20;
+constexpr int MAX_ENTITY_SPAWN_COUNT = 2;
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
 	: m_tileData(std::move(tileData))
@@ -50,21 +50,27 @@ bool Level::TurretPlacement::isActive() const
 void Level::TurretPlacement::setTurret(TurretType turretType, Vector2i position)
 {
 	m_active = true;
+	assert(m_position == position);
+	m_turret.setPosition(position);
 	switch (turretType)
 	{
 	case TurretType::Cannon :
 		m_turret.m_base.setID(static_cast<int>(EntityID::TURRET_CANNON_BASE));
-		m_turret.m_base.setPosition(position);
 		m_turret.m_head.setID(static_cast<int>(EntityID::TURRET_CANNON_HEAD));
-		m_turret.m_head.setPosition(position);
 		break;
 
 	case TurretType::Missle :
 		m_turret.m_base.setID(static_cast<int>(EntityID::TURRET_MISSLE_BASE));
-		m_turret.m_base.setPosition(position);
 		m_turret.m_head.setID(static_cast<int>(EntityID::TURRET_MISSLE_HEAD));
-		m_turret.m_head.setPosition(position);
 		break;
+	}
+}
+
+void Level::TurretPlacement::update(const std::vector<Entity>& entities, float deltaTime)
+{
+	if (m_active)
+	{
+		m_turret.update(entities, deltaTime);
 	}
 }
 
@@ -118,6 +124,11 @@ void Level::addTurretAtPosition(Vector2i position, TurretType turretType)
 
 void Level::update(float deltaTime, Texture& tileSheet)
 {
+	for (auto& turret : m_turretPlacements)
+	{
+		turret.update(m_entities, deltaTime);
+	}
+
 	for (auto& entity : m_entities)
 	{
 		entity.update(deltaTime);
