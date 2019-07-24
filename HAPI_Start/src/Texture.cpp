@@ -114,3 +114,17 @@ bool Texture::isFrameAlpha(int ID) const
 	assert(ID < m_frames.size());
 	return m_frames[ID].alpha;
 }
+
+bool Textures::loadAllTextures()
+{
+	assert(!m_texturesLoaded);
+	texture = std::move(Texture::load("mapOne.tmx", "tilesheet.png"));
+	if (!texture)
+	{
+		std::cout << "Tilesheet not loaded\n";
+		return false;
+	}
+
+	m_texturesLoaded = true;
+	return true;
+}

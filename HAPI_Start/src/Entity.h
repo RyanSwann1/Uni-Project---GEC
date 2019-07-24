@@ -34,12 +34,23 @@ enum class EntityMoveDirection
 	Down
 };
 
+struct Projectile
+{
+	Projectile(Vector2i startingPosition, ProjectileSender sentFrom, int damage, int tileID);
+
+	Vector2i m_position;
+	int m_damage;
+	ProjectileSender m_sentFrom;
+	float m_speed;
+	Sprite m_sprite;
+};
+
 class Entity;
 class Window;
 class Texture;
 struct Turret
 {
-	Turret(Texture& tileSheet);
+	Turret();
 
 	void update(const std::vector<Entity>& entities, float deltaTime);
 	void setPosition(Vector2i position);
@@ -54,7 +65,7 @@ struct Turret
 class Entity
 {
 public:
-	Entity(Texture& tileSheet, int tileID, const std::vector<Vector2i>& entityPath);
+	Entity(int tileID, const std::vector<Vector2i>& entityPath);
 
 	Vector2i getPosition() const;
 	bool isActive() const;

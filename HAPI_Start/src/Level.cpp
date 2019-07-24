@@ -13,8 +13,9 @@ TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
 	: m_tileData(std::move(tileData))
 {}
 
-void TileLayer::render(Window & window, Vector2i levelSize, Texture& tileSheet) const 
+void TileLayer::render(Window & window, Vector2i levelSize) const 
 {
+	int tileSize = Textures::getInstance().texture->getTileSize();
 	for (int y = 0; y < levelSize.y; ++y)
 	{
 		for (int x = 0; x < levelSize.x; ++x)
@@ -22,8 +23,8 @@ void TileLayer::render(Window & window, Vector2i levelSize, Texture& tileSheet) 
 			const int tileID = m_tileData[y][x];
 			if (tileID >= 0)
 			{
-				Vector2i position(x * tileSheet.getTileSize(), y * tileSheet.getTileSize());
-				Sprite sprite(tileSheet, position, tileID);
+				Vector2i position(x * tileSize, y * tileSize);
+				Sprite sprite(position, tileID);
 				window.render(sprite);
 			}
 		}
@@ -31,10 +32,10 @@ void TileLayer::render(Window & window, Vector2i levelSize, Texture& tileSheet) 
 }
 
 //Turret Placement
-Level::TurretPlacement::TurretPlacement(Vector2i position, Texture& tileSheet)
+Level::TurretPlacement::TurretPlacement(Vector2i position)
 	: m_position(position),
 	m_active(false),
-	m_turret(tileSheet)
+	m_turret()
 {}
 
 Vector2i Level::TurretPlacement::getPosition() const
@@ -92,7 +93,7 @@ Level::Level()
 	m_spawnedEntityCount(0)
 {}
 
-std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, Texture& tileSheet)
+std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 {
 	Level level;
 	std::vector<Vector2i> turretPlacementPositions;
@@ -101,7 +102,7 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, Texture& 
 		level.m_turretPlacements.reserve(turretPlacementPositions.size());
 		for (auto position : turretPlacementPositions)
 		{
-			level.m_turretPlacements.emplace_back(position, tileSheet);
+			level.m_turretPlacements.emplace_back(position);
 		}
 
 		level.m_entities.reserve(static_cast<size_t>(MAX_ENTITY_SPAWN_COUNT));
@@ -122,7 +123,7 @@ void Level::addTurretAtPosition(Vector2i position, TurretType turretType)
 	}
 }
 
-void Level::update(float deltaTime, Texture& tileSheet)
+void Level::update(float deltaTime)
 {
 	for (auto& turret : m_turretPlacements)
 	{
@@ -138,17 +139,17 @@ void Level::update(float deltaTime, Texture& tileSheet)
 	if (m_spawnTimer.isExpired())
 	{
 		m_spawnTimer.reset();
-		spawnNextEntity(tileSheet);
+		spawnNextEntity();
 	}
 
 	handleInactiveEntities();
 }
 
-void Level::render(Window & window, Texture& tileSheet)
+void Level::render(Window & window)
 {
 	for (const auto& tileLayer : m_tileLayers)
 	{
-		tileLayer.render(window, m_levelSize, tileSheet);
+		tileLayer.render(window, m_levelSize);
 	}
 
 	for (const auto& turretPlacement : m_turretPlacements)
@@ -162,12 +163,12 @@ void Level::render(Window & window, Texture& tileSheet)
 	}
 }
 
-void Level::spawnNextEntity(Texture& tileSheet)
+void Level::spawnNextEntity()
 {
 	++m_spawnedEntityCount;
 	if (m_spawnedEntityCount < MAX_ENTITY_SPAWN_COUNT)
 	{
-		m_entities.emplace_back(tileSheet, static_cast<int>(EntityID::SOILDER_GREEN), m_entityPath);
+		m_entities.emplace_back(static_cast<int>(EntityID::SOILDER_GREEN), m_entityPath);
 	}
 }
 

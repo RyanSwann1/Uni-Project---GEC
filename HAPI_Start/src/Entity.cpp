@@ -3,11 +3,18 @@
 #include <assert.h>
 #include "Utilities/Math.h"
 
+//Projectile
+Projectile::Projectile(Vector2i startingPosition, ProjectileSender sentFrom, int damage, int tileID)
+	: m_position(startingPosition),
+	m_sentFrom(sentFrom),
+	m_damage(damage)
+{}
+
 //Turret
-Turret::Turret(Texture & tileSheet)
+Turret::Turret()
 	: m_position(),
-	m_base(tileSheet),
-	m_head(tileSheet),
+	m_base(),
+	m_head(),
 	m_attackRange(250.0)
 {}
 
@@ -37,10 +44,10 @@ void Turret::setPosition(Vector2i position)
 }
 
 //Entity
-Entity::Entity(Texture & tileSheet, int tileID, const std::vector<Vector2i>& entityPath)
+Entity::Entity(int tileID, const std::vector<Vector2i>& entityPath)
 	: m_entityPath(entityPath),
 	m_position(entityPath.back()),
-	m_sprite(tileSheet),
+	m_sprite(),
 	m_active(true),
 	m_speed(2.0f)
 {

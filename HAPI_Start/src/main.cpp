@@ -26,14 +26,9 @@ void HAPI_Main()
 		return;
 	}
 
-	std::unique_ptr<Texture> texture = Texture::load("mapOne.tmx", "tilesheet.png");
-	if (!texture)
-	{
-		std::cout << "Tilesheet not loaded\n";
-		return;
-	}
+	Textures::getInstance().loadAllTextures();
 
-	std::unique_ptr<Level> level = Level::loadLevel("mapOne.tmx", *texture);
+	std::unique_ptr<Level> level = Level::loadLevel("mapOne.tmx");
 	if (!level)
 	{
 		std::cout << "Couldn't load level\n";
@@ -41,18 +36,19 @@ void HAPI_Main()
 	}
 
 	auto& mouseData = HAPI.GetMouseData();
-	Sprite mouseRectSprite(*texture, Vector2i(), 15);
+	Sprite mouseRectSprite(Vector2i(), 15);
 	Vector2i mousePosition(mouseData.x, mouseData.y);
 	Vector2i mouseRectPosition;
 	const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData();
 	float frameStart = HAPI.GetTime();
 	float lastFrameStart = HAPI.GetTime();
 	float deltaTime = 0;
+	int tileSize = Textures::getInstance().texture->getTileSize();
 	while (HAPI.Update())
 	{	
 		frameStart = HAPI.GetTime();
-		mouseRectPosition.x = (mouseData.x / texture->getTileSize()) * texture->getTileSize();
-		mouseRectPosition.y = (mouseData.y / texture->getTileSize()) * texture->getTileSize();
+		mouseRectPosition.x = (mouseData.x / tileSize) * tileSize;
+		mouseRectPosition.y = (mouseData.y / tileSize) * tileSize;
 		mouseRectSprite.setPosition(mouseRectPosition);
 
 		if (mouseData.leftButtonDown)
@@ -61,10 +57,10 @@ void HAPI_Main()
 		}
 
 		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
-		level->update(deltaTime, *texture.get());
+		level->update(deltaTime);
 		
 		window->clearToBlack();
-		level->render(*window, *texture);
+		level->render(*window);
 		window->render(mouseRectSprite);
 
 		lastFrameStart = frameStart;

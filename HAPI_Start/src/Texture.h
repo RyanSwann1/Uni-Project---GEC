@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "Texture.h"
 
 struct Frame
 {
@@ -43,4 +44,21 @@ private:
 	bool isFrameAlpha(int ID) const;
 	void loadInFrames();
 	bool loadTexture(const std::string& xmlFileName, const std::string& textureFileName);
+};
+
+class Textures
+{
+public:
+	static Textures& getInstance()
+	{
+		static Textures instance;
+		return instance;
+	}
+
+	bool loadAllTextures();
+
+	std::unique_ptr<Texture> texture;
+
+private:
+	bool m_texturesLoaded = false;
 };

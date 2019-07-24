@@ -4,7 +4,6 @@
 const std::string DATA_DIRECTORY = "Data//";
 constexpr int BYTES_PER_PIXEL = 4;
 
-
 struct Vector2i
 {
 	Vector2i();

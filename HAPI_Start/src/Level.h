@@ -5,13 +5,12 @@
 #include "Entity.h"
 #include "Timer.h"
 
-class Texture;
 class Window;
 struct TileLayer
 {
 	TileLayer(std::vector<std::vector<int>>&& tileData);
 
-	void render(Window& window, Vector2i levelSize, Texture& tileSheet) const;
+	void render(Window& window, Vector2i levelSize) const;
 
 	std::vector<std::vector<int>> m_tileData;
 };
@@ -21,7 +20,7 @@ class Level
 	class TurretPlacement
 	{
 	public:
-		TurretPlacement(Vector2i position, Texture& tileSheet);
+		TurretPlacement(Vector2i position);
 		
 		Vector2i getPosition() const;
 		bool isActive() const;
@@ -38,12 +37,12 @@ class Level
 
 public:
 
-	static std::unique_ptr<Level> loadLevel(const std::string& levelName, Texture& tileSheet);
+	static std::unique_ptr<Level> loadLevel(const std::string& levelName);
 	
 	void addTurretAtPosition(Vector2i position, TurretType turretType);
 	
-	void update(float deltaTime, Texture& tileSheet);
-	void render(Window& window, Texture& tileSheet);
+	void update(float deltaTime);
+	void render(Window& window);
 
 private:
 	Level();
@@ -55,6 +54,6 @@ private:
 	Timer m_spawnTimer;
 	int m_spawnedEntityCount;
 
-	void spawnNextEntity(Texture& tileSheet);
+	void spawnNextEntity();
 	void handleInactiveEntities();
 };

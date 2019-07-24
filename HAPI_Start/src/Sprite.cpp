@@ -2,15 +2,15 @@
 #include "Texture.h"
 #include <assert.h>
 
-Sprite::Sprite(Texture & tileSheet)
-	: m_texture(&tileSheet),
-	m_size(tileSheet.getTileSize(), tileSheet.getTileSize())
+Sprite::Sprite()
+	: m_texture(*Textures::getInstance().texture),
+	m_size(Textures::getInstance().texture->getTileSize(), Textures::getInstance().texture->getTileSize())
 {}
 
-Sprite::Sprite(Texture & texture, Vector2i startingPosition, int tileID)
-	: m_texture(&texture),
+Sprite::Sprite(Vector2i startingPosition, int tileID)
+	: m_texture(*Textures::getInstance().texture),
 	m_position(startingPosition),
-	m_size(texture.getTileSize(), texture.getTileSize()),
+	m_size(Textures::getInstance().texture->getTileSize(), Textures::getInstance().texture->getTileSize()),
 	m_tileID(tileID)
 {}
 
@@ -26,25 +26,22 @@ Vector2i Sprite::getPosition() const
 
 Texture & Sprite::getTexture() const
 {
-	assert(m_texture);
-	return *m_texture;
+	return m_texture.get();
 }
 
 bool Sprite::isAlpha() const
 {
-	return m_texture->getFrame(m_tileID).alpha;
+	return m_texture.get().getFrame(m_tileID).alpha;
 }
 
 Frame Sprite::getFrame() const
 {
-	assert(m_texture);
-	return m_texture->getFrame(m_tileID);
+	return m_texture.get().getFrame(m_tileID);
 }
 
 Rectangle Sprite::getFrameRect() const
 {
-	assert(m_texture);
-	return m_texture->getFrameRect(m_tileID);
+	return m_texture.get().getFrameRect(m_tileID);
 }
 
 void Sprite::setID(int tileID)
