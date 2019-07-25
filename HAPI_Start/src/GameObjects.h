@@ -25,13 +25,17 @@ enum class UnitMoveDirection
 	Down
 };
 
+
+
 class Unit;
 class Window;
 class Projectile
 {
 public:
-	Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID, float speed);
+	Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
+		int tileID, float speed, int damage);
 
+	int getDamage() const;
 	ProjectileSender getSentFrom() const;
 	Vector2i getPosition() const;
 
@@ -44,6 +48,7 @@ private:
 	float m_speed;
 	Sprite m_sprite;
 	Vector2f m_direction;
+	int m_damage;
 };
 
 class Texture;

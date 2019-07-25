@@ -6,20 +6,32 @@
 
 constexpr float TIME_BETWEEN_TURRET_SHOT = 1.0f;
 constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
-constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
+
 constexpr float TURRET_PROJECTLE_SPEED = 5.0f;
 constexpr float TURRET_ATTACK_RANGE = 250.f;
+constexpr int TURRET_HEALTH = 5;
+constexpr int TURRET_DAMAGE = 1;
+
 constexpr float UNIT_ATTACK_RANGE = 250.f;
+constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
 constexpr float UNIT_SPEED = 5.0f;
+constexpr int UNIT_HEALTH = 1;
 
 //Projectile
-Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID, float speed)
+Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
+	int tileID, float speed, int damage)
 	: m_position(startingPosition),
 	m_sentFrom(sentFrom),
 	m_speed(speed),
 	m_sprite(startingPosition, tileID),
-	m_direction(startingDirection)
+	m_direction(startingDirection),
+	m_damage(damage)
 {}
+
+int Projectile::getDamage() const
+{
+	return m_damage;
+}
 
 ProjectileSender Projectile::getSentFrom() const
 {
@@ -139,8 +151,8 @@ void Turret::setPosition(Vector2i position)
 Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath)
 	: m_movementPath(movementPath),
 	m_position(movementPath.back()),
-	m_baseSprite(),
-	m_headSprite(),
+	m_baseSprite(m_position, baseTileID),
+	m_headSprite(m_position, headTileID),
 	m_active(true),
 	m_speed(UNIT_SPEED),
 	m_attackRange(UNIT_ATTACK_RANGE),
@@ -148,10 +160,6 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 {
 	m_movementPath.pop_back();
 	m_moveDirection = Math::getDirectionTowards(m_position, m_movementPath.back());
-	m_baseSprite.setID(baseTileID);
-	m_baseSprite.setPosition(m_position);
-	m_headSprite.setID(headTileID);
-	m_headSprite.setPosition(m_position);
 }
 
 Vector2i Unit::getPosition() const

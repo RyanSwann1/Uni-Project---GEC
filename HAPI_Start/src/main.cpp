@@ -37,12 +37,12 @@ void HAPI_Main()
 
 	auto& mouseData = HAPI.GetMouseData();
 	Sprite mouseRectSprite(Vector2i(), 15);
-	Vector2i mousePosition(mouseData.x, mouseData.y);
 	Vector2i mouseRectPosition;
-	const HAPISPACE::HAPI_TKeyboardData &keyData = HAPI.GetKeyboardData();
+
 	float frameStart = HAPI.GetTime();
 	float lastFrameStart = HAPI.GetTime();
 	float deltaTime = 0;
+
 	int tileSize = Textures::getInstance().texture->getTileSize();
 	while (HAPI.Update())
 	{	
@@ -59,14 +59,13 @@ void HAPI_Main()
 		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
 		level->update(deltaTime);
 
-
 		window->clearToBlack();
 		level->render(*window);
 		window->render(mouseRectSprite);
 
 		if (level->isEnded())
 		{
-			HAPI.Close();
+			level = Level::loadLevel("mapOne.tmx");
 		}
 
 		lastFrameStart = frameStart;

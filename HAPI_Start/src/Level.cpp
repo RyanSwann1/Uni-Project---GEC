@@ -59,6 +59,9 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 		}
 
 		level.m_units.reserve(static_cast<size_t>(MAX_UNIT_SPAWN_COUNT));
+		level.m_projectiles.reserve(100);
+		level.m_particles.reserve(25);
+
 		return std::make_unique<Level>(std::move(level));
 	}
 	else
@@ -152,8 +155,6 @@ void Level::spawnNextUnit()
 	{
 		//m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), m_unitMovementPath);
 		m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), m_unitMovementPath);
-		//m_units.emplace_back
-		//m_units.emplace_back
 	}
 }
 
