@@ -6,6 +6,8 @@
 
 constexpr float TIME_BETWEEN_TURRET_SHOT = 1.0f;
 constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
+constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
+constexpr float TURRET_PROJECTLE_SPEED = 5.0f;
 
 //Projectile
 Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID, float speed)
@@ -105,7 +107,7 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 		if (Math::isWithinRange(m_position, unit.getPosition(), m_attackRange))
 		{
 			Vector2f dir = Math::getDirection(m_position, unit.getPosition());
-			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(TileID::PROJECTILE));
+			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(TileID::PROJECTILE), TURRET_PROJECTLE_SPEED);
 			return true;
 		}
 	}
@@ -207,7 +209,7 @@ bool Unit::fire(const std::vector<Turret>& turrets, std::vector<Projectile>& pro
 		if (Math::isWithinRange(m_position, turret.getPosition(), m_attackRange) && turret.isActive())
 		{
 			Vector2f dir = Math::getDirection(m_position, turret.getPosition());
-			projectiles.emplace_back(m_position, dir, ProjectileSender::Unit, static_cast<int>(TileID::PROJECTILE));
+			projectiles.emplace_back(m_position, dir, ProjectileSender::Unit, static_cast<int>(TileID::PROJECTILE), UNIT_PROJECTILE_SPEED);
 			return true;
 		}
 	}
