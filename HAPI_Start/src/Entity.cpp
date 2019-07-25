@@ -2,20 +2,45 @@
 #include "Window.h"
 #include <assert.h>
 #include "Utilities/Math.h"
+#include "Texture.h"
+
+constexpr float TIME_BETWEEN_TURRET_SHOT = 1.0f;
 
 //Projectile
-Projectile::Projectile(Vector2i startingPosition, ProjectileSender sentFrom, int damage, int tileID)
+Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID)
 	: m_position(startingPosition),
 	m_sentFrom(sentFrom),
-	m_damage(damage)
+	m_speed(10.0f),
+	m_sprite(startingPosition, tileID),
+	m_direction(startingDirection)
 {}
+
+void Projectile::update(float deltaTime, const std::vector<Unit>& units)
+{
+	Vector2f position = Vector2f(m_position.x, m_position.y);
+	//m_direction.x *= m_speed;
+	//m_direction.y *= m_speed;
+
+	position.x += m_direction.x * m_speed;
+	position.y += m_direction.y * m_speed;
+	
+	m_position.x = position.x;
+	m_position.y = position.y;
+	m_sprite.setPosition(m_position);
+}
+
+void Projectile::render(const Window & window) const
+{
+	window.render(m_sprite);
+}
 
 //Turret
 Turret::Turret()
 	: m_position(),
 	m_base(),
 	m_head(),
-	m_attackRange(250.0)
+	m_attackRange(250.0),
+	m_fireTimer(TIME_BETWEEN_TURRET_SHOT, true)
 {}
 
 void Turret::render(const Window & window) const
@@ -24,16 +49,31 @@ void Turret::render(const Window & window) const
 	window.render(m_head);
 }
 
-void Turret::update(const std::vector<Unit>& entities, float deltaTime)
+void Turret::update(float deltaTime, const std::vector<Unit>& units, std::vector<Projectile>& projectiles)
 {
-	for (const auto& entity : entities)
+	m_fireTimer.update(deltaTime);
+	if (m_fireTimer.isExpired())
 	{
-		if (Math::isWithinRange(m_position, entity.getPosition(), m_attackRange))
+		if (fire(units, projectiles))
 		{
-			Vector2f dir = Math::getDirection(m_position, entity.getPosition());
-
+			m_fireTimer.reset();
 		}
 	}
+}
+
+bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& projectiles) const
+{
+	for (const auto& unit : units)
+	{
+		if (Math::isWithinRange(m_position, unit.getPosition(), m_attackRange))
+		{
+			Vector2f dir = Math::getDirection(m_position, unit.getPosition());
+			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(EntityID::PROJECTILE));
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Turret::setPosition(Vector2i position)

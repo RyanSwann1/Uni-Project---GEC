@@ -26,7 +26,7 @@ class Level
 		bool isActive() const;
 		void setTurret(TurretType turretType, Vector2i position);
 
-		void update(const std::vector<Unit>& entities, float deltaTime);
+		void update(const std::vector<Unit>& units, std::vector<Projectile>& projectiles, float deltaTime);
 		void render(const Window& window) const;
 
 	private:
@@ -50,10 +50,12 @@ private:
 	std::vector<Vector2i> m_unitMovementPath;
 	std::vector<TurretPlacement> m_turretPlacements;
 	std::vector<Unit> m_units;
+	std::vector<Projectile> m_projectiles;
 	Vector2i m_levelSize;
 	Timer m_spawnTimer;
 	int m_spawnedUnitCount;
 
 	void spawnNextUnit();
 	void handleInactiveEntities();
+	void handleCollisions();
 };

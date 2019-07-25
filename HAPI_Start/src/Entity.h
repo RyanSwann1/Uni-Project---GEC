@@ -17,7 +17,8 @@ enum class EntityID
 	TURRET_CANNON_HEAD = 249,
 	TURRET_MISSLE_BASE = 181,
 	TURRET_MISSLE_HEAD = 204,
-	SOILDER_GREEN = 245
+	SOILDER_GREEN = 245,
+	PROJECTILE = 272
 };
 
 enum class ProjectileSender
@@ -34,25 +35,28 @@ enum class UnitMoveDirection
 	Down
 };
 
+class Unit;
+class Window;
 struct Projectile
 {
-	Projectile(Vector2i startingPosition, ProjectileSender sentFrom, int damage, int tileID);
+	Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID);
+
+	void update(float deltaTime, const std::vector<Unit>& units);
+	void render(const Window& window) const;
 
 	Vector2i m_position;
-	int m_damage;
 	ProjectileSender m_sentFrom;
 	float m_speed;
 	Sprite m_sprite;
+	Vector2f m_direction;
 };
 
-class Unit;
-class Window;
 class Texture;
 struct Turret
 {
 	Turret();
 
-	void update(const std::vector<Unit>& entities, float deltaTime);
+	void update(float deltaTime, const std::vector<Unit>& units, std::vector<Projectile>& projectiles);
 	void setPosition(Vector2i position);
 	void render(const Window& window) const;
 
@@ -60,6 +64,9 @@ struct Turret
 	Sprite m_base;
 	Sprite m_head;
 	float m_attackRange;
+	Timer m_fireTimer;
+
+	bool fire(const std::vector<Unit>& units, std::vector<Projectile>& projectiles) const;
 };
 
 class Unit

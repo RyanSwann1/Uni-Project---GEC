@@ -101,3 +101,32 @@ Vector2f Vector2f::operator-(Vector2f other)
 
 	return v;
 }
+
+Vector2f Vector2f::operator*(float other)
+{
+	Vector2f v(x, y);
+	v.x *= other;
+	v.y *= other;
+
+	return v;
+
+	return Vector2f(x * other, y * other);
+}
+
+Vector2f Vector2f::operator*=(float amount)
+{
+	Vector2f vect;
+	vect.x *= amount;
+	vect.y *= amount;
+
+	return vect;
+}
+
+Vector2f Vector2f::operator+=(Vector2f other)
+{
+	Vector2f vect;
+	vect.x += other.x;
+	vect.y += other.y;
+
+	return vect;
+}

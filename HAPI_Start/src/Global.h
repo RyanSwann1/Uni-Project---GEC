@@ -20,6 +20,9 @@ struct Vector2f
 	Vector2f();
 	Vector2f(float x, float y);
 	Vector2f operator-(Vector2f);
+	Vector2f operator*(float);
+	Vector2f operator*=(float);
+	Vector2f operator+=(Vector2f);
 
 	float x;
 	float y;

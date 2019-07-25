@@ -10,6 +10,7 @@ class Sprite
 public:
 	Sprite();
 	Sprite(Vector2i startingPosition, int tileID);
+	Sprite(Vector2i startingPosition, int tileID, Vector2i size);
 
 	Vector2i getSize() const;
 	Vector2i getPosition() const;

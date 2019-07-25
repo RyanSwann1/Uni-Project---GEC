@@ -7,7 +7,7 @@
 #include "Utilities/XMLParser.h"
 
 constexpr float TIME_BETWEEN_ENTITY_SPAWN = 1.0f;
-constexpr int MAX_ENTITY_SPAWN_COUNT = 2;
+constexpr int MAX_ENTITY_SPAWN_COUNT = 20;
 
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
@@ -68,11 +68,11 @@ void Level::TurretPlacement::setTurret(TurretType turretType, Vector2i position)
 	}
 }
 
-void Level::TurretPlacement::update(const std::vector<Unit>& entities, float deltaTime)
+void Level::TurretPlacement::update(const std::vector<Unit>& units, std::vector<Projectile>& projectiles, float deltaTime)
 {
 	if (m_active)
 	{
-		m_turret.update(entities, deltaTime);
+		m_turret.update(deltaTime, units, projectiles);
 	}
 }
 
@@ -128,12 +128,17 @@ void Level::update(float deltaTime)
 {
 	for (auto& turret : m_turretPlacements)
 	{
-		turret.update(m_units, deltaTime);
+		turret.update(m_units, m_projectiles, deltaTime);
 	}
 
 	for (auto& unit : m_units)
 	{
 		unit.update(deltaTime);
+	}
+
+	for (auto& projectile : m_projectiles)
+	{
+		projectile.update(deltaTime, m_units);
 	}
 
 	m_spawnTimer.update(deltaTime);
@@ -144,6 +149,7 @@ void Level::update(float deltaTime)
 	}
 
 	handleInactiveEntities();
+	handleCollisions();
 }
 
 void Level::render(Window & window)
@@ -161,6 +167,11 @@ void Level::render(Window & window)
 	for (const auto& unit : m_units)
 	{
 		unit.render(window);
+	}
+
+	for (const auto& projectile : m_projectiles)
+	{
+		projectile.render(window);
 	}
 }
 
@@ -184,6 +195,49 @@ void Level::handleInactiveEntities()
 		else
 		{
 			++iter;
+		}
+	}
+}
+
+void Level::handleCollisions()
+{
+	int tileSize = Textures::getInstance().texture->getTileSize();
+	for (auto projectile = m_projectiles.begin(); projectile != m_projectiles.end();)
+	{
+		if (projectile->m_position.y < 15)
+		{
+			projectile = m_projectiles.erase(projectile);
+			continue;
+		}
+
+		bool destroyProjectile = false;
+		//Detect Unit Collisions
+		Rectangle projectileAABB(projectile->m_position.x, tileSize, projectile->m_position.y, tileSize);
+		for (auto unit = m_units.begin(); unit != m_units.end();)
+		{
+			Rectangle unitAABB(unit->getPosition().x, tileSize, unit->getPosition().y, tileSize);
+			if (projectileAABB.intersect(unitAABB))
+			{
+				destroyProjectile = true;
+				unit = m_units.erase(unit);
+			}
+			else
+			{
+				++unit;
+			}
+		}
+
+		//Detect Turret Collisions
+
+
+		//Destory Projectile on Collision
+		if (destroyProjectile)
+		{
+			projectile = m_projectiles.erase(projectile);
+		}
+		else
+		{
+			++projectile;
 		}
 	}
 }
