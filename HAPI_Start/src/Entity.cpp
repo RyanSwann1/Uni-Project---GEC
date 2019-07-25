@@ -5,12 +5,13 @@
 #include "Texture.h"
 
 constexpr float TIME_BETWEEN_TURRET_SHOT = 1.0f;
+constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 
 //Projectile
 Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID)
 	: m_position(startingPosition),
 	m_sentFrom(sentFrom),
-	m_speed(10.0f),
+	m_speed(5.0f),
 	m_sprite(startingPosition, tileID),
 	m_direction(startingDirection)
 {}
@@ -18,14 +19,13 @@ Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, Pr
 void Projectile::update(float deltaTime, const std::vector<Unit>& units)
 {
 	Vector2f position = Vector2f(m_position.x, m_position.y);
-	//m_direction.x *= m_speed;
-	//m_direction.y *= m_speed;
 
 	position.x += m_direction.x * m_speed;
 	position.y += m_direction.y * m_speed;
 	
 	m_position.x = position.x;
 	m_position.y = position.y;
+
 	m_sprite.setPosition(m_position);
 }
 
@@ -35,28 +35,65 @@ void Projectile::render(const Window & window) const
 }
 
 //Turret
-Turret::Turret()
-	: m_position(),
+Turret::Turret(Vector2i startingPosition)
+	: m_position(startingPosition),
 	m_base(),
 	m_head(),
 	m_attackRange(250.0),
-	m_fireTimer(TIME_BETWEEN_TURRET_SHOT, true)
+	m_fireTimer(TIME_BETWEEN_TURRET_SHOT, true),
+	m_active(false)
 {}
 
 void Turret::render(const Window & window) const
 {
-	window.render(m_base);
-	window.render(m_head);
+	if (m_active)
+	{
+		window.render(m_base);
+		window.render(m_head);
+	}
+}
+
+bool Turret::isActive() const
+{
+	return m_active;
+}
+
+Vector2i Turret::getPosition() const
+{
+	return m_position;
+}
+
+void Turret::setTurret(TurretType turretType, Vector2i position)
+{
+	m_active = true;
+
+	assert(m_position == position);
+	setPosition(position);
+	switch (turretType)
+	{
+	case TurretType::Cannon:
+		m_base.setID(static_cast<int>(TileID::TURRET_CANNON_BASE));
+		m_head.setID(static_cast<int>(TileID::TURRET_CANNON_HEAD));
+		break;
+
+	case TurretType::Missle:
+		m_base.setID(static_cast<int>(TileID::TURRET_MISSLE_BASE));
+		m_head.setID(static_cast<int>(TileID::TURRET_MISSLE_HEAD));
+		break;
+	}
 }
 
 void Turret::update(float deltaTime, const std::vector<Unit>& units, std::vector<Projectile>& projectiles)
 {
-	m_fireTimer.update(deltaTime);
-	if (m_fireTimer.isExpired())
+	if (m_active)
 	{
-		if (fire(units, projectiles))
+		m_fireTimer.update(deltaTime);
+		if (m_fireTimer.isExpired())
 		{
-			m_fireTimer.reset();
+			if (fire(units, projectiles))
+			{
+				m_fireTimer.reset();
+			}
 		}
 	}
 }
@@ -68,7 +105,7 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 		if (Math::isWithinRange(m_position, unit.getPosition(), m_attackRange))
 		{
 			Vector2f dir = Math::getDirection(m_position, unit.getPosition());
-			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(EntityID::PROJECTILE));
+			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(TileID::PROJECTILE));
 			return true;
 		}
 	}
@@ -83,13 +120,15 @@ void Turret::setPosition(Vector2i position)
 	m_head.setPosition(position);
 }
 
-//Entity
+//Unit
 Unit::Unit(int tileID, const std::vector<Vector2i>& movementPath)
 	: m_movementPath(movementPath),
 	m_position(movementPath.back()),
 	m_sprite(),
 	m_active(true),
-	m_speed(2.0f)
+	m_speed(2.0f),
+	m_attackRange(250.0f),
+	m_fireTimer(TIME_BETWEEN_UNIT_SHOT, true)
 {
 	m_movementPath.pop_back();
 	m_moveDirection = Math::getDirectionTowards(m_position, m_movementPath.back());
@@ -107,8 +146,17 @@ bool Unit::isActive() const
 	return m_active;
 }
 
-void Unit::update(float deltaTime)
+void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles)
 {
+	m_fireTimer.update(deltaTime);
+	if (m_fireTimer.isExpired())
+	{
+		if (fire(turrets, projectiles))
+		{
+			m_fireTimer.reset();
+		}
+	}
+
 	//Move to destination
 	bool reachedDestination = false;
 	switch (m_moveDirection)
@@ -150,4 +198,19 @@ void Unit::update(float deltaTime)
 void Unit::render(const Window & window) const
 {
 	window.render(m_sprite);	
+}
+
+bool Unit::fire(const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles) const
+{
+	for (const auto& turret : turrets)
+	{
+		if (Math::isWithinRange(m_position, turret.getPosition(), m_attackRange) && turret.isActive())
+		{
+			Vector2f dir = Math::getDirection(m_position, turret.getPosition());
+			projectiles.emplace_back(m_position, dir, ProjectileSender::Unit, static_cast<int>(TileID::PROJECTILE));
+			return true;
+		}
+	}
+
+	return false;
 }

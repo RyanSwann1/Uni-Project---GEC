@@ -11,7 +11,7 @@ enum class TurretType
 	Missle
 };
 
-enum class EntityID
+enum class TileID
 {
 	TURRET_CANNON_BASE = 180,
 	TURRET_CANNON_HEAD = 249,
@@ -23,7 +23,7 @@ enum class EntityID
 
 enum class ProjectileSender
 {
-	Entity = 0,
+	Unit = 0,
 	Turret
 };
 
@@ -54,19 +54,26 @@ struct Projectile
 class Texture;
 struct Turret
 {
-	Turret();
+public:
+	Turret(Vector2i startingPosition);
+
+	bool isActive() const;
+	Vector2i getPosition() const;
+	void setTurret(TurretType turretType, Vector2i position);
 
 	void update(float deltaTime, const std::vector<Unit>& units, std::vector<Projectile>& projectiles);
-	void setPosition(Vector2i position);
 	void render(const Window& window) const;
 
+private:
 	Vector2i m_position;
 	Sprite m_base;
 	Sprite m_head;
 	float m_attackRange;
 	Timer m_fireTimer;
+	bool m_active;
 
 	bool fire(const std::vector<Unit>& units, std::vector<Projectile>& projectiles) const;
+	void setPosition(Vector2i position);
 };
 
 class Unit
@@ -77,7 +84,7 @@ public:
 	Vector2i getPosition() const;
 	bool isActive() const;
 
-	void update(float deltaTime);
+	void update(float deltaTime, const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles);
 	void render(const Window& window) const;
 
 private:
@@ -86,5 +93,9 @@ private:
 	Sprite m_sprite;
 	bool m_active;
 	float m_speed;
+	float m_attackRange;
 	UnitMoveDirection m_moveDirection;
+	Timer m_fireTimer;
+
+	bool fire(const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles) const;
 };

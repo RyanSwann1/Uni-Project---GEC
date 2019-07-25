@@ -128,7 +128,7 @@ void Level::spawnNextUnit()
 	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_ENTITY_SPAWN_COUNT)
 	{
-		m_units.emplace_back(static_cast<int>(EntityID::SOILDER_GREEN), m_unitMovementPath);
+		m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), m_unitMovementPath);
 	}
 }
 
@@ -160,23 +160,38 @@ void Level::handleCollisions()
 
 		bool destroyProjectile = false;
 		//Detect Unit Collisions
-		Rectangle projectileAABB(projectile->m_position.x, tileSize, projectile->m_position.y, tileSize);
-		for (auto unit = m_units.begin(); unit != m_units.end();)
+		if (projectile->m_sentFrom == ProjectileSender::Turret)
 		{
-			Rectangle unitAABB(unit->getPosition().x, tileSize, unit->getPosition().y, tileSize);
-			if (projectileAABB.intersect(unitAABB))
+			Rectangle projectileAABB(projectile->m_position.x, tileSize, projectile->m_position.y, tileSize);
+			for (auto unit = m_units.begin(); unit != m_units.end();)
 			{
-				destroyProjectile = true;
-				unit = m_units.erase(unit);
-			}
-			else
-			{
-				++unit;
+				Rectangle unitAABB(unit->getPosition().x, tileSize, unit->getPosition().y, tileSize);
+				if (projectileAABB.intersect(unitAABB))
+				{
+					destroyProjectile = true;
+					unit = m_units.erase(unit);
+				}
+				else
+				{
+					++unit;
+				}
 			}
 		}
-
 		//Detect Turret Collisions
+		else
+		{
+			Rectangle projectileAABB(projectile->m_position.x, tileSize, projectile->m_position.y, tileSize);
+			for (auto turret = m_turrets.begin(); turret != m_turrets.end();)
+			{
+				Rectangle turretAABB(turret->getPosition().x, tileSize, turret->getPosition().y, tileSize);
+				if (projectileAABB.intersect(turretAABB))
+				{
+					destroyProjectile = true;
+				}
 
+				++turret;
+			}
+		}
 
 		//Destory Projectile on Collision
 		if (destroyProjectile)
