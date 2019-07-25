@@ -23,6 +23,7 @@
     <ClCompile Include="src\Global.cpp" />
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Particle.cpp" />
     <ClCompile Include="src\Utilities\Math.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\Texture.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\Global.h" />
     <ClInclude Include="src\Level.h" />
+    <ClInclude Include="src\Particle.h" />
     <ClInclude Include="src\Utilities\Math.h" />
     <ClInclude Include="src\Sprite.h" />
     <ClInclude Include="src\Texture.h" />
