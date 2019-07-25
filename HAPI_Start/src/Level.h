@@ -17,26 +17,7 @@ struct TileLayer
 
 class Level
 {
-	class TurretPlacement
-	{
-	public:
-		TurretPlacement(Vector2i position);
-		
-		Vector2i getPosition() const;
-		bool isActive() const;
-		void setTurret(TurretType turretType, Vector2i position);
-
-		void update(const std::vector<Unit>& units, std::vector<Projectile>& projectiles, float deltaTime);
-		void render(const Window& window) const;
-
-	private:
-		bool m_active;
-		Vector2i m_position;
-		Turret m_turret;
-	};
-
 public:
-
 	static std::unique_ptr<Level> loadLevel(const std::string& levelName);
 	
 	void addTurretAtPosition(Vector2i position, TurretType turretType);
@@ -48,7 +29,7 @@ private:
 	Level();
 	std::vector<TileLayer> m_tileLayers;
 	std::vector<Vector2i> m_unitMovementPath;
-	std::vector<TurretPlacement> m_turretPlacements;
+	std::vector<Turret> m_turrets;
 	std::vector<Unit> m_units;
 	std::vector<Projectile> m_projectiles;
 	Vector2i m_levelSize;
