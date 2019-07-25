@@ -37,6 +37,9 @@ Level::Level()
 	: m_tileLayers(),
 	m_unitMovementPath(),
 	m_turrets(),
+	m_units(),
+	m_projectiles(),
+	m_particles(),
 	m_levelSize(),
 	m_spawnTimer(TIME_BETWEEN_ENTITY_SPAWN, true),
 	m_spawnedUnitCount(0),
@@ -95,6 +98,11 @@ void Level::update(float deltaTime)
 		projectile.update(deltaTime, m_units);
 	}
 
+	for (auto& particle : m_particles)
+	{
+		particle.update(deltaTime);
+	}
+
 	m_spawnTimer.update(deltaTime);
 	if (m_spawnTimer.isExpired())
 	{
@@ -104,6 +112,7 @@ void Level::update(float deltaTime)
 
 	handleInactiveEntities();
 	handleCollisions();
+	handleParticles();
 }
 
 void Level::render(Window & window)
@@ -126,6 +135,11 @@ void Level::render(Window & window)
 	for (const auto& projectile : m_projectiles)
 	{
 		projectile.render(window);
+	}
+
+	for (const auto& particle : m_particles)
+	{
+		particle.render(window);
 	}
 
 	HAPI.RenderText(850, 50, HAPISPACE::HAPI_TColour::WHITE, std::to_string(m_unitsReachedDestination), 26);
@@ -175,7 +189,7 @@ void Level::handleCollisions()
 			for (auto unit = m_units.begin(); unit != m_units.end();)
 			{
 				Rectangle unitAABB(unit->getPosition().x, tileSize, unit->getPosition().y, tileSize);
-				if (projectileAABB.intersect(unitAABB))
+				if (projectileAABB.intersects(unitAABB))
 				{
 					destroyProjectile = true;
 					unit = m_units.erase(unit);
@@ -193,8 +207,9 @@ void Level::handleCollisions()
 			for (auto turret = m_turrets.begin(); turret != m_turrets.end();)
 			{
 				Rectangle turretAABB(turret->getPosition().x, tileSize, turret->getPosition().y, tileSize);
-				if (projectileAABB.intersect(turretAABB))
+				if (projectileAABB.intersects(turretAABB))
 				{
+					m_particles.emplace_back(turret->getPosition(), static_cast<int>(TileID::PARTICLE));
 					destroyProjectile = true;
 				}
 
@@ -210,6 +225,21 @@ void Level::handleCollisions()
 		else
 		{
 			++projectile;
+		}
+	}
+}
+
+void Level::handleParticles()
+{
+	for (auto particle = m_particles.begin(); particle != m_particles.end();)
+	{
+		if (!particle->isActive())
+		{
+			particle = m_particles.erase(particle);
+		}
+		else
+		{
+			++particle;
 		}
 	}
 }

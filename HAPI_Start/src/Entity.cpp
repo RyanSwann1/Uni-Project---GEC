@@ -10,7 +10,7 @@ constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
 constexpr float TURRET_PROJECTLE_SPEED = 5.0f;
 constexpr float TURRET_ATTACK_RANGE = 250.f;
 constexpr float UNIT_ATTACK_RANGE = 250.f;
-constexpr float UNIT_SPEED = 15.0f;
+constexpr float UNIT_SPEED = 5.0f;
 
 //Projectile
 Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID, float speed)

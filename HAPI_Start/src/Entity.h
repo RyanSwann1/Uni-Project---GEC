@@ -11,15 +11,7 @@ enum class TurretType
 	Missle
 };
 
-enum class TileID
-{
-	TURRET_CANNON_BASE = 180,
-	TURRET_CANNON_HEAD = 249,
-	TURRET_MISSLE_BASE = 181,
-	TURRET_MISSLE_HEAD = 204,
-	SOILDER_GREEN = 245,
-	PROJECTILE = 272
-};
+
 
 enum class ProjectileSender
 {

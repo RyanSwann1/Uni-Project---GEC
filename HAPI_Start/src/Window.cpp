@@ -110,7 +110,7 @@ void Window::blitAlpha(const Sprite & sprite) const
 	Rectangle spriteRect(sprite.getPosition().x, sprite.getTexture().getTileSize(), sprite.getPosition().y, 
 		sprite.getTexture().getTileSize());
 
-	if (!spriteRect.intersect(windowRect))
+	if (!spriteRect.intersects(windowRect))
 	{
 		return;
 	}

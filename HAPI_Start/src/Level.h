@@ -4,6 +4,7 @@
 #include "Global.h"
 #include "Entity.h"
 #include "Timer.h"
+#include "Particle.h"
 
 class Window;
 struct TileLayer
@@ -34,13 +35,14 @@ private:
 	std::vector<Turret> m_turrets;
 	std::vector<Unit> m_units;
 	std::vector<Projectile> m_projectiles;
+	std::vector<Particle> m_particles;
 	Vector2i m_levelSize;
 	Timer m_spawnTimer;
 	int m_spawnedUnitCount;
 	int m_unitsReachedDestination;
 
-
 	void spawnNextUnit();
 	void handleInactiveEntities();
 	void handleCollisions();
+	void handleParticles();
 };

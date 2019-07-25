@@ -4,6 +4,17 @@
 const std::string DATA_DIRECTORY = "Data//";
 constexpr int BYTES_PER_PIXEL = 4;
 
+enum class TileID
+{
+	TURRET_CANNON_BASE = 180,
+	TURRET_CANNON_HEAD = 249,
+	TURRET_MISSLE_BASE = 181,
+	TURRET_MISSLE_HEAD = 204,
+	SOILDER_GREEN = 245,
+	PROJECTILE = 272,
+	PARTICLE = 295
+};
+
 struct Vector2i
 {
 	Vector2i();
@@ -38,7 +49,7 @@ struct Rectangle
 	int getBottom() const;
 	int getTop() const;
 
-	bool intersect(Rectangle rect);
+	bool intersects(Rectangle rect);
 	void clipTo(Rectangle rect);
 	void translate(int x, int y);
 	
