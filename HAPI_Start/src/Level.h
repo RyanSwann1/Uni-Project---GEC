@@ -22,6 +22,8 @@ public:
 	
 	void addTurretAtPosition(Vector2i position, TurretType turretType);
 	
+	bool isEnded() const;
+
 	void update(float deltaTime);
 	void render(Window& window);
 
@@ -35,6 +37,8 @@ private:
 	Vector2i m_levelSize;
 	Timer m_spawnTimer;
 	int m_spawnedUnitCount;
+	int m_unitsReachedDestination;
+
 
 	void spawnNextUnit();
 	void handleInactiveEntities();

@@ -37,13 +37,18 @@ enum class UnitMoveDirection
 
 class Unit;
 class Window;
-struct Projectile
+class Projectile
 {
+public:
 	Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID, float speed);
+
+	ProjectileSender getSentFrom() const;
+	Vector2i getPosition() const;
 
 	void update(float deltaTime, const std::vector<Unit>& units);
 	void render(const Window& window) const;
 
+private:
 	Vector2i m_position;
 	ProjectileSender m_sentFrom;
 	float m_speed;

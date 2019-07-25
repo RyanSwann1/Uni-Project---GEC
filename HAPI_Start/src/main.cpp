@@ -58,10 +58,16 @@ void HAPI_Main()
 
 		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
 		level->update(deltaTime);
-		
+
+
 		window->clearToBlack();
 		level->render(*window);
 		window->render(mouseRectSprite);
+
+		if (level->isEnded())
+		{
+			HAPI.Close();
+		}
 
 		lastFrameStart = frameStart;
 	}

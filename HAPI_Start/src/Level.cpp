@@ -7,7 +7,7 @@
 #include "Utilities/XMLParser.h"
 
 constexpr float TIME_BETWEEN_ENTITY_SPAWN = 1.0f;
-constexpr int MAX_ENTITY_SPAWN_COUNT = 20;
+constexpr int MAX_UNIT_SPAWN_COUNT = 20;
 
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
@@ -39,7 +39,8 @@ Level::Level()
 	m_turrets(),
 	m_levelSize(),
 	m_spawnTimer(TIME_BETWEEN_ENTITY_SPAWN, true),
-	m_spawnedUnitCount(0)
+	m_spawnedUnitCount(0),
+	m_unitsReachedDestination(0)
 {}
 
 std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
@@ -54,7 +55,7 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 			level.m_turrets.emplace_back(position);
 		}
 
-		level.m_units.reserve(static_cast<size_t>(MAX_ENTITY_SPAWN_COUNT));
+		level.m_units.reserve(static_cast<size_t>(MAX_UNIT_SPAWN_COUNT));
 		return std::make_unique<Level>(std::move(level));
 	}
 	else
@@ -70,6 +71,11 @@ void Level::addTurretAtPosition(Vector2i position, TurretType turretType)
 	{
 		iter->setTurret(turretType, position);
 	}
+}
+
+bool Level::isEnded() const
+{
+	return m_spawnedUnitCount == MAX_UNIT_SPAWN_COUNT && m_units.empty();
 }
 
 void Level::update(float deltaTime)
@@ -121,12 +127,14 @@ void Level::render(Window & window)
 	{
 		projectile.render(window);
 	}
+
+	HAPI.RenderText(850, 50, HAPISPACE::HAPI_TColour::WHITE, std::to_string(m_unitsReachedDestination), 26);
 }
 
 void Level::spawnNextUnit()
 {
 	++m_spawnedUnitCount;
-	if (m_spawnedUnitCount < MAX_ENTITY_SPAWN_COUNT)
+	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
 		m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), m_unitMovementPath);
 	}
@@ -139,6 +147,7 @@ void Level::handleInactiveEntities()
 		if (!iter->isActive())
 		{
 			iter = m_units.erase(iter);
+			++m_unitsReachedDestination;
 		}
 		else
 		{
@@ -152,7 +161,7 @@ void Level::handleCollisions()
 	int tileSize = Textures::getInstance().texture->getTileSize();
 	for (auto projectile = m_projectiles.begin(); projectile != m_projectiles.end();)
 	{
-		if (projectile->m_position.y < 15)
+		if (projectile->getPosition().y < 15)
 		{
 			projectile = m_projectiles.erase(projectile);
 			continue;
@@ -160,9 +169,9 @@ void Level::handleCollisions()
 
 		bool destroyProjectile = false;
 		//Detect Unit Collisions
-		if (projectile->m_sentFrom == ProjectileSender::Turret)
+		if (projectile->getSentFrom() == ProjectileSender::Turret)
 		{
-			Rectangle projectileAABB(projectile->m_position.x, tileSize, projectile->m_position.y, tileSize);
+			Rectangle projectileAABB(projectile->getPosition().x, tileSize, projectile->getPosition().y, tileSize);
 			for (auto unit = m_units.begin(); unit != m_units.end();)
 			{
 				Rectangle unitAABB(unit->getPosition().x, tileSize, unit->getPosition().y, tileSize);
@@ -180,7 +189,7 @@ void Level::handleCollisions()
 		//Detect Turret Collisions
 		else
 		{
-			Rectangle projectileAABB(projectile->m_position.x, tileSize, projectile->m_position.y, tileSize);
+			Rectangle projectileAABB(projectile->getPosition().x, tileSize, projectile->getPosition().y, tileSize);
 			for (auto turret = m_turrets.begin(); turret != m_turrets.end();)
 			{
 				Rectangle turretAABB(turret->getPosition().x, tileSize, turret->getPosition().y, tileSize);

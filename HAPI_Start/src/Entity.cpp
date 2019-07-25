@@ -8,6 +8,9 @@ constexpr float TIME_BETWEEN_TURRET_SHOT = 1.0f;
 constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
 constexpr float TURRET_PROJECTLE_SPEED = 5.0f;
+constexpr float TURRET_ATTACK_RANGE = 250.f;
+constexpr float UNIT_ATTACK_RANGE = 250.f;
+constexpr float UNIT_SPEED = 15.0f;
 
 //Projectile
 Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID, float speed)
@@ -17,6 +20,16 @@ Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, Pr
 	m_sprite(startingPosition, tileID),
 	m_direction(startingDirection)
 {}
+
+ProjectileSender Projectile::getSentFrom() const
+{
+	return m_sentFrom;
+}
+
+Vector2i Projectile::getPosition() const
+{
+	return m_position;
+}
 
 void Projectile::update(float deltaTime, const std::vector<Unit>& units)
 {
@@ -41,7 +54,7 @@ Turret::Turret(Vector2i startingPosition)
 	: m_position(startingPosition),
 	m_base(),
 	m_head(),
-	m_attackRange(250.0),
+	m_attackRange(TURRET_ATTACK_RANGE),
 	m_fireTimer(TIME_BETWEEN_TURRET_SHOT, true),
 	m_active(false)
 {}
@@ -128,8 +141,8 @@ Unit::Unit(int tileID, const std::vector<Vector2i>& movementPath)
 	m_position(movementPath.back()),
 	m_sprite(),
 	m_active(true),
-	m_speed(2.0f),
-	m_attackRange(250.0f),
+	m_speed(UNIT_SPEED),
+	m_attackRange(UNIT_ATTACK_RANGE),
 	m_fireTimer(TIME_BETWEEN_UNIT_SHOT, true)
 {
 	m_movementPath.pop_back();
