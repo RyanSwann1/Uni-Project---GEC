@@ -11,8 +11,6 @@ enum class TurretType
 	Missle
 };
 
-
-
 enum class ProjectileSender
 {
 	Unit = 0,
