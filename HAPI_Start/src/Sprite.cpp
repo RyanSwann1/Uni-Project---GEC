@@ -4,7 +4,9 @@
 
 Sprite::Sprite()
 	: m_texture(*Textures::getInstance().texture),
-	m_size(Textures::getInstance().texture->getTileSize(), Textures::getInstance().texture->getTileSize())
+	m_position(),
+	m_size(Textures::getInstance().texture->getTileSize(), Textures::getInstance().texture->getTileSize()),
+	m_tileID(0)
 {}
 
 Sprite::Sprite(Vector2i startingPosition, int tileID)
