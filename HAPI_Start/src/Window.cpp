@@ -66,6 +66,11 @@ bool Window::createWindow()
 
 void Window::render(const Sprite & sprite) const
 {
+	if (sprite.getID() == static_cast<int>(TileID::INVALID))
+	{
+		return;
+	}
+
 	if (isSpriteFullyContained(sprite) && !sprite.isAlpha())
 	{
 		blit(sprite);

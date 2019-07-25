@@ -11,6 +11,7 @@ public:
 	Sprite();
 	Sprite(Vector2i startingPosition, int tileID);
 
+	int getID() const;
 	Vector2i getSize() const;
 	Vector2i getPosition() const;
 	bool isAlpha() const;

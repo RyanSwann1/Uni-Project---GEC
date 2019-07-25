@@ -61,8 +61,8 @@ public:
 
 private:
 	Vector2i m_position;
-	Sprite m_base;
-	Sprite m_head;
+	Sprite m_baseSprite;
+	Sprite m_headSprite;
 	float m_attackRange;
 	Timer m_fireTimer;
 	bool m_active;
@@ -74,7 +74,7 @@ private:
 class Unit
 {
 public:
-	Unit(int tileID, const std::vector<Vector2i>& movementPath);
+	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath);
 
 	Vector2i getPosition() const;
 	bool isActive() const;
@@ -85,7 +85,8 @@ public:
 private:
 	std::vector<Vector2i> m_movementPath;
 	Vector2i m_position;
-	Sprite m_sprite;
+	Sprite m_baseSprite;
+	Sprite m_headSprite;
 	bool m_active;
 	float m_speed;
 	float m_attackRange;

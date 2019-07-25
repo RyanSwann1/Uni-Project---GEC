@@ -52,8 +52,8 @@ void Projectile::render(const Window & window) const
 //Turret
 Turret::Turret(Vector2i startingPosition)
 	: m_position(startingPosition),
-	m_base(),
-	m_head(),
+	m_baseSprite(),
+	m_headSprite(),
 	m_attackRange(TURRET_ATTACK_RANGE),
 	m_fireTimer(TIME_BETWEEN_TURRET_SHOT, true),
 	m_active(false)
@@ -63,8 +63,8 @@ void Turret::render(const Window & window) const
 {
 	if (m_active)
 	{
-		window.render(m_base);
-		window.render(m_head);
+		window.render(m_baseSprite);
+		window.render(m_headSprite);
 	}
 }
 
@@ -87,13 +87,13 @@ void Turret::setTurret(TurretType turretType, Vector2i position)
 	switch (turretType)
 	{
 	case TurretType::Cannon:
-		m_base.setID(static_cast<int>(TileID::TURRET_CANNON_BASE));
-		m_head.setID(static_cast<int>(TileID::TURRET_CANNON_HEAD));
+		m_baseSprite.setID(static_cast<int>(TileID::TURRET_CANNON_BASE));
+		m_headSprite.setID(static_cast<int>(TileID::TURRET_CANNON_HEAD));
 		break;
 
 	case TurretType::Missle:
-		m_base.setID(static_cast<int>(TileID::TURRET_MISSLE_BASE));
-		m_head.setID(static_cast<int>(TileID::TURRET_MISSLE_HEAD));
+		m_baseSprite.setID(static_cast<int>(TileID::TURRET_MISSLE_BASE));
+		m_headSprite.setID(static_cast<int>(TileID::TURRET_MISSLE_HEAD));
 		break;
 	}
 }
@@ -131,15 +131,16 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 void Turret::setPosition(Vector2i position)
 {
 	m_position = position;
-	m_base.setPosition(position);
-	m_head.setPosition(position);
+	m_baseSprite.setPosition(position);
+	m_headSprite.setPosition(position);
 }
 
 //Unit
-Unit::Unit(int tileID, const std::vector<Vector2i>& movementPath)
+Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath)
 	: m_movementPath(movementPath),
 	m_position(movementPath.back()),
-	m_sprite(),
+	m_baseSprite(),
+	m_headSprite(),
 	m_active(true),
 	m_speed(UNIT_SPEED),
 	m_attackRange(UNIT_ATTACK_RANGE),
@@ -147,8 +148,10 @@ Unit::Unit(int tileID, const std::vector<Vector2i>& movementPath)
 {
 	m_movementPath.pop_back();
 	m_moveDirection = Math::getDirectionTowards(m_position, m_movementPath.back());
-	m_sprite.setID(tileID);
-	m_sprite.setPosition(m_position);
+	m_baseSprite.setID(baseTileID);
+	m_baseSprite.setPosition(m_position);
+	m_headSprite.setID(headTileID);
+	m_headSprite.setPosition(m_position);
 }
 
 Vector2i Unit::getPosition() const
@@ -178,7 +181,6 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	{
 	case UnitMoveDirection::Up:
 		m_position.y -= m_speed;
-		m_sprite.setPosition(m_position);
 		if (m_position.y <= m_movementPath.back().y)
 		{
 			reachedDestination = true;
@@ -187,13 +189,15 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 
 	case UnitMoveDirection::Right:
 		m_position.x += m_speed;
-		m_sprite.setPosition(m_position);
 		if (m_position.x >= m_movementPath.back().x)
 		{
 			reachedDestination = true;
 		}
 		break;
 	}
+
+	m_baseSprite.setPosition(m_position);
+	m_headSprite.setPosition(m_position);
 	
 	//Assign new destination
 	if (reachedDestination)
@@ -212,7 +216,8 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 
 void Unit::render(const Window & window) const
 {
-	window.render(m_sprite);	
+	window.render(m_baseSprite);
+	window.render(m_headSprite);
 }
 
 bool Unit::fire(const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles) const

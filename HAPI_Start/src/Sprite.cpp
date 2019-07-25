@@ -6,7 +6,7 @@ Sprite::Sprite()
 	: m_texture(*Textures::getInstance().texture),
 	m_position(),
 	m_size(Textures::getInstance().texture->getTileSize(), Textures::getInstance().texture->getTileSize()),
-	m_tileID(0)
+	m_tileID(static_cast<int>(TileID::INVALID))
 {}
 
 Sprite::Sprite(Vector2i startingPosition, int tileID)
@@ -15,6 +15,11 @@ Sprite::Sprite(Vector2i startingPosition, int tileID)
 	m_size(Textures::getInstance().texture->getTileSize(), Textures::getInstance().texture->getTileSize()),
 	m_tileID(tileID)
 {}
+
+int Sprite::getID() const
+{
+	return m_tileID;
+}
 
 Vector2i Sprite::getSize() const
 {

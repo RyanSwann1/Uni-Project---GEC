@@ -22,7 +22,7 @@ void TileLayer::render(Window & window, Vector2i levelSize) const
 		for (int x = 0; x < levelSize.x; ++x)
 		{
 			const int tileID = m_tileData[y][x];
-			if (tileID >= 0)
+			if (tileID > static_cast<int>(TileID::INVALID))
 			{
 				Vector2i position(x * tileSize, y * tileSize);
 				Sprite sprite(position, tileID);
@@ -150,7 +150,10 @@ void Level::spawnNextUnit()
 	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
-		m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), m_unitMovementPath);
+		//m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), m_unitMovementPath);
+		m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), m_unitMovementPath);
+		//m_units.emplace_back
+		//m_units.emplace_back
 	}
 }
 
