@@ -39,7 +39,7 @@ class Unit;
 class Window;
 struct Projectile
 {
-	Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID);
+	Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID, float speed);
 
 	void update(float deltaTime, const std::vector<Unit>& units);
 	void render(const Window& window) const;

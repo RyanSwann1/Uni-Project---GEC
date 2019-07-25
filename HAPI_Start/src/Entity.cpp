@@ -8,10 +8,10 @@ constexpr float TIME_BETWEEN_TURRET_SHOT = 1.0f;
 constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 
 //Projectile
-Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID)
+Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, int tileID, float speed)
 	: m_position(startingPosition),
 	m_sentFrom(sentFrom),
-	m_speed(5.0f),
+	m_speed(speed),
 	m_sprite(startingPosition, tileID),
 	m_direction(startingDirection)
 {}
