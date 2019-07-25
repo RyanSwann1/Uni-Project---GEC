@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Global.h"
-#include "../Entity.h"
+#include "../GameObjects.h"
 
 namespace Math
 {

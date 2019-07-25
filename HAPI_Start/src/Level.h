@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Global.h"
-#include "Entity.h"
+#include "GameObjects.h"
 #include "Timer.h"
 #include "Particle.h"
 

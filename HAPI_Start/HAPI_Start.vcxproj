@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Entity.cpp" />
+    <ClCompile Include="src\GameObjects.cpp" />
     <ClCompile Include="src\Global.cpp" />
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -36,7 +36,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Entity.h" />
+    <ClInclude Include="src\GameObjects.h" />
     <ClInclude Include="src\Global.h" />
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\Particle.h" />
