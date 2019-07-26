@@ -115,7 +115,6 @@ bool Texture::isFrameAlpha(int ID) const
 	return m_frames[ID].alpha;
 }
 
-
 //Textures
 bool Textures::loadAllTextures()
 {

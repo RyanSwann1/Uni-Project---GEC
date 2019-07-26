@@ -15,8 +15,11 @@ constexpr int TURRET_DAMAGE = 1;
 constexpr float UNIT_ATTACK_RANGE = 250.f;
 constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
 constexpr float UNIT_SPEED = 2.0f;
-constexpr int UNIT_MAX_HEALTH = 1;
-constexpr int UNIT_DAMAGE = 1;
+
+constexpr int TANK_MAX_HEALTH = 3;
+constexpr int TANK_DAMAGE_VALUE = 2;
+
+constexpr int SOILDER_MAX_HEALTH = 1;
 
 //Projectile
 Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
@@ -127,12 +130,9 @@ void Turret::update(float deltaTime, const std::vector<Unit>& units, std::vector
 	if (m_active)
 	{
 		m_fireTimer.update(deltaTime);
-		if (m_fireTimer.isExpired())
+		if (m_fireTimer.isExpired() && fire(units, projectiles))
 		{
-			if (fire(units, projectiles))
-			{
-				m_fireTimer.reset();
-			}
+			m_fireTimer.reset();
 		}
 	}
 }
@@ -165,7 +165,7 @@ void Turret::setPosition(Vector2i position)
 }
 
 //Unit
-Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath)
+Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, UnitType unitType)
 	: m_movementPath(movementPath),
 	m_position(movementPath.back()),
 	m_baseSprite(m_position, baseTileID),
@@ -174,8 +174,20 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	m_speed(UNIT_SPEED),
 	m_attackRange(UNIT_ATTACK_RANGE),
 	m_fireTimer(TIME_BETWEEN_UNIT_SHOT, true),
-	m_health(UNIT_MAX_HEALTH)
+	m_health(0),
+	m_unitType(unitType),
+	m_damage(0)
 {
+	if (m_unitType == UnitType::Soilder)
+	{
+		m_health = SOILDER_MAX_HEALTH;
+	}
+	else if (m_unitType == UnitType::Tank)
+	{
+		m_health = TANK_MAX_HEALTH;
+		m_damage = TANK_DAMAGE_VALUE;
+	}
+
 	m_movementPath.pop_back();
 	m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
 }
@@ -207,13 +219,13 @@ void Unit::damage(int damageValue)
 
 void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles)
 {
-	m_fireTimer.update(deltaTime);
-	if (m_fireTimer.isExpired())
+	if (m_unitType == UnitType::Tank)
 	{
-		//if (fire(turrets, projectiles))
-		//{
-		//	m_fireTimer.reset();
-		//}
+		m_fireTimer.update(deltaTime);
+		if (m_fireTimer.isExpired() && (fire(turrets, projectiles)))
+		{
+			m_fireTimer.reset();
+		}
 	}
 
 	Vector2f position = Vector2f(m_position.x, m_position.y);
@@ -275,7 +287,7 @@ bool Unit::fire(const std::vector<Turret>& turrets, std::vector<Projectile>& pro
 		if (Math::isWithinRange(m_position, turret.getPosition(), m_attackRange) && turret.isActive())
 		{
 			Vector2f dir = Math::getDirection(m_position, turret.getPosition());
-			projectiles.emplace_back(m_position, dir, ProjectileSender::Unit, static_cast<int>(TileID::PROJECTILE), UNIT_PROJECTILE_SPEED, UNIT_DAMAGE);
+			projectiles.emplace_back(m_position, dir, ProjectileSender::Unit, static_cast<int>(TileID::PROJECTILE), UNIT_PROJECTILE_SPEED, m_damage);
 			return true;
 		}
 	}

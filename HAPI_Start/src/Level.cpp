@@ -170,11 +170,11 @@ void Level::spawnNextUnit()
 	{
 		if (m_spawnedUnitCount % 3 == 0)
 		{
-			m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), m_unitMovementPath);
+			m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), m_unitMovementPath, UnitType::Tank);
 		}
 		else
 		{
-			m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), m_unitMovementPath);
+			m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), m_unitMovementPath, UnitType::Soilder);
 		}
 	}
 }

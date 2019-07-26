@@ -17,6 +17,12 @@ enum class ProjectileSender
 	Turret
 };
 
+enum class UnitType
+{
+	Soilder = 0,
+	Tank
+};
+
 class Unit;
 class Window;
 class Projectile
@@ -71,7 +77,7 @@ private:
 class Unit
 {
 public:
-	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath);
+	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, UnitType unitType);
 
 	Vector2f getMoveDirection() const;
 	Vector2i getPosition() const;
@@ -92,6 +98,8 @@ private:
 	Vector2f m_moveDirection;
 	Timer m_fireTimer;
 	int m_health;
+	UnitType m_unitType;
+	int m_damage;
 
 	bool fire(const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles) const;
 };
