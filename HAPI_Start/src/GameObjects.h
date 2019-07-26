@@ -17,14 +17,6 @@ enum class ProjectileSender
 	Turret
 };
 
-enum class UnitMoveDirection
-{
-	Left = 0,
-	Right,
-	Up,
-	Down
-};
-
 class Unit;
 class Window;
 class Projectile
@@ -96,7 +88,7 @@ private:
 	bool m_active;
 	float m_speed;
 	float m_attackRange;
-	UnitMoveDirection m_moveDirection;
+	Vector2f m_moveDirection;
 	Timer m_fireTimer;
 	int m_health;
 

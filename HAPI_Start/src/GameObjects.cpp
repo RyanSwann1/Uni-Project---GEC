@@ -172,7 +172,7 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	m_health(UNIT_MAX_HEALTH)
 {
 	m_movementPath.pop_back();
-	m_moveDirection = Math::getDirectionTowards(m_position, m_movementPath.back());
+	m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
 }
 
 Vector2i Unit::getPosition() const
@@ -206,49 +206,42 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 		}
 	}
 
-	//Move to destination
-	bool reachedDestination = false;
-	switch (m_moveDirection)
-	{
-	case UnitMoveDirection::Up:
-		m_position.y -= m_speed;
-		if (m_position.y <= m_movementPath.back().y)
-		{
-			reachedDestination = true;
-		}
-		break;
+	Vector2f position = Vector2f(m_position.x, m_position.y);
 
-	case UnitMoveDirection::Right:
-		m_position.x += m_speed;
-		if (m_position.x >= m_movementPath.back().x)
-		{
-			reachedDestination = true;
-		}
-		break;
+	position.x += m_moveDirection.x * m_speed;
+	position.y += m_moveDirection.y * m_speed;
 
-	case UnitMoveDirection::Down:
-		m_position.y += m_speed;
-		if (m_position.y >= m_movementPath.back().y)
-		{
-			reachedDestination = true;
-		}
-		break;
-	case UnitMoveDirection::Left :
-		m_position.x -= m_speed;
-		if (m_position.x <= m_movementPath.back().x)
-		{
-			reachedDestination = true;
-		}
-		break;
-	}
+	m_position.x = position.x;
+	m_position.y = position.y;
 
 	m_baseSprite.setPosition(m_position);
 	m_headSprite.setPosition(m_position);
+
+	//Move to destination
+	bool reachedDestination = false;
+	if (m_moveDirection.y == -1 && m_position.y <= m_movementPath.back().y)
+	{
+		reachedDestination = true;
+	}
+	else if (m_moveDirection.x == 1 && m_position.x >= m_movementPath.back().x)
+	{
+		reachedDestination = true;
+	}
+	else if (m_moveDirection.x == -1 && m_position.x <= m_movementPath.back().x)
+	{
+		reachedDestination = true;
+	}
+	else if (m_moveDirection.y == 1 && m_position.y >= m_movementPath.back().y)
+	{
+		reachedDestination = true;
+	}
 	
 	//Assign new destination
 	if (reachedDestination)
 	{
 		m_position = m_movementPath.back();
+		m_baseSprite.setPosition(m_position);
+		m_headSprite.setPosition(m_position);
 		m_movementPath.pop_back();
 		if (m_movementPath.empty())
 		{
@@ -256,7 +249,7 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 			return;
 		}
 
-		m_moveDirection = Math::getDirectionTowards(m_position, m_movementPath.back());
+		m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
 	}
 }
 
