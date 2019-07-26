@@ -6,7 +6,7 @@
 #include <assert.h>
 #include "Utilities/XMLParser.h"
 
-constexpr float TIME_BETWEEN_ENTITY_SPAWN = 2.5f;
+constexpr float TIME_BETWEEN_ENTITY_SPAWN = 3.5f;
 constexpr int MAX_UNIT_SPAWN_COUNT = 25;
 
 constexpr size_t MAX_PROJECTILES_COUNT = 100;
@@ -222,12 +222,11 @@ void Level::handleCollisions(int& playerScore)
 					{
 						unit = m_units.erase(unit);
 						playerScore += UNIT_ELIMINATE_SCORE;
+						continue;
 					}
 				}
-				else
-				{
-					++unit;
-				}
+
+				++unit;
 			}
 		}
 		//Detect Turret Collisions
