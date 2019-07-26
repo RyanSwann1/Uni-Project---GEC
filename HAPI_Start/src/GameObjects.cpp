@@ -8,8 +8,8 @@ constexpr float TIME_BETWEEN_TURRET_SHOT = 2.5f;
 constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 
 constexpr float TURRET_PROJECTLE_SPEED = 7.5f;
-constexpr float TURRET_ATTACK_RANGE = 250.f;
-constexpr int TURRET_MAX_HEALTH = 1;
+constexpr float TURRET_ATTACK_RANGE = 350.f;
+constexpr int TURRET_MAX_HEALTH = 3;
 constexpr int TURRET_DAMAGE = 1;
 
 constexpr float UNIT_ATTACK_RANGE = 250.f;
@@ -239,19 +239,23 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	m_baseSprite.setPosition(m_position);
 	m_headSprite.setPosition(m_position);
 
+	//Up
 	bool reachedDestination = false;
 	if (m_moveDirection.y == -1 && m_position.y <= m_movementPath.back().y)
 	{
 		reachedDestination = true;
 	}
+	//Right
 	else if (m_moveDirection.x == 1 && m_position.x >= m_movementPath.back().x)
 	{
 		reachedDestination = true;
 	}
+	//Left
 	else if (m_moveDirection.x == -1 && m_position.x <= m_movementPath.back().x)
 	{
 		reachedDestination = true;
 	}
+	//Down
 	else if (m_moveDirection.y == 1 && m_position.y >= m_movementPath.back().y)
 	{
 		reachedDestination = true;

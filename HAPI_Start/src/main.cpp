@@ -30,7 +30,7 @@ void HAPI_Main()
 
 	Textures::getInstance().loadAllTextures();
 
-	std::unique_ptr<Level> level = Level::loadLevel("mapTwo.tmx");
+	std::unique_ptr<Level> level = Level::loadLevel("mapThree.tmx");
 	if (!level)
 	{
 		std::cout << "Couldn't load level\n";
@@ -72,7 +72,7 @@ void HAPI_Main()
 
 		if (level->isEnded())
 		{
-			level = Level::loadLevel("mapTwo.tmx");
+			level = Level::loadLevel("mapThree.tmx");
 			playerScore = PLAYER_STARTING_SCORE;
 		}
 
