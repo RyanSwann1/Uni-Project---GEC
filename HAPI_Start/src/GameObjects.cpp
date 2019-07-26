@@ -29,7 +29,7 @@ Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, Pr
 	m_damage(damage)
 {}
 
-int Projectile::getDamage() const
+int Projectile::getDamageValue() const
 {
 	return m_damage;
 }
@@ -183,6 +183,16 @@ Vector2i Unit::getPosition() const
 bool Unit::isActive() const
 {
 	return m_active;
+}
+
+void Unit::damage(int damageValue)
+{
+	m_health -= damageValue;
+	if (m_health <= 0)
+	{
+		m_health = 0;
+		m_active = false;
+	}
 }
 
 void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles)

@@ -33,7 +33,7 @@ public:
 	Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
 		int tileID, float speed, int damage);
 
-	int getDamage() const;
+	int getDamageValue() const;
 	ProjectileSender getSentFrom() const;
 	Vector2i getPosition() const;
 
@@ -84,6 +84,7 @@ public:
 	Vector2i getPosition() const;
 	bool isActive() const;
 
+	void damage(int damageValue);
 	void update(float deltaTime, const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles);
 	void render(const Window& window) const;
 

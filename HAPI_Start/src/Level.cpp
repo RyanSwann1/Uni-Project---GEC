@@ -199,7 +199,11 @@ void Level::handleCollisions()
 				if (projectileAABB.intersects(unitAABB))
 				{
 					destroyProjectile = true;
-					unit = m_units.erase(unit);
+					unit->damage(projectile->getDamageValue());
+					if (!unit->isActive())
+					{
+						unit = m_units.erase(unit);
+					}
 				}
 				else
 				{
@@ -216,7 +220,7 @@ void Level::handleCollisions()
 				Rectangle turretAABB(turret->getPosition().x, tileSize, turret->getPosition().y, tileSize);
 				if (projectileAABB.intersects(turretAABB))
 				{
-					turret->damage(projectile->getDamage());
+					turret->damage(projectile->getDamageValue());
 					m_particles.emplace_back(turret->getPosition(), static_cast<int>(TileID::PARTICLE));
 					destroyProjectile = true;
 				}
