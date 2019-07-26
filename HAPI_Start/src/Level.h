@@ -25,7 +25,7 @@ public:
 	
 	bool isEnded() const;
 
-	void update(float deltaTime);
+	void update(float deltaTime, int& playerScore);
 	void render(Window& window);
 
 private:
@@ -43,6 +43,6 @@ private:
 
 	void spawnNextUnit();
 	void handleInactiveEntities();
-	void handleCollisions();
+	void handleCollisions(int& playerScore);
 	void handleParticles();
 };

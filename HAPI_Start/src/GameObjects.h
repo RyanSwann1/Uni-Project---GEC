@@ -73,6 +73,7 @@ class Unit
 public:
 	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath);
 
+	Vector2f getMoveDirection() const;
 	Vector2i getPosition() const;
 	bool isActive() const;
 

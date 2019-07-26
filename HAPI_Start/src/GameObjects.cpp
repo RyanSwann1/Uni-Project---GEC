@@ -4,17 +4,17 @@
 #include "Utilities/Math.h"
 #include "Texture.h"
 
-constexpr float TIME_BETWEEN_TURRET_SHOT = 1.0f;
+constexpr float TIME_BETWEEN_TURRET_SHOT = 2.5f;
 constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 
-constexpr float TURRET_PROJECTLE_SPEED = 5.0f;
+constexpr float TURRET_PROJECTLE_SPEED = 7.5f;
 constexpr float TURRET_ATTACK_RANGE = 250.f;
 constexpr int TURRET_MAX_HEALTH = 1;
 constexpr int TURRET_DAMAGE = 1;
 
 constexpr float UNIT_ATTACK_RANGE = 250.f;
 constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
-constexpr float UNIT_SPEED = 5.0f;
+constexpr float UNIT_SPEED = 2.0f;
 constexpr int UNIT_MAX_HEALTH = 1;
 constexpr int UNIT_DAMAGE = 1;
 
@@ -143,7 +143,12 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 	{
 		if (Math::isWithinRange(m_position, unit.getPosition(), m_attackRange))
 		{
-			Vector2f dir = Math::getDirection(m_position, unit.getPosition());
+			int xOffset = 0;
+			if (unit.getMoveDirection().x == 1)
+			{
+				xOffset += 40;
+			}
+			Vector2f dir = Math::getDirection(m_position, { unit.getPosition().x + xOffset, unit.getPosition().y });
 			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(TileID::PROJECTILE), TURRET_PROJECTLE_SPEED, TURRET_DAMAGE);
 			return true;
 		}
@@ -175,6 +180,11 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
 }
 
+Vector2f Unit::getMoveDirection() const
+{
+	return m_moveDirection;
+}
+
 Vector2i Unit::getPosition() const
 {
 	return m_position;
@@ -200,10 +210,10 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	m_fireTimer.update(deltaTime);
 	if (m_fireTimer.isExpired())
 	{
-		if (fire(turrets, projectiles))
-		{
-			m_fireTimer.reset();
-		}
+		//if (fire(turrets, projectiles))
+		//{
+		//	m_fireTimer.reset();
+		//}
 	}
 
 	Vector2f position = Vector2f(m_position.x, m_position.y);

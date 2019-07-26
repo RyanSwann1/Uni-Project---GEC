@@ -62,7 +62,7 @@ void HAPI_Main()
 		}
 
 		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
-		level->update(deltaTime);
+		level->update(deltaTime, playerScore);
 
 		window->clearToBlack();
 		level->render(*window);

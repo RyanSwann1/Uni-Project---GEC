@@ -6,12 +6,14 @@
 #include <assert.h>
 #include "Utilities/XMLParser.h"
 
-constexpr float TIME_BETWEEN_ENTITY_SPAWN = 1.0f;
-constexpr int MAX_UNIT_SPAWN_COUNT = 20;
+constexpr float TIME_BETWEEN_ENTITY_SPAWN = 2.5f;
+constexpr int MAX_UNIT_SPAWN_COUNT = 25;
+
 constexpr size_t MAX_PROJECTILES_COUNT = 100;
 constexpr size_t MAX_PARTICLES_COUNT = 25;
 
-constexpr int TURRET_PLACEMENT_COST = 10;
+constexpr int TURRET_PLACEMENT_COST = 5;
+constexpr int UNIT_ELIMINATE_SCORE = 2;
 
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
@@ -93,7 +95,7 @@ bool Level::isEnded() const
 	return m_spawnedUnitCount == MAX_UNIT_SPAWN_COUNT && m_units.empty();
 }
 
-void Level::update(float deltaTime)
+void Level::update(float deltaTime, int& playerScore)
 {
 	for (auto& turret : m_turrets)
 	{
@@ -123,7 +125,7 @@ void Level::update(float deltaTime)
 	}
 
 	handleInactiveEntities();
-	handleCollisions();
+	handleCollisions(playerScore);
 	handleParticles();
 }
 
@@ -162,8 +164,8 @@ void Level::spawnNextUnit()
 	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
-		//m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), m_unitMovementPath);
-		m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), m_unitMovementPath);
+		m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), m_unitMovementPath);
+		//m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), m_unitMovementPath);
 	}
 }
 
@@ -183,7 +185,7 @@ void Level::handleInactiveEntities()
 	}
 }
 
-void Level::handleCollisions()
+void Level::handleCollisions(int& playerScore)
 {
 	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	for (auto projectile = m_projectiles.begin(); projectile != m_projectiles.end();)
@@ -209,6 +211,7 @@ void Level::handleCollisions()
 					if (!unit->isActive())
 					{
 						unit = m_units.erase(unit);
+						playerScore += UNIT_ELIMINATE_SCORE;
 					}
 				}
 				else
