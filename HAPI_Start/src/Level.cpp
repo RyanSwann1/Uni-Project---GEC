@@ -7,7 +7,7 @@
 #include "Utilities/XMLParser.h"
 
 constexpr float TIME_BETWEEN_ENTITY_SPAWN = 3.5f;
-constexpr int MAX_UNIT_SPAWN_COUNT = 25;
+constexpr int MAX_UNIT_SPAWN_COUNT = 2;
 
 constexpr size_t MAX_PROJECTILES_COUNT = 100;
 constexpr size_t MAX_PARTICLES_COUNT = 25;
@@ -168,14 +168,16 @@ void Level::spawnNextUnit()
 	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
-		if (m_spawnedUnitCount % 3 == 0)
-		{
-			m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), m_unitMovementPath, UnitType::Tank);
-		}
-		else
-		{
-			m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), m_unitMovementPath, UnitType::Soilder);
-		}
+		m_units.emplace_back(static_cast<int>(TileID::PLANE), static_cast<int>(TileID::INVALID), m_unitMovementPath, UnitType::Plane);
+
+		//if (m_spawnedUnitCount % 3 == 0)
+		//{
+		//	m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), m_unitMovementPath, UnitType::Tank);
+		//}
+		//else
+		//{
+		//	m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), m_unitMovementPath, UnitType::Soilder);
+		//}
 	}
 }
 

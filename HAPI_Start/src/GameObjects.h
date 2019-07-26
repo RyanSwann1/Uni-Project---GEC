@@ -20,7 +20,8 @@ enum class ProjectileSender
 enum class UnitType
 {
 	Soilder = 0,
-	Tank
+	Tank, 
+	Plane
 };
 
 class Unit;

@@ -178,18 +178,40 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	m_unitType(unitType),
 	m_damage(0)
 {
-	if (m_unitType == UnitType::Soilder)
+	switch (m_unitType)
 	{
+	case UnitType::Soilder :
 		m_health = SOILDER_MAX_HEALTH;
-	}
-	else if (m_unitType == UnitType::Tank)
-	{
+		m_movementPath.pop_back();
+		break;
+	
+	case UnitType::Tank :
 		m_health = TANK_MAX_HEALTH;
 		m_damage = TANK_DAMAGE_VALUE;
+		m_movementPath.pop_back();
+		break;
+	
+	case UnitType::Plane :
+		m_health = TANK_MAX_HEALTH;
+		m_damage = TANK_DAMAGE_VALUE;
+		size_t movementPathSize = m_movementPath.size();
+		for (int i = 0; i < movementPathSize - 1; ++i)
+		{
+			m_movementPath.pop_back();
+		}
+		break;
 	}
 
-	m_movementPath.pop_back();
+	if (m_position.x == 0)
+	{
+		m_position.x += 10;
+	}
+	else if (m_position.y == 0)
+	{
+		m_position.y += 10;
+	}
 	m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
+	int i = 0;
 }
 
 Vector2f Unit::getMoveDirection() const
