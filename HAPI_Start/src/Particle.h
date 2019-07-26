@@ -9,13 +9,12 @@ class Particle
 public:
 	Particle(Vector2i startingPosition, int tileID);
 
-	bool isActive() const;
+	bool isExpired() const;
 
 	void update(float deltaTime);
 	void render(Window& window) const;
 
 private:
-	bool m_active;
 	Sprite m_sprite;
 	Vector2i m_position;
 	Timer m_aliveTimer;
