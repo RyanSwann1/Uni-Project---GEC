@@ -59,6 +59,7 @@ public:
 	Vector2i getPosition() const;
 	void setTurret(TurretType turretType, Vector2i position);
 
+	void damage(int damageValue);
 	void update(float deltaTime, const std::vector<Unit>& units, std::vector<Projectile>& projectiles);
 	void render(const Window& window) const;
 

@@ -9,7 +9,7 @@ constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 
 constexpr float TURRET_PROJECTLE_SPEED = 5.0f;
 constexpr float TURRET_ATTACK_RANGE = 250.f;
-constexpr int TURRET_MAX_HEALTH = 5;
+constexpr int TURRET_MAX_HEALTH = 1;
 constexpr int TURRET_DAMAGE = 1;
 
 constexpr float UNIT_ATTACK_RANGE = 250.f;
@@ -109,6 +109,16 @@ void Turret::setTurret(TurretType turretType, Vector2i position)
 		m_baseSprite.setID(static_cast<int>(TileID::TURRET_MISSLE_BASE));
 		m_headSprite.setID(static_cast<int>(TileID::TURRET_MISSLE_HEAD));
 		break;
+	}
+}
+
+void Turret::damage(int damageValue)
+{
+	m_health -= damageValue;
+	if (m_health <= 0)
+	{
+		m_health = 0;
+		m_active = false;
 	}
 }
 

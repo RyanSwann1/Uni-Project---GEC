@@ -54,6 +54,7 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 	std::vector<Vector2i> turretPlacementPositions;
 	if (XMLParser::parseLevel(levelName, level.m_levelSize, level.m_tileLayers, level.m_unitMovementPath, turretPlacementPositions))
 	{
+		//Initialize all game objects - requiring no memory allocations at run time
 		level.m_turrets.reserve(turretPlacementPositions.size());
 		for (auto position : turretPlacementPositions)
 		{
@@ -61,8 +62,8 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 		}
 
 		level.m_units.reserve(static_cast<size_t>(MAX_UNIT_SPAWN_COUNT));
-		level.m_projectiles.reserve(100);
-		level.m_particles.reserve(25);
+		level.m_projectiles.reserve(MAX_PROJECTILES_COUNT);
+		level.m_particles.reserve(MAX_PARTICLES_COUNT);
 
 		return std::make_unique<Level>(std::move(level));
 	}
@@ -215,6 +216,7 @@ void Level::handleCollisions()
 				Rectangle turretAABB(turret->getPosition().x, tileSize, turret->getPosition().y, tileSize);
 				if (projectileAABB.intersects(turretAABB))
 				{
+					turret->damage(projectile->getDamage());
 					m_particles.emplace_back(turret->getPosition(), static_cast<int>(TileID::PARTICLE));
 					destroyProjectile = true;
 				}
