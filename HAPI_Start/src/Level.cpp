@@ -18,7 +18,7 @@ TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
 
 void TileLayer::render(Window & window, Vector2i levelSize) const 
 {
-	int tileSize = Textures::getInstance().texture->getTileSize();
+	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	for (int y = 0; y < levelSize.y; ++y)
 	{
 		for (int x = 0; x < levelSize.x; ++x)
@@ -179,7 +179,7 @@ void Level::handleInactiveEntities()
 
 void Level::handleCollisions()
 {
-	int tileSize = Textures::getInstance().texture->getTileSize();
+	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	for (auto projectile = m_projectiles.begin(); projectile != m_projectiles.end();)
 	{
 		if (projectile->getPosition().y < 15)

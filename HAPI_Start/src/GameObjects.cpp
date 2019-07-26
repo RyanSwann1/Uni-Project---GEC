@@ -217,7 +217,6 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	m_baseSprite.setPosition(m_position);
 	m_headSprite.setPosition(m_position);
 
-	//Move to destination
 	bool reachedDestination = false;
 	if (m_moveDirection.y == -1 && m_position.y <= m_movementPath.back().y)
 	{

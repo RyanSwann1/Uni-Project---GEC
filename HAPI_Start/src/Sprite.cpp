@@ -3,16 +3,16 @@
 #include <assert.h>
 
 Sprite::Sprite()
-	: m_texture(*Textures::getInstance().texture),
+	: m_texture(Textures::getInstance().getTexture()),
 	m_position(),
-	m_size(Textures::getInstance().texture->getTileSize(), Textures::getInstance().texture->getTileSize()),
+	m_size(Textures::getInstance().getTexture().getTileSize(), Textures::getInstance().getTexture().getTileSize()),
 	m_tileID(static_cast<int>(TileID::INVALID))
 {}
 
 Sprite::Sprite(Vector2i startingPosition, int tileID)
-	: m_texture(*Textures::getInstance().texture),
+	: m_texture(Textures::getInstance().getTexture()),
 	m_position(startingPosition),
-	m_size(Textures::getInstance().texture->getTileSize(), Textures::getInstance().texture->getTileSize()),
+	m_size(Textures::getInstance().getTexture().getTileSize(), Textures::getInstance().getTexture().getTileSize()),
 	m_tileID(tileID)
 {}
 

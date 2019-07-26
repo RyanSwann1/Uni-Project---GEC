@@ -43,7 +43,7 @@ void HAPI_Main()
 	float lastFrameStart = HAPI.GetTime();
 	float deltaTime = 0;
 
-	int tileSize = Textures::getInstance().texture->getTileSize();
+	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	while (HAPI.Update())
 	{	
 		frameStart = HAPI.GetTime();

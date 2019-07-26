@@ -58,8 +58,9 @@ public:
 
 	bool loadAllTextures();
 
-	std::unique_ptr<Texture> texture;
+	Texture& getTexture();
 
 private:
+	std::unique_ptr<Texture> m_texture;
 	bool m_texturesLoaded = false;
 };
