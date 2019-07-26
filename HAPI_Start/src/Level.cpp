@@ -8,6 +8,8 @@
 
 constexpr float TIME_BETWEEN_ENTITY_SPAWN = 1.0f;
 constexpr int MAX_UNIT_SPAWN_COUNT = 20;
+constexpr size_t MAX_PROJECTILES_COUNT = 100;
+constexpr size_t MAX_PARTICLES_COUNT = 25;
 
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
@@ -237,7 +239,7 @@ void Level::handleParticles()
 {
 	for (auto particle = m_particles.begin(); particle != m_particles.end();)
 	{
-		if (!particle->isActive())
+		if (particle->isExpired())
 		{
 			particle = m_particles.erase(particle);
 		}

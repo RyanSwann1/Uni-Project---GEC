@@ -25,8 +25,6 @@ enum class UnitMoveDirection
 	Down
 };
 
-
-
 class Unit;
 class Window;
 class Projectile
@@ -71,6 +69,7 @@ private:
 	float m_attackRange;
 	Timer m_fireTimer;
 	bool m_active;
+	int m_health;
 
 	bool fire(const std::vector<Unit>& units, std::vector<Projectile>& projectiles) const;
 	void setPosition(Vector2i position);
@@ -97,6 +96,7 @@ private:
 	float m_attackRange;
 	UnitMoveDirection m_moveDirection;
 	Timer m_fireTimer;
+	int m_health;
 
 	bool fire(const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles) const;
 };

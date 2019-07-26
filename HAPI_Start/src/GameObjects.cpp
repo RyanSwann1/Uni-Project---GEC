@@ -9,13 +9,14 @@ constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 
 constexpr float TURRET_PROJECTLE_SPEED = 5.0f;
 constexpr float TURRET_ATTACK_RANGE = 250.f;
-constexpr int TURRET_HEALTH = 5;
+constexpr int TURRET_MAX_HEALTH = 5;
 constexpr int TURRET_DAMAGE = 1;
 
 constexpr float UNIT_ATTACK_RANGE = 250.f;
 constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
 constexpr float UNIT_SPEED = 5.0f;
-constexpr int UNIT_HEALTH = 1;
+constexpr int UNIT_MAX_HEALTH = 1;
+constexpr int UNIT_DAMAGE = 1;
 
 //Projectile
 Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
@@ -68,7 +69,8 @@ Turret::Turret(Vector2i startingPosition)
 	m_headSprite(),
 	m_attackRange(TURRET_ATTACK_RANGE),
 	m_fireTimer(TIME_BETWEEN_TURRET_SHOT, true),
-	m_active(false)
+	m_active(false),
+	m_health(TURRET_MAX_HEALTH)
 {}
 
 void Turret::render(const Window & window) const
@@ -132,7 +134,7 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 		if (Math::isWithinRange(m_position, unit.getPosition(), m_attackRange))
 		{
 			Vector2f dir = Math::getDirection(m_position, unit.getPosition());
-			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(TileID::PROJECTILE), TURRET_PROJECTLE_SPEED);
+			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(TileID::PROJECTILE), TURRET_PROJECTLE_SPEED, TURRET_DAMAGE);
 			return true;
 		}
 	}
@@ -156,7 +158,8 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	m_active(true),
 	m_speed(UNIT_SPEED),
 	m_attackRange(UNIT_ATTACK_RANGE),
-	m_fireTimer(TIME_BETWEEN_UNIT_SHOT, true)
+	m_fireTimer(TIME_BETWEEN_UNIT_SHOT, true),
+	m_health(UNIT_MAX_HEALTH)
 {
 	m_movementPath.pop_back();
 	m_moveDirection = Math::getDirectionTowards(m_position, m_movementPath.back());
@@ -235,7 +238,7 @@ bool Unit::fire(const std::vector<Turret>& turrets, std::vector<Projectile>& pro
 		if (Math::isWithinRange(m_position, turret.getPosition(), m_attackRange) && turret.isActive())
 		{
 			Vector2f dir = Math::getDirection(m_position, turret.getPosition());
-			projectiles.emplace_back(m_position, dir, ProjectileSender::Unit, static_cast<int>(TileID::PROJECTILE), UNIT_PROJECTILE_SPEED);
+			projectiles.emplace_back(m_position, dir, ProjectileSender::Unit, static_cast<int>(TileID::PROJECTILE), UNIT_PROJECTILE_SPEED, UNIT_DAMAGE);
 			return true;
 		}
 	}
