@@ -17,6 +17,14 @@ UnitMoveDirection Math::getDirectionTowards(Vector2i currentPosition, Vector2i d
 	{
 		return UnitMoveDirection::Up;
 	}
+	else if (vect.x == -1)
+	{
+		return UnitMoveDirection::Left;
+	}
+	else if (vect.y == 1)
+	{
+		return UnitMoveDirection::Down;
+	}
 
 	return moveDirection;
 }

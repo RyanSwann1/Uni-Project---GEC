@@ -28,7 +28,7 @@ void HAPI_Main()
 
 	Textures::getInstance().loadAllTextures();
 
-	std::unique_ptr<Level> level = Level::loadLevel("mapOne.tmx");
+	std::unique_ptr<Level> level = Level::loadLevel("mapTwo.tmx");
 	if (!level)
 	{
 		std::cout << "Couldn't load level\n";
@@ -65,7 +65,7 @@ void HAPI_Main()
 
 		if (level->isEnded())
 		{
-			level = Level::loadLevel("mapOne.tmx");
+			level = Level::loadLevel("mapTwo.tmx");
 		}
 
 		lastFrameStart = frameStart;
