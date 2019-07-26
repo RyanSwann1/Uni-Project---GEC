@@ -17,6 +17,8 @@
 //https://en.cppreference.com/w/cpp/language/delete
 //https://en.cppreference.com/w/cpp/language/rule_of_three
 
+constexpr int PLAYER_STARTING_SCORE = 20;
+
 void HAPI_Main()
 {
 	std::unique_ptr<Window> window = Window::create();
@@ -43,6 +45,9 @@ void HAPI_Main()
 	float lastFrameStart = HAPI.GetTime();
 	float deltaTime = 0;
 
+	int playerScore = PLAYER_STARTING_SCORE;
+	const std::string scoreText("Player Score: ");
+
 	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	while (HAPI.Update())
 	{	
@@ -53,7 +58,7 @@ void HAPI_Main()
 
 		if (mouseData.leftButtonDown)
 		{
-			level->addTurretAtPosition(mouseRectPosition, TurretType::Cannon);
+			level->addTurretAtPosition(mouseRectPosition, TurretType::Cannon, playerScore);
 		}
 
 		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
@@ -63,9 +68,12 @@ void HAPI_Main()
 		level->render(*window);
 		window->render(mouseRectSprite);
 
+		HAPI.RenderText(500, 50, HAPISPACE::HAPI_TColour::WHITE, scoreText + std::to_string(playerScore), 26);
+
 		if (level->isEnded())
 		{
 			level = Level::loadLevel("mapTwo.tmx");
+			playerScore = PLAYER_STARTING_SCORE;
 		}
 
 		lastFrameStart = frameStart;

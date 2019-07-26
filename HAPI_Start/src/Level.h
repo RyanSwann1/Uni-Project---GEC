@@ -21,7 +21,7 @@ class Level
 public:
 	static std::unique_ptr<Level> loadLevel(const std::string& levelName);
 	
-	void addTurretAtPosition(Vector2i position, TurretType turretType);
+	void addTurretAtPosition(Vector2i position, TurretType turretType, int& playerScore);
 	
 	bool isEnded() const;
 

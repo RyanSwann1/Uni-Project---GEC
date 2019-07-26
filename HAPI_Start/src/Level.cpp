@@ -11,6 +11,8 @@ constexpr int MAX_UNIT_SPAWN_COUNT = 20;
 constexpr size_t MAX_PROJECTILES_COUNT = 100;
 constexpr size_t MAX_PARTICLES_COUNT = 25;
 
+constexpr int TURRET_PLACEMENT_COST = 10;
+
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
 	: m_tileData(std::move(tileData))
@@ -73,12 +75,16 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 	}
 }
 
-void Level::addTurretAtPosition(Vector2i position, TurretType turretType)
+void Level::addTurretAtPosition(Vector2i position, TurretType turretType, int& playerScore)
 {
-	auto iter = std::find_if(m_turrets.begin(), m_turrets.end(), [position](const auto& turret) { return turret.getPosition() == position; });
-	if (iter != m_turrets.end())
+	if (playerScore >= TURRET_PLACEMENT_COST)
 	{
-		iter->setTurret(turretType, position);
+		auto iter = std::find_if(m_turrets.begin(), m_turrets.end(), [position](const auto& turret) { return turret.getPosition() == position; });
+		if (iter != m_turrets.end())
+		{
+			iter->setTurret(turretType, position);
+			playerScore -= TURRET_PLACEMENT_COST;
+		}
 	}
 }
 
