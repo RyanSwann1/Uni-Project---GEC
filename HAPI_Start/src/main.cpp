@@ -17,7 +17,7 @@
 //https://en.cppreference.com/w/cpp/language/delete
 //https://en.cppreference.com/w/cpp/language/rule_of_three
 
-constexpr int PLAYER_STARTING_SCORE = 20;
+constexpr int PLAYER_STARTING_SCORE = 5;
 
 void HAPI_Main()
 {

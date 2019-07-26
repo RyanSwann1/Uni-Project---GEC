@@ -84,8 +84,12 @@ void Level::addTurretAtPosition(Vector2i position, TurretType turretType, int& p
 		auto iter = std::find_if(m_turrets.begin(), m_turrets.end(), [position](const auto& turret) { return turret.getPosition() == position; });
 		if (iter != m_turrets.end())
 		{
+			if (!iter->isActive())
+			{
+				playerScore -= TURRET_PLACEMENT_COST;
+			}
+
 			iter->setTurret(turretType, position);
-			playerScore -= TURRET_PLACEMENT_COST;
 		}
 	}
 }
