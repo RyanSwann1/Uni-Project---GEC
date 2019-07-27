@@ -38,7 +38,7 @@ void HAPI_Main()
 	}
 
 	auto& mouseData = HAPI.GetMouseData();
-	Sprite mouseRectSprite(Vector2i(), 15);
+	Sprite mouseRectSprite(Vector2i(), static_cast<int>(TileID::SELECTOR));
 	Vector2i mouseRectPosition;
 
 	float frameStart = HAPI.GetTime();
@@ -47,6 +47,7 @@ void HAPI_Main()
 
 	int playerScore = PLAYER_STARTING_SCORE;
 	const std::string scoreText("Player Score: ");
+	GameDifficulty gameDifficulty = GameDifficulty::EASY;
 
 	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	while (HAPI.Update())
@@ -62,7 +63,7 @@ void HAPI_Main()
 		}
 
 		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
-		level->update(deltaTime, playerScore);
+		level->update(deltaTime, playerScore, gameDifficulty);
 
 		window->clearToBlack();
 		level->render(*window);

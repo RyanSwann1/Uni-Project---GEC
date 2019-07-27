@@ -25,7 +25,7 @@ public:
 	
 	bool isEnded() const;
 
-	void update(float deltaTime, int& playerScore);
+	void update(float deltaTime, int& playerScore, GameDifficulty gameDifficulty);
 	void render(Window& window);
 
 private:
@@ -40,8 +40,11 @@ private:
 	Timer m_spawnTimer;
 	int m_spawnedUnitCount;
 	int m_unitsReachedDestination;
+	int m_soilderSpawnRate;
+	int m_tankSpawnRate;
+	int m_planeSpawnRate;
 
-	void spawnNextUnit();
+	void spawnNextUnit(GameDifficulty gameDifficulty);
 	void handleInactiveEntities();
 	void handleCollisions(int& playerScore);
 	void handleParticles();

@@ -78,7 +78,7 @@ private:
 class Unit
 {
 public:
-	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, UnitType unitType);
+	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, UnitType unitType, GameDifficulty gameDifficulty);
 
 	Vector2f getMoveDirection() const;
 	Vector2i getPosition() const;

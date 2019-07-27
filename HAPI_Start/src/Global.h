@@ -16,7 +16,15 @@ enum class TileID
 	TANK_HEAD = 291,
 	PLANE = 271,
 	PROJECTILE = 272,
-	PARTICLE = 295
+	PARTICLE = 295,
+	SELECTOR = 15
+};
+
+enum class GameDifficulty
+{
+	EASY = 0,
+	MEDIUM,
+	HARD
 };
 
 struct Vector2i

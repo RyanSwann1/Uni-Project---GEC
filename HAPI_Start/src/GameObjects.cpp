@@ -17,13 +17,17 @@ constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
 
 constexpr int TANK_MAX_HEALTH = 3;
 constexpr int TANK_DAMAGE_VALUE = 2;
-constexpr float TANK_MOVEMENT_SPEED = 0.8f;
+constexpr float TANK_MOVEMENT_SPEED = 1.0f;
 
 constexpr int SOILDER_MAX_HEALTH = 1;
-constexpr float SOILDER_MOVEMENT_SPEED = 1.25f;
+constexpr float SOILDER_MOVEMENT_SPEED = 1.5f;
 
 constexpr int PLANE_MAX_HEALTH = 2;
 constexpr float PLANE_MOVEMENT_SPEED = 2.0f;
+
+constexpr float GAME_DIFFICULTY_MODIFIER_EASY = 1.0f;
+constexpr float GAME_DIFFICULTY_MODIFIER_MEDIUM = 1.2f;
+constexpr float GAME_DIFFICULTY_MODIFIER_HARD = 1.4f;
 
 //Projectile
 Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
@@ -169,7 +173,7 @@ void Turret::setPosition(Vector2i position)
 }
 
 //Unit
-Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, UnitType unitType)
+Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, UnitType unitType, GameDifficulty gameDifficulty)
 	: m_movementPath(movementPath),
 	m_position(movementPath.back()),
 	m_baseSprite(m_position, baseTileID),
@@ -198,6 +202,21 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	case UnitType::Plane :
 		m_health = PLANE_MAX_HEALTH;
 		m_speed = PLANE_MOVEMENT_SPEED;
+		break;
+	}
+
+	switch (gameDifficulty)
+	{
+	case GameDifficulty::EASY:
+		m_speed *= GAME_DIFFICULTY_MODIFIER_EASY;
+		break;
+
+	case GameDifficulty::MEDIUM:
+		m_speed *= GAME_DIFFICULTY_MODIFIER_MEDIUM;
+		break;
+
+	case GameDifficulty::HARD:
+		m_speed *= GAME_DIFFICULTY_MODIFIER_HARD;
 		break;
 	}
 
