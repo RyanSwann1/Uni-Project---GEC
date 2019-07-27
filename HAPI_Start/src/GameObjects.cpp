@@ -14,12 +14,16 @@ constexpr int TURRET_DAMAGE = 1;
 
 constexpr float UNIT_ATTACK_RANGE = 250.f;
 constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
-constexpr float UNIT_SPEED = 2.0f;
 
 constexpr int TANK_MAX_HEALTH = 3;
 constexpr int TANK_DAMAGE_VALUE = 2;
+constexpr float TANK_MOVEMENT_SPEED = 0.8f;
 
 constexpr int SOILDER_MAX_HEALTH = 1;
+constexpr float SOILDER_MOVEMENT_SPEED = 1.25f;
+
+constexpr int PLANE_MAX_HEALTH = 2;
+constexpr float PLANE_MOVEMENT_SPEED = 2.0f;
 
 //Projectile
 Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
@@ -171,7 +175,7 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	m_baseSprite(m_position, baseTileID),
 	m_headSprite(m_position, headTileID),
 	m_active(true),
-	m_speed(UNIT_SPEED),
+	m_speed(0),
 	m_attackRange(UNIT_ATTACK_RANGE),
 	m_fireTimer(TIME_BETWEEN_UNIT_SHOT, true),
 	m_health(0),
@@ -182,36 +186,23 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	{
 	case UnitType::Soilder :
 		m_health = SOILDER_MAX_HEALTH;
-		m_movementPath.pop_back();
+		m_speed = SOILDER_MOVEMENT_SPEED;
 		break;
 	
 	case UnitType::Tank :
 		m_health = TANK_MAX_HEALTH;
 		m_damage = TANK_DAMAGE_VALUE;
-		m_movementPath.pop_back();
+		m_speed = TANK_MOVEMENT_SPEED;
 		break;
 	
 	case UnitType::Plane :
-		m_health = TANK_MAX_HEALTH;
-		m_damage = TANK_DAMAGE_VALUE;
-		size_t movementPathSize = m_movementPath.size();
-		for (int i = 0; i < movementPathSize - 1; ++i)
-		{
-			m_movementPath.pop_back();
-		}
+		m_health = PLANE_MAX_HEALTH;
+		m_speed = PLANE_MOVEMENT_SPEED;
 		break;
 	}
 
-	if (m_position.x == 0)
-	{
-		m_position.x += 10;
-	}
-	else if (m_position.y == 0)
-	{
-		m_position.y += 10;
-	}
+	m_movementPath.pop_back();
 	m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
-	int i = 0;
 }
 
 Vector2f Unit::getMoveDirection() const
@@ -241,6 +232,7 @@ void Unit::damage(int damageValue)
 
 void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles)
 {
+	//Fire Weapon
 	if (m_unitType == UnitType::Tank)
 	{
 		m_fireTimer.update(deltaTime);
@@ -250,6 +242,7 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 		}
 	}
 
+	//Update position
 	Vector2f position = Vector2f(m_position.x, m_position.y);
 
 	position.x += m_moveDirection.x * m_speed;
