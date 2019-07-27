@@ -9,6 +9,7 @@
 std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, Vector2i levelSize, std::vector<TileLayer>& tileLayers);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, Vector2i levelSize);
 std::vector<Vector2i> parseObjectLayer(const TiXmlElement & rootElement, int tileSize, const std::string& layerName, std::vector<Vector2i>& objects);
+void parseProperties(const TiXmlElement& rootElement, int& soilderSpawnRate, int& tankSpawnRate, int& planeSpawnRate);
 
 void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns, const std::string& fileName)
 {
@@ -33,7 +34,8 @@ void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns,
 }
 
 bool XMLParser::parseLevel(const std::string & levelName, Vector2i & levelSize, std::vector<TileLayer>& tileLayers, 
-	std::vector<Vector2i>& entityPath, std::vector<Vector2i>& buildingPlacementPosition)
+	std::vector<Vector2i>& entityPath, std::vector<Vector2i>& buildingPlacementPosition,
+	int& soilderSpawnRate, int& tankSpawnRate, int& planeSpawnRate)
 {
 	TiXmlDocument file;
 	if (!file.LoadFile(DATA_DIRECTORY + levelName))
@@ -49,6 +51,7 @@ bool XMLParser::parseLevel(const std::string & levelName, Vector2i & levelSize, 
 
 	parseTileLayers(*rootElement, levelSize, tileLayers);
 	parseObjectLayer(*rootElement, tileSize, "Entity Path Layer", entityPath);
+	parseProperties(*rootElement, soilderSpawnRate, tankSpawnRate, planeSpawnRate);
 
 	//Reverse the entity path
 	std::vector<Vector2i> reversedEntityPath;
@@ -90,6 +93,44 @@ std::vector<Vector2i> parseObjectLayer(const TiXmlElement & rootElement, int til
 
 	assert(!objects.empty());
 	return objects;
+}
+
+void parseProperties(const TiXmlElement& rootElement, int & soilderSpawnRate, int & tankSpawnRate, int & planeSpawnRate)
+{
+	for (const auto* propertyElement = rootElement.FirstChildElement();
+		propertyElement != nullptr; propertyElement = propertyElement->NextSiblingElement())
+	{
+		if (propertyElement->Value() != std::string("property"))
+		{
+			continue;
+		}
+
+		propertyElement->Attribute("SOILDER_SPAWN_RATE", &soilderSpawnRate);
+		propertyElement->Attribute("TANK_SPAWN_RATE", &tankSpawnRate);
+		propertyElement->Attribute("PLANE_SPAWN_RATE", &planeSpawnRate);
+		int i = 0;
+
+		//int tileSheetFirstGID = 0;
+		//tileSheetElement->Attribute("firstgid", &tileSheetFirstGID);
+		//auto& tileSheetManager = TileSheetManagerLocator::getTileSheetManager();
+		//if (tileSheetManager.hasTileSheet(tileSheetFirstGID))
+		//{
+		//	continue;
+		//}
+
+		//std::string tileSheetName = tileSheetElement->Attribute("name");
+		//sf::Vector2i tileSetSize;
+		//int spacing = 0, margin = 0, tileSize = 0, firstGID = 0;
+		//tileSheetElement->FirstChildElement()->Attribute("width", &tileSetSize.x);
+		//tileSheetElement->FirstChildElement()->Attribute("height", &tileSetSize.y);
+		//tileSheetElement->Attribute("tilewidth", &tileSize);
+		//tileSheetElement->Attribute("spacing", &spacing);
+		//tileSheetElement->Attribute("firstgid", &firstGID);
+		//tileSheetElement->Attribute("margin", &margin);
+		//const int columns = tileSetSize.x / (tileSize + spacing);
+		//const int rows = tileSetSize.y / (tileSize + spacing);
+		//tileSheetManager.addTileSheet(tileSheetFirstGID, TileSheet(std::move(tileSheetName), tileSize, columns, rows, firstGID, margin, spacing));
+	}
 }
 
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, Vector2i levelSize)
