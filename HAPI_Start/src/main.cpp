@@ -53,10 +53,12 @@ void HAPI_Main()
 	int playerScore = PLAYER_STARTING_SCORE;
 	const std::string scoreText("Player Score: ");
 	bool gamePaused = false;
+	bool resetCurrentGame = false;
 
 	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	while (HAPI.Update())
 	{	
+		//Handle Input
 		if (keyboardData.scanCode['P'])
 		{
 			gamePaused = true;
@@ -65,8 +67,17 @@ void HAPI_Main()
 		{
 			gamePaused = false;
 		}
-		frameStart = HAPI.GetTime();
+		else if (keyboardData.scanCode['R'])
+		{
+			if (gamePaused)
+			{
+				resetCurrentGame = true;
+			}
+			
+		}
 
+		//Update 
+		frameStart = HAPI.GetTime();
 		if (!gamePaused)
 		{
 			mouseRectPosition.x = (mouseData.x / tileSize) * tileSize;
@@ -82,17 +93,17 @@ void HAPI_Main()
 			level->update(deltaTime, playerScore, gameDifficulty);
 		}
 
-		
-
+		//Render
 		window->clearToBlack();
-
 		level->render(*window);
 		window->render(mouseRectSprite);
-
 		HAPI.RenderText(500, 50, HAPISPACE::HAPI_TColour::WHITE, scoreText + std::to_string(playerScore), 26);
 
-		if (level->isEnded())
+		//Handle Events
+		if (resetCurrentGame || level->isEnded())
 		{
+			resetCurrentGame = false;
+			gamePaused = false;
 			level = Level::loadLevel("mapOne.tmx", gameDifficulty);
 			playerScore = PLAYER_STARTING_SCORE;
 		}
