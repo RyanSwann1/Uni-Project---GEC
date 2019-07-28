@@ -30,7 +30,8 @@ void HAPI_Main()
 
 	Textures::getInstance().loadAllTextures();
 
-	std::unique_ptr<Level> level = Level::loadLevel("mapTwo.tmx");
+	GameDifficulty gameDifficulty = GameDifficulty::EASY;
+	std::unique_ptr<Level> level = Level::loadLevel("mapOne.tmx", gameDifficulty);
 	if (!level)
 	{
 		std::cout << "Couldn't load level\n";
@@ -47,7 +48,7 @@ void HAPI_Main()
 
 	int playerScore = PLAYER_STARTING_SCORE;
 	const std::string scoreText("Player Score: ");
-	GameDifficulty gameDifficulty = GameDifficulty::EASY;
+	
 
 	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	while (HAPI.Update())
@@ -73,7 +74,7 @@ void HAPI_Main()
 
 		if (level->isEnded())
 		{
-			level = Level::loadLevel("mapTwo.tmx");
+			level = Level::loadLevel("mapOne.tmx", gameDifficulty);
 			playerScore = PLAYER_STARTING_SCORE;
 		}
 

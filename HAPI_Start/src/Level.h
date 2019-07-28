@@ -19,7 +19,7 @@ struct TileLayer
 class Level
 {
 public:
-	static std::unique_ptr<Level> loadLevel(const std::string& levelName);
+	static std::unique_ptr<Level> loadLevel(const std::string& levelName, GameDifficulty gameDifficulty);
 	
 	void addTurretAtPosition(Vector2i position, TurretType turretType, int& playerScore);
 	

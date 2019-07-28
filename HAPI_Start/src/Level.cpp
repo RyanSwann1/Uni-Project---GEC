@@ -55,7 +55,7 @@ Level::Level()
 	m_unitsReachedDestination(0)
 {}
 
-std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
+std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, GameDifficulty gameDifficulty)
 {
 	Level level;
 	std::vector<Vector2i> turretPlacementPositions;
@@ -72,6 +72,19 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName)
 		level.m_units.reserve(static_cast<size_t>(MAX_UNIT_SPAWN_COUNT));
 		level.m_projectiles.reserve(MAX_PROJECTILES_COUNT);
 		level.m_particles.reserve(MAX_PARTICLES_COUNT);
+
+		if (gameDifficulty == GameDifficulty::MEDIUM)
+		{
+			level.m_soilderSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
+			level.m_tankSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
+			level.m_planeSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
+		}
+		else if (gameDifficulty == GameDifficulty::HARD)
+		{
+			level.m_soilderSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
+			level.m_tankSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
+			level.m_planeSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
+		}
 
 		return std::make_unique<Level>(std::move(level));
 	}
@@ -172,12 +185,12 @@ void Level::spawnNextUnit(GameDifficulty gameDifficulty)
 	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
-		if (m_spawnedUnitCount % 3 == 0)
+		if (m_spawnedUnitCount % m_tankSpawnRate == 0)
 		{
 			m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), 
 				m_unitMovementPath, UnitType::Tank, gameDifficulty);
 		}
-		else if (m_spawnedUnitCount % 5 == 0)
+		else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
 		{
 			m_units.emplace_back(static_cast<int>(TileID::PLANE), static_cast<int>(TileID::INVALID), 
 				m_unitMovementPath, UnitType::Plane, gameDifficulty);
