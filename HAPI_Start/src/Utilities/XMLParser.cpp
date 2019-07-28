@@ -97,39 +97,29 @@ std::vector<Vector2i> parseObjectLayer(const TiXmlElement & rootElement, int til
 
 void parseProperties(const TiXmlElement& rootElement, int & soilderSpawnRate, int & tankSpawnRate, int & planeSpawnRate)
 {
-	for (const auto* propertyElement = rootElement.FirstChildElement();
-		propertyElement != nullptr; propertyElement = propertyElement->NextSiblingElement())
+	for (const auto* xmlElement = rootElement.FirstChildElement(); xmlElement != nullptr; xmlElement = xmlElement->NextSiblingElement())
 	{
-		if (propertyElement->Value() != std::string("property"))
+		if (xmlElement->Value() != std::string("properties"))
 		{
 			continue;
 		}
 
-		propertyElement->Attribute("SOILDER_SPAWN_RATE", &soilderSpawnRate);
-		propertyElement->Attribute("TANK_SPAWN_RATE", &tankSpawnRate);
-		propertyElement->Attribute("PLANE_SPAWN_RATE", &planeSpawnRate);
-		int i = 0;
-
-		//int tileSheetFirstGID = 0;
-		//tileSheetElement->Attribute("firstgid", &tileSheetFirstGID);
-		//auto& tileSheetManager = TileSheetManagerLocator::getTileSheetManager();
-		//if (tileSheetManager.hasTileSheet(tileSheetFirstGID))
-		//{
-		//	continue;
-		//}
-
-		//std::string tileSheetName = tileSheetElement->Attribute("name");
-		//sf::Vector2i tileSetSize;
-		//int spacing = 0, margin = 0, tileSize = 0, firstGID = 0;
-		//tileSheetElement->FirstChildElement()->Attribute("width", &tileSetSize.x);
-		//tileSheetElement->FirstChildElement()->Attribute("height", &tileSetSize.y);
-		//tileSheetElement->Attribute("tilewidth", &tileSize);
-		//tileSheetElement->Attribute("spacing", &spacing);
-		//tileSheetElement->Attribute("firstgid", &firstGID);
-		//tileSheetElement->Attribute("margin", &margin);
-		//const int columns = tileSetSize.x / (tileSize + spacing);
-		//const int rows = tileSetSize.y / (tileSize + spacing);
-		//tileSheetManager.addTileSheet(tileSheetFirstGID, TileSheet(std::move(tileSheetName), tileSize, columns, rows, firstGID, margin, spacing));
+		for (const auto* propertyElement = xmlElement->FirstChildElement(); propertyElement != nullptr; propertyElement = propertyElement->NextSiblingElement())
+		{	
+			std::string propertyName = propertyElement->FirstAttribute()->Value();
+			if (propertyName == "SOILDER_SPAWN_RATE")
+			{
+				propertyElement->Attribute("value", &soilderSpawnRate);
+			}
+			else if (propertyName == "TANK_SPAWN_RATE")
+			{
+				propertyElement->Attribute("value", &tankSpawnRate);
+			}
+			else if (propertyName == "PLANE_SPAWN_RATE")
+			{
+				propertyElement->Attribute("value", &planeSpawnRate);
+			}
+		}
 	}
 }
 
