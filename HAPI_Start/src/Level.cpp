@@ -10,7 +10,7 @@ constexpr float TIME_BETWEEN_ENTITY_SPAWN = 3.5f;
 constexpr int MAX_UNIT_SPAWN_COUNT = 20;
 
 constexpr size_t MAX_PROJECTILES_COUNT = 100;
-constexpr size_t MAX_PARTICLES_COUNT = 25;
+constexpr size_t MAX_PARTICLES_COUNT = 50;
 
 constexpr int TURRET_PLACEMENT_COST = 5;
 constexpr int UNIT_ELIMINATE_SCORE = 2;
@@ -195,7 +195,7 @@ void Level::spawnNextUnit(eGameDifficulty gameDifficulty)
 		}
 		else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
 		{
-			m_units.emplace_back(static_cast<int>(eTileID::PLANE), static_cast<int>(eTileID::INVALID), 
+			m_units.emplace_back(static_cast<int>(eTileID::PLANE_SHADOW), static_cast<int>(eTileID::PLANE),
 				m_unitMovementPath, eUnitType::Plane, gameDifficulty);
 		}
 		else
