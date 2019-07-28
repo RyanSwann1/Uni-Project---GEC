@@ -58,8 +58,9 @@ bool Window::createWindow()
 	{
 		return false;
 	}
-	HAPI.SetShowFPS(true, FPS_DISPLAY_POSITION.x, FPS_DISPLAY_POSITION.y);
+
 	m_window = HAPI.GetScreenPointer();
+	HAPI.SetShowFPS(true, FPS_DISPLAY_POSITION.x, FPS_DISPLAY_POSITION.y);
 	
 	return true;
 }

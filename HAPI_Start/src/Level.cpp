@@ -7,7 +7,7 @@
 #include "Utilities/XMLParser.h"
 
 constexpr float TIME_BETWEEN_ENTITY_SPAWN = 3.5f;
-constexpr int MAX_UNIT_SPAWN_COUNT = 20;
+constexpr int MAX_UNIT_SPAWN_COUNT = 10;
 
 constexpr size_t MAX_PROJECTILES_COUNT = 100;
 constexpr size_t MAX_PARTICLES_COUNT = 50;
@@ -116,7 +116,7 @@ void Level::addTurretAtPosition(Vector2f position, eTurretType turretType, int& 
 
 bool Level::isEnded() const
 {
-	return m_spawnedUnitCount == MAX_UNIT_SPAWN_COUNT && m_units.empty();
+	return m_spawnedUnitCount >= MAX_UNIT_SPAWN_COUNT && m_units.empty();
 }
 
 void Level::update(float deltaTime, int& playerScore, eGameDifficulty gameDifficulty)
@@ -185,24 +185,25 @@ void Level::render(Window & window)
 
 void Level::spawnNextUnit(eGameDifficulty gameDifficulty)
 {
-	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
+		++m_spawnedUnitCount;
+
 		if (m_spawnedUnitCount % m_tankSpawnRate == 0)
 		{
+			++m_spawnedUnitCount;
 			m_units.emplace_back(static_cast<int>(eTileID::TANK_BASE), static_cast<int>(eTileID::TANK_HEAD), 
 				m_unitMovementPath, eUnitType::Vechile, gameDifficulty);
 		}
 		else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
 		{
+			++m_spawnedUnitCount;
 			m_units.emplace_back(static_cast<int>(eTileID::PLANE_SHADOW), static_cast<int>(eTileID::PLANE),
 				m_unitMovementPath, eUnitType::Aircraft, gameDifficulty);
 		}
-		else
-		{
-			m_units.emplace_back(static_cast<int>(eTileID::SOILDER_GREEN), static_cast<int>(eTileID::INVALID), 
-				m_unitMovementPath, eUnitType::Footman, gameDifficulty);
-		}
+
+		m_units.emplace_back(static_cast<int>(eTileID::SOILDER_GREEN), static_cast<int>(eTileID::INVALID),
+			m_unitMovementPath, eUnitType::Footman, gameDifficulty);
 	}
 }
 
