@@ -191,17 +191,17 @@ void Level::spawnNextUnit(eGameDifficulty gameDifficulty)
 		if (m_spawnedUnitCount % m_tankSpawnRate == 0)
 		{
 			m_units.emplace_back(static_cast<int>(eTileID::TANK_BASE), static_cast<int>(eTileID::TANK_HEAD), 
-				m_unitMovementPath, eUnitType::Tank, gameDifficulty);
+				m_unitMovementPath, eUnitType::Vechile, gameDifficulty);
 		}
 		else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
 		{
 			m_units.emplace_back(static_cast<int>(eTileID::PLANE_SHADOW), static_cast<int>(eTileID::PLANE),
-				m_unitMovementPath, eUnitType::Plane, gameDifficulty);
+				m_unitMovementPath, eUnitType::Aircraft, gameDifficulty);
 		}
 		else
 		{
 			m_units.emplace_back(static_cast<int>(eTileID::SOILDER_GREEN), static_cast<int>(eTileID::INVALID), 
-				m_unitMovementPath, eUnitType::Soilder, gameDifficulty);
+				m_unitMovementPath, eUnitType::Footman, gameDifficulty);
 		}
 	}
 }

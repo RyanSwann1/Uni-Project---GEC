@@ -19,9 +19,9 @@ enum class eProjectileSender
 
 enum class eUnitType
 {
-	Soilder = 0,
-	Tank, 
-	Plane
+	Footman = 0,
+	Vechile, 
+	Aircraft
 };
 
 class Unit;

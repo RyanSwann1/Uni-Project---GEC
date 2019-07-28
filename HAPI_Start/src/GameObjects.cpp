@@ -183,20 +183,20 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 {
 	switch (m_unitType)
 	{
-	case eUnitType::Soilder :
+	case eUnitType::Footman :
 		m_health = SOILDER_MAX_HEALTH;
 		m_speed = SOILDER_MOVEMENT_SPEED;
 		m_movementPath.pop_back();
 		break;
 	
-	case eUnitType::Tank :
+	case eUnitType::Vechile :
 		m_health = TANK_MAX_HEALTH;
 		m_damage = TANK_DAMAGE_VALUE;
 		m_speed = TANK_MOVEMENT_SPEED;
 		m_movementPath.pop_back();
 		break;
 	
-	case eUnitType::Plane :
+	case eUnitType::Aircraft :
 		m_health = PLANE_MAX_HEALTH;
 		m_speed = PLANE_MOVEMENT_SPEED;
 		size_t movementPathSize = m_movementPath.size();
@@ -255,7 +255,7 @@ void Unit::damage(int damageValue)
 void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles)
 {
 	//Fire Weapon
-	if (m_unitType == eUnitType::Tank)
+	if (m_unitType == eUnitType::Vechile)
 	{
 		m_fireTimer.update(deltaTime);
 		if (m_fireTimer.isExpired() && (fire(turrets, projectiles)))
@@ -295,7 +295,7 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	}
 	
 
-	if (m_unitType == eUnitType::Plane)
+	if (m_unitType == eUnitType::Aircraft)
 	{
 		int tileSize = m_baseSprite.getTexture().getTileSize();
 		Vector2f newBasePosition(m_position.x + tileSize, m_position.y + tileSize);
