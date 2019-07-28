@@ -73,6 +73,9 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, GameDiffi
 		level.m_projectiles.reserve(MAX_PROJECTILES_COUNT);
 		level.m_particles.reserve(MAX_PARTICLES_COUNT);
 
+		assert(level.m_soilderSpawnRate > 0);
+		assert(level.m_tankSpawnRate > 0);
+		assert(level.m_planeSpawnRate > 0);
 		if (gameDifficulty == GameDifficulty::MEDIUM)
 		{
 			level.m_soilderSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
