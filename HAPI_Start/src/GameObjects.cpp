@@ -264,45 +264,43 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 		}
 	}
 
-	//Update position
-	Vector2f position = Vector2f(m_position.x, m_position.y);
-
-	position.x += m_moveDirection.x * m_speed;
-	position.y += m_moveDirection.y * m_speed;
-
-	m_position.x = position.x;
-	m_position.y = position.y;
-
+	//Update Position
+	m_position.x += m_moveDirection.x * m_speed;
+	m_position.y += m_moveDirection.y * m_speed;
+	
 	m_baseSprite.setPosition(m_position);
 	m_headSprite.setPosition(m_position);
 
-	//Up
+	//Check if reached destination
 	bool reachedDestination = false;
-	if (m_moveDirection.y == -1 && m_position.y <= m_movementPath.back().y)
+	if (m_moveDirection.x >= 0 && m_moveDirection.y <= 0 &&
+		m_position.x >= m_movementPath.back().x && m_position.y <= m_movementPath.back().y)
 	{
 		reachedDestination = true;
 	}
-	//Right
-	else if (m_moveDirection.x == 1 && m_position.x >= m_movementPath.back().x)
+	else if (m_moveDirection.x >= 0 && m_moveDirection.y >= 0 &&
+		m_position.x >= m_movementPath.back().x && m_position.y >= m_movementPath.back().y)
 	{
 		reachedDestination = true;
 	}
-	//Left
-	else if (m_moveDirection.x == -1 && m_position.x <= m_movementPath.back().x)
+	else if (m_moveDirection.x <= 0 && m_moveDirection.y >= 0 &&
+		m_position.x >= m_movementPath.back().y && m_position.y >= m_movementPath.back().y)
 	{
 		reachedDestination = true;
 	}
-	//Down
-	else if (m_moveDirection.y == 1 && m_position.y >= m_movementPath.back().y)
-	{
-		reachedDestination = true;
-	}
-	else if (m_moveDirection.x >= 0 && m_position.x >= m_movementPath.back().x &&
-		m_moveDirection.y <= 0 && m_position.y <= m_movementPath.back().y)
+	else if (m_moveDirection.x <= 0 && m_moveDirection.y <= 0 &&
+		m_position.x >= m_movementPath.back().y && m_position.y <= m_movementPath.back().y)
 	{
 		reachedDestination = true;
 	}
 	
+	if (m_unitType == eUnitType::Plane)
+	{
+		int tileSize = m_baseSprite.getTexture().getTileSize();
+		Vector2f newBasePosition(m_position.x + tileSize, m_position.y + tileSize);
+		m_baseSprite.setPosition(newBasePosition);
+	}
+
 	//Assign new destination
 	if (reachedDestination)
 	{
