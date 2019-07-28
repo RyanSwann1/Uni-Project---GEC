@@ -294,6 +294,7 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 		reachedDestination = true;
 	}
 	
+
 	if (m_unitType == eUnitType::Plane)
 	{
 		int tileSize = m_baseSprite.getTexture().getTileSize();
@@ -328,7 +329,7 @@ bool Unit::fire(const std::vector<Turret>& turrets, std::vector<Projectile>& pro
 {
 	for (const auto& turret : turrets)
 	{
-		if (Math::isWithinRange(m_position, turret.getPosition(), m_attackRange) && turret.isActive())
+		if (turret.isActive() && Math::isWithinRange(m_position, turret.getPosition(), m_attackRange))
 		{
 			Vector2f dir = Math::getDirection(m_position, turret.getPosition());
 			projectiles.emplace_back(m_position, dir, eProjectileSender::Unit, static_cast<int>(eTileID::PROJECTILE), UNIT_PROJECTILE_SPEED, m_damage);
