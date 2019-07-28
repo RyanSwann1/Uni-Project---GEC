@@ -73,9 +73,9 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, eGameDiff
 		level.m_projectiles.reserve(MAX_PROJECTILES_COUNT);
 		level.m_particles.reserve(MAX_PARTICLES_COUNT);
 
-		assert(level.m_soilderSpawnRate > 0);
-		assert(level.m_tankSpawnRate > 0);
-		assert(level.m_planeSpawnRate > 0);
+		//assert(level.m_soilderSpawnRate > 0);
+		//assert(level.m_tankSpawnRate > 0);
+		//assert(level.m_planeSpawnRate > 0);
 		if (gameDifficulty == eGameDifficulty::HARD)
 		{
 			level.m_soilderSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
@@ -188,21 +188,24 @@ void Level::spawnNextUnit(eGameDifficulty gameDifficulty)
 	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
-		if (m_spawnedUnitCount % m_tankSpawnRate == 0)
-		{
-			m_units.emplace_back(static_cast<int>(eTileID::TANK_BASE), static_cast<int>(eTileID::TANK_HEAD), 
-				m_unitMovementPath, eUnitType::Tank, gameDifficulty);
-		}
-		else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
-		{
-			m_units.emplace_back(static_cast<int>(eTileID::PLANE), static_cast<int>(eTileID::INVALID), 
-				m_unitMovementPath, eUnitType::Plane, gameDifficulty);
-		}
-		else
-		{
-			m_units.emplace_back(static_cast<int>(eTileID::SOILDER_GREEN), static_cast<int>(eTileID::INVALID), 
-				m_unitMovementPath, eUnitType::Soilder, gameDifficulty);
-		}
+		m_units.emplace_back(static_cast<int>(eTileID::PLANE), static_cast<int>(eTileID::INVALID),
+			m_unitMovementPath, eUnitType::Plane, gameDifficulty);
+
+		//if (m_spawnedUnitCount % m_tankSpawnRate == 0)
+		//{
+		//	m_units.emplace_back(static_cast<int>(eTileID::TANK_BASE), static_cast<int>(eTileID::TANK_HEAD), 
+		//		m_unitMovementPath, eUnitType::Tank, gameDifficulty);
+		//}
+		//else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
+		//{
+		//	m_units.emplace_back(static_cast<int>(eTileID::PLANE), static_cast<int>(eTileID::INVALID), 
+		//		m_unitMovementPath, eUnitType::Plane, gameDifficulty);
+		//}
+		//else
+		//{
+		//	m_units.emplace_back(static_cast<int>(eTileID::SOILDER_GREEN), static_cast<int>(eTileID::INVALID), 
+		//		m_unitMovementPath, eUnitType::Soilder, gameDifficulty);
+		//}
 	}
 }
 

@@ -202,6 +202,11 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	case eUnitType::Plane :
 		m_health = PLANE_MAX_HEALTH;
 		m_speed = PLANE_MOVEMENT_SPEED;
+		size_t movementPathSize = m_movementPath.size();
+		for (int i = 0; i < movementPathSize - 1; ++i)
+		{
+			m_movementPath.pop_back();
+		}
 		break;
 	}
 
@@ -220,7 +225,7 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 		break;
 	}
 
-	m_movementPath.pop_back();
+	//m_movementPath.pop_back();
 	m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
 }
 
@@ -264,8 +269,8 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	//Update position
 	Vector2f position = Vector2f(m_position.x, m_position.y);
 
-	position.x += m_moveDirection.x * m_speed;
-	position.y += m_moveDirection.y * m_speed;
+	position.x += m_moveDirection.x * 20;
+	position.y += m_moveDirection.y * 20;
 
 	m_position.x = position.x;
 	m_position.y = position.y;
@@ -291,6 +296,11 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	}
 	//Down
 	else if (m_moveDirection.y == 1 && m_position.y >= m_movementPath.back().y)
+	{
+		reachedDestination = true;
+	}
+	else if (m_moveDirection.x >= 0 && m_position.x >= m_movementPath.back().x &&
+		m_moveDirection.y <= 0 && m_position.y <= m_movementPath.back().y)
 	{
 		reachedDestination = true;
 	}
