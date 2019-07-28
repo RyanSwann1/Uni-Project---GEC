@@ -289,7 +289,7 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 		reachedDestination = true;
 	}
 	else if (m_moveDirection.x <= 0 && m_moveDirection.y <= 0 &&
-		m_position.x >= m_movementPath.back().y && m_position.y <= m_movementPath.back().y)
+		m_position.x <= m_movementPath.back().y && m_position.y <= m_movementPath.back().y)
 	{
 		reachedDestination = true;
 	}
