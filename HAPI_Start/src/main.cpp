@@ -17,6 +17,9 @@
 //https://en.cppreference.com/w/cpp/language/delete
 //https://en.cppreference.com/w/cpp/language/rule_of_three
 
+//http://www.alanzucconi.com/2016/02/03/2d-rotations/
+//https://gamedev.stackexchange.com/questions/14602/what-are-atan-and-atan2-used-for-in-games
+
 constexpr int PLAYER_STARTING_SCORE = 5;
 
 void HAPI_Main()
@@ -29,8 +32,8 @@ void HAPI_Main()
 	}
 
 	Textures::getInstance().loadAllTextures();
-
-	GameDifficulty gameDifficulty = GameDifficulty::EASY;
+	
+	eGameDifficulty gameDifficulty = eGameDifficulty::NORMAL;
 	std::unique_ptr<Level> level = Level::loadLevel("mapOne.tmx", gameDifficulty);
 	if (!level)
 	{
@@ -39,7 +42,8 @@ void HAPI_Main()
 	}
 
 	auto& mouseData = HAPI.GetMouseData();
-	Sprite mouseRectSprite(Vector2i(), static_cast<int>(TileID::SELECTOR));
+	auto& keyboardData = HAPI.GetKeyboardData();
+	Sprite mouseRectSprite(Vector2i(), static_cast<int>(eTileID::SELECTOR));
 	Vector2i mouseRectPosition;
 
 	float frameStart = HAPI.GetTime();
@@ -48,25 +52,40 @@ void HAPI_Main()
 
 	int playerScore = PLAYER_STARTING_SCORE;
 	const std::string scoreText("Player Score: ");
-	
+	bool gamePaused = false;
 
 	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	while (HAPI.Update())
 	{	
-		frameStart = HAPI.GetTime();
-		mouseRectPosition.x = (mouseData.x / tileSize) * tileSize;
-		mouseRectPosition.y = (mouseData.y / tileSize) * tileSize;
-		mouseRectSprite.setPosition(mouseRectPosition);
-
-		if (mouseData.leftButtonDown)
+		if (keyboardData.scanCode['P'])
 		{
-			level->addTurretAtPosition(mouseRectPosition, TurretType::Cannon, playerScore);
+			gamePaused = true;
+		}
+		else if (keyboardData.scanCode['U'])
+		{
+			gamePaused = false;
+		}
+		frameStart = HAPI.GetTime();
+
+		if (!gamePaused)
+		{
+			mouseRectPosition.x = (mouseData.x / tileSize) * tileSize;
+			mouseRectPosition.y = (mouseData.y / tileSize) * tileSize;
+			mouseRectSprite.setPosition(mouseRectPosition);
+
+			if (mouseData.leftButtonDown)
+			{
+				level->addTurretAtPosition(mouseRectPosition, eTurretType::Cannon, playerScore);
+			}
+
+			deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
+			level->update(deltaTime, playerScore, gameDifficulty);
 		}
 
-		deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
-		level->update(deltaTime, playerScore, gameDifficulty);
+		
 
 		window->clearToBlack();
+
 		level->render(*window);
 		window->render(mouseRectSprite);
 
