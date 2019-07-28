@@ -29,18 +29,18 @@ class Window;
 class Projectile
 {
 public:
-	Projectile(Vector2i startingPosition, Vector2f startingDirection, eProjectileSender sentFrom, 
+	Projectile(Vector2f startingPosition, Vector2f startingDirection, eProjectileSender sentFrom, 
 		int tileID, float speed, int damage);
 
 	int getDamageValue() const;
 	eProjectileSender getSentFrom() const;
-	Vector2i getPosition() const;
+	Vector2f getPosition() const;
 
 	void update(float deltaTime, const std::vector<Unit>& units);
 	void render(const Window& window) const;
 
 private:
-	Vector2i m_position;
+	Vector2f m_position;
 	eProjectileSender m_sentFrom;
 	float m_speed;
 	Sprite m_sprite;
@@ -52,18 +52,18 @@ class Texture;
 struct Turret
 {
 public:
-	Turret(Vector2i startingPosition);
+	Turret(Vector2f startingPosition);
 
 	bool isActive() const;
-	Vector2i getPosition() const;
-	void setTurret(eTurretType turretType, Vector2i position);
+	Vector2f getPosition() const;
+	void setTurret(eTurretType turretType, Vector2f position);
 
 	void damage(int damageValue);
 	void update(float deltaTime, const std::vector<Unit>& units, std::vector<Projectile>& projectiles);
 	void render(const Window& window) const;
 
 private:
-	Vector2i m_position;
+	Vector2f m_position;
 	Sprite m_baseSprite;
 	Sprite m_headSprite;
 	float m_attackRange;
@@ -72,7 +72,7 @@ private:
 	int m_health;
 
 	bool fire(const std::vector<Unit>& units, std::vector<Projectile>& projectiles) const;
-	void setPosition(Vector2i position);
+	void setPosition(Vector2f position);
 };
 
 class Unit
@@ -81,7 +81,7 @@ public:
 	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, eUnitType unitType, eGameDifficulty gameDifficulty);
 
 	Vector2f getMoveDirection() const;
-	Vector2i getPosition() const;
+	Vector2f getPosition() const;
 	bool isActive() const;
 
 	void damage(int damageValue);
@@ -90,7 +90,7 @@ public:
 
 private:
 	std::vector<Vector2i> m_movementPath;
-	Vector2i m_position;
+	Vector2f m_position;
 	Sprite m_baseSprite;
 	Sprite m_headSprite;
 	bool m_active;

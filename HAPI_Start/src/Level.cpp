@@ -33,7 +33,7 @@ void TileLayer::render(Window & window, Vector2i levelSize) const
 			const int tileID = m_tileData[y][x];
 			if (tileID > static_cast<int>(eTileID::INVALID))
 			{
-				Vector2i position(x * tileSize, y * tileSize);
+				Vector2f position(x * tileSize, y * tileSize);
 				Sprite sprite(position, tileID);
 				window.render(sprite);
 			}
@@ -66,16 +66,16 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, eGameDiff
 		level.m_turrets.reserve(turretPlacementPositions.size());
 		for (auto position : turretPlacementPositions)
 		{
-			level.m_turrets.emplace_back(position);
+			level.m_turrets.emplace_back(Vector2f(position.x, position.y));
 		}
 
 		level.m_units.reserve(static_cast<size_t>(MAX_UNIT_SPAWN_COUNT));
 		level.m_projectiles.reserve(MAX_PROJECTILES_COUNT);
 		level.m_particles.reserve(MAX_PARTICLES_COUNT);
 
-		//assert(level.m_soilderSpawnRate > 0);
-		//assert(level.m_tankSpawnRate > 0);
-		//assert(level.m_planeSpawnRate > 0);
+		assert(level.m_soilderSpawnRate > 0);
+		assert(level.m_tankSpawnRate > 0);
+		assert(level.m_planeSpawnRate > 0);
 		if (gameDifficulty == eGameDifficulty::HARD)
 		{
 			level.m_soilderSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
@@ -97,7 +97,7 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, eGameDiff
 	}
 }
 
-void Level::addTurretAtPosition(Vector2i position, eTurretType turretType, int& playerScore)
+void Level::addTurretAtPosition(Vector2f position, eTurretType turretType, int& playerScore)
 {
 	if (playerScore >= TURRET_PLACEMENT_COST)
 	{
@@ -188,24 +188,21 @@ void Level::spawnNextUnit(eGameDifficulty gameDifficulty)
 	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
-		m_units.emplace_back(static_cast<int>(eTileID::PLANE), static_cast<int>(eTileID::INVALID),
-			m_unitMovementPath, eUnitType::Plane, gameDifficulty);
-
-		//if (m_spawnedUnitCount % m_tankSpawnRate == 0)
-		//{
-		//	m_units.emplace_back(static_cast<int>(eTileID::TANK_BASE), static_cast<int>(eTileID::TANK_HEAD), 
-		//		m_unitMovementPath, eUnitType::Tank, gameDifficulty);
-		//}
-		//else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
-		//{
-		//	m_units.emplace_back(static_cast<int>(eTileID::PLANE), static_cast<int>(eTileID::INVALID), 
-		//		m_unitMovementPath, eUnitType::Plane, gameDifficulty);
-		//}
-		//else
-		//{
-		//	m_units.emplace_back(static_cast<int>(eTileID::SOILDER_GREEN), static_cast<int>(eTileID::INVALID), 
-		//		m_unitMovementPath, eUnitType::Soilder, gameDifficulty);
-		//}
+		if (m_spawnedUnitCount % m_tankSpawnRate == 0)
+		{
+			m_units.emplace_back(static_cast<int>(eTileID::TANK_BASE), static_cast<int>(eTileID::TANK_HEAD), 
+				m_unitMovementPath, eUnitType::Tank, gameDifficulty);
+		}
+		else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
+		{
+			m_units.emplace_back(static_cast<int>(eTileID::PLANE), static_cast<int>(eTileID::INVALID), 
+				m_unitMovementPath, eUnitType::Plane, gameDifficulty);
+		}
+		else
+		{
+			m_units.emplace_back(static_cast<int>(eTileID::SOILDER_GREEN), static_cast<int>(eTileID::INVALID), 
+				m_unitMovementPath, eUnitType::Soilder, gameDifficulty);
+		}
 	}
 }
 

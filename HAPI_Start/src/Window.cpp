@@ -93,7 +93,9 @@ void Window::clearToBlack()
 
 void Window::blit(const Sprite& sprite) const
 {
-	HAPISPACE::BYTE* screenPnter = m_window + (sprite.getPosition().x + (sprite.getPosition().y * m_windowSize.x)) * BYTES_PER_PIXEL;
+	Vector2i spritePosition(static_cast<int>(sprite.getPosition().x), static_cast<int>(sprite.getPosition().y));
+	HAPISPACE::BYTE* screenPnter = m_window + (spritePosition.x + (spritePosition.y * m_windowSize.x)) * BYTES_PER_PIXEL;
+
 	int textureOffset = (sprite.getFrame().x + (sprite.getTexture().getSize().x) * sprite.getFrame().y) * BYTES_PER_PIXEL;
 	HAPISPACE::BYTE* texturePnter = sprite.getTexture().getTexture() + textureOffset;
 	Rectangle frameRect = sprite.getFrameRect();
@@ -112,7 +114,9 @@ void Window::blit(const Sprite& sprite) const
 void Window::blitAlpha(const Sprite & sprite) const
 {
 	Rectangle windowRect(0, m_windowSize.x, 0, m_windowSize.y);
-	Rectangle spriteRect(sprite.getPosition().x, sprite.getTexture().getTileSize(), sprite.getPosition().y, 
+
+	Vector2i spritePosition(static_cast<int>(sprite.getPosition().x), static_cast<int>(sprite.getPosition().y));
+	Rectangle spriteRect(spritePosition.x, sprite.getTexture().getTileSize(), spritePosition.y, 
 		sprite.getTexture().getTileSize());
 
 	if (!spriteRect.intersects(windowRect))
@@ -124,7 +128,7 @@ void Window::blitAlpha(const Sprite & sprite) const
 
 	int textureOffset = (sprite.getFrame().x + (sprite.getTexture().getSize().x) * sprite.getFrame().y) * BYTES_PER_PIXEL;
 	HAPISPACE::BYTE* texturePointer = sprite.getTexture().getTexture() + textureOffset;
-	HAPISPACE::BYTE* screenPointer = m_window + (sprite.getPosition().x + (sprite.getPosition().y * m_windowSize.x)) * BYTES_PER_PIXEL;
+	HAPISPACE::BYTE* screenPointer = m_window + (spritePosition.x + (spritePosition.y * m_windowSize.x)) * BYTES_PER_PIXEL;
 
 	for (int y = spriteRect.m_top; y < spriteRect.m_bottom; y++)
 	{

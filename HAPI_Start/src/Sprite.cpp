@@ -9,7 +9,7 @@ Sprite::Sprite()
 	m_tileID(static_cast<int>(eTileID::INVALID))
 {}
 
-Sprite::Sprite(Vector2i startingPosition, int tileID)
+Sprite::Sprite(Vector2f startingPosition, int tileID)
 	: m_texture(Textures::getInstance().getTexture()),
 	m_position(startingPosition),
 	m_size(Textures::getInstance().getTexture().getTileSize(), Textures::getInstance().getTexture().getTileSize()),
@@ -26,7 +26,7 @@ Vector2i Sprite::getSize() const
 	return m_size;
 }
 
-Vector2i Sprite::getPosition() const
+Vector2f Sprite::getPosition() const
 {
 	return m_position;
 }
@@ -56,7 +56,7 @@ void Sprite::setID(int tileID)
 	m_tileID = tileID;
 }
 
-void Sprite::setPosition(Vector2i position)
+void Sprite::setPosition(Vector2f position)
 {
 	m_position = position;
 }

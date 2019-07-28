@@ -34,7 +34,8 @@ void HAPI_Main()
 	Textures::getInstance().loadAllTextures();
 	
 	eGameDifficulty gameDifficulty = eGameDifficulty::NORMAL;
-	std::unique_ptr<Level> level = Level::loadLevel("mapThree.tmx", gameDifficulty);
+	std::string levelName = "mapOne.tmx";
+	std::unique_ptr<Level> level = Level::loadLevel(levelName, gameDifficulty);
 	if (!level)
 	{
 		std::cout << "Couldn't load level\n";
@@ -43,8 +44,8 @@ void HAPI_Main()
 
 	auto& mouseData = HAPI.GetMouseData();
 	auto& keyboardData = HAPI.GetKeyboardData();
-	Sprite mouseRectSprite(Vector2i(), static_cast<int>(eTileID::SELECTOR));
-	Vector2i mouseRectPosition;
+	Sprite mouseRectSprite(Vector2f(), static_cast<int>(eTileID::SELECTOR));
+	Vector2f mouseRectPosition;
 
 	float frameStart = HAPI.GetTime();
 	float lastFrameStart = HAPI.GetTime();
@@ -103,7 +104,7 @@ void HAPI_Main()
 		{
 			resetCurrentGame = false;
 			gamePaused = false;
-			level = Level::loadLevel("mapOne.tmx", gameDifficulty);
+			level = Level::loadLevel(levelName, gameDifficulty);
 			playerScore = PLAYER_STARTING_SCORE;
 		}
 

@@ -130,3 +130,8 @@ Vector2f Vector2f::operator+=(Vector2f other)
 
 	return vect;
 }
+
+bool Vector2f::operator==(Vector2f other)
+{
+	return x == other.x && y == other.y;
+}

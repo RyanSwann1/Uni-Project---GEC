@@ -7,7 +7,7 @@ class Window;
 class Particle
 {
 public:
-	Particle(Vector2i startingPosition, int tileID);
+	Particle(Vector2f startingPosition, int tileID);
 
 	bool isExpired() const;
 
@@ -16,6 +16,6 @@ public:
 
 private:
 	Sprite m_sprite;
-	Vector2i m_position;
+	Vector2f m_position;
 	Timer m_aliveTimer;
 };

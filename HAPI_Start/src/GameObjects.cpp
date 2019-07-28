@@ -30,7 +30,7 @@ constexpr float GAME_DIFFICULTY_MODIFIER_MEDIUM = 1.2f;
 constexpr float GAME_DIFFICULTY_MODIFIER_HARD = 1.4f;
 
 //Projectile
-Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, eProjectileSender sentFrom, 
+Projectile::Projectile(Vector2f startingPosition, Vector2f startingDirection, eProjectileSender sentFrom, 
 	int tileID, float speed, int damage)
 	: m_position(startingPosition),
 	m_sentFrom(sentFrom),
@@ -50,20 +50,15 @@ eProjectileSender Projectile::getSentFrom() const
 	return m_sentFrom;
 }
 
-Vector2i Projectile::getPosition() const
+Vector2f Projectile::getPosition() const
 {
 	return m_position;
 }
 
 void Projectile::update(float deltaTime, const std::vector<Unit>& units)
 {
-	Vector2f position = Vector2f(m_position.x, m_position.y);
-
-	position.x += m_direction.x * m_speed;
-	position.y += m_direction.y * m_speed;
-	
-	m_position.x = position.x;
-	m_position.y = position.y;
+	m_position.x += m_direction.x * m_speed;
+	m_position.y += m_direction.y * m_speed;
 
 	m_sprite.setPosition(m_position);
 }
@@ -74,7 +69,7 @@ void Projectile::render(const Window & window) const
 }
 
 //Turret
-Turret::Turret(Vector2i startingPosition)
+Turret::Turret(Vector2f startingPosition)
 	: m_position(startingPosition),
 	m_baseSprite(),
 	m_headSprite(),
@@ -98,12 +93,12 @@ bool Turret::isActive() const
 	return m_active;
 }
 
-Vector2i Turret::getPosition() const
+Vector2f Turret::getPosition() const
 {
 	return m_position;
 }
 
-void Turret::setTurret(eTurretType turretType, Vector2i position)
+void Turret::setTurret(eTurretType turretType, Vector2f position)
 {
 	m_active = true;
 
@@ -165,7 +160,7 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 	return false;
 }
 
-void Turret::setPosition(Vector2i position)
+void Turret::setPosition(Vector2f position)
 {
 	m_position = position;
 	m_baseSprite.setPosition(position);
@@ -175,7 +170,7 @@ void Turret::setPosition(Vector2i position)
 //Unit
 Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, eUnitType unitType, eGameDifficulty gameDifficulty)
 	: m_movementPath(movementPath),
-	m_position(movementPath.back()),
+	m_position(static_cast<float>(movementPath.back().x), static_cast<float>(movementPath.back().y)),
 	m_baseSprite(m_position, baseTileID),
 	m_headSprite(m_position, headTileID),
 	m_active(true),
@@ -191,12 +186,14 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	case eUnitType::Soilder :
 		m_health = SOILDER_MAX_HEALTH;
 		m_speed = SOILDER_MOVEMENT_SPEED;
+		m_movementPath.pop_back();
 		break;
 	
 	case eUnitType::Tank :
 		m_health = TANK_MAX_HEALTH;
 		m_damage = TANK_DAMAGE_VALUE;
 		m_speed = TANK_MOVEMENT_SPEED;
+		m_movementPath.pop_back();
 		break;
 	
 	case eUnitType::Plane :
@@ -225,8 +222,9 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 		break;
 	}
 
-	//m_movementPath.pop_back();
-	m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
+	
+	m_moveDirection = Math::getDirection(m_position, 
+		Vector2f(m_movementPath.back().x, m_movementPath.back().y));
 }
 
 Vector2f Unit::getMoveDirection() const
@@ -234,7 +232,7 @@ Vector2f Unit::getMoveDirection() const
 	return m_moveDirection;
 }
 
-Vector2i Unit::getPosition() const
+Vector2f Unit::getPosition() const
 {
 	return m_position;
 }
@@ -269,8 +267,8 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	//Update position
 	Vector2f position = Vector2f(m_position.x, m_position.y);
 
-	position.x += m_moveDirection.x * 20;
-	position.y += m_moveDirection.y * 20;
+	position.x += m_moveDirection.x * m_speed;
+	position.y += m_moveDirection.y * m_speed;
 
 	m_position.x = position.x;
 	m_position.y = position.y;
@@ -308,7 +306,7 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	//Assign new destination
 	if (reachedDestination)
 	{
-		m_position = m_movementPath.back();
+		m_position = Vector2f(m_movementPath.back().x, m_movementPath.back().y);
 		m_baseSprite.setPosition(m_position);
 		m_headSprite.setPosition(m_position);
 		m_movementPath.pop_back();
@@ -318,7 +316,7 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 			return;
 		}
 
-		m_moveDirection = Math::getDirection(m_position, m_movementPath.back());
+		m_moveDirection = Math::getDirection(m_position, Vector2f(m_movementPath.back().x, m_movementPath.back().y));
 	}
 }
 
