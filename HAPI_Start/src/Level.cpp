@@ -76,13 +76,13 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, GameDiffi
 		assert(level.m_soilderSpawnRate > 0);
 		assert(level.m_tankSpawnRate > 0);
 		assert(level.m_planeSpawnRate > 0);
-		if (gameDifficulty == GameDifficulty::MEDIUM)
+		if (gameDifficulty == GameDifficulty::HARD)
 		{
 			level.m_soilderSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 			level.m_tankSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 			level.m_planeSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 		}
-		else if (gameDifficulty == GameDifficulty::HARD)
+		else if (gameDifficulty == GameDifficulty::EXTREME)
 		{
 			level.m_soilderSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
 			level.m_tankSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;

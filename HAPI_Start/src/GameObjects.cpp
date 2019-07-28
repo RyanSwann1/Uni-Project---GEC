@@ -207,15 +207,15 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 
 	switch (gameDifficulty)
 	{
-	case GameDifficulty::EASY:
+	case GameDifficulty::NORMAL:
 		m_speed *= GAME_DIFFICULTY_MODIFIER_EASY;
 		break;
 
-	case GameDifficulty::MEDIUM:
+	case GameDifficulty::HARD:
 		m_speed *= GAME_DIFFICULTY_MODIFIER_MEDIUM;
 		break;
 
-	case GameDifficulty::HARD:
+	case GameDifficulty::EXTREME:
 		m_speed *= GAME_DIFFICULTY_MODIFIER_HARD;
 		break;
 	}

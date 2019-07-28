@@ -22,9 +22,9 @@ enum class TileID
 
 enum class GameDifficulty
 {
-	EASY = 0,
-	MEDIUM,
-	HARD
+	NORMAL = 0,
+	HARD,
+	EXTREME
 };
 
 struct Vector2i
