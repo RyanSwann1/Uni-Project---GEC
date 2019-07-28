@@ -5,19 +5,19 @@
 #include "Timer.h"
 #include <array>
 
-enum class TurretType
+enum class eTurretType
 {
 	Cannon = 0,
 	Missle
 };
 
-enum class ProjectileSender
+enum class eProjectileSender
 {
 	Unit = 0,
 	Turret
 };
 
-enum class UnitType
+enum class eUnitType
 {
 	Soilder = 0,
 	Tank, 
@@ -29,11 +29,11 @@ class Window;
 class Projectile
 {
 public:
-	Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
+	Projectile(Vector2i startingPosition, Vector2f startingDirection, eProjectileSender sentFrom, 
 		int tileID, float speed, int damage);
 
 	int getDamageValue() const;
-	ProjectileSender getSentFrom() const;
+	eProjectileSender getSentFrom() const;
 	Vector2i getPosition() const;
 
 	void update(float deltaTime, const std::vector<Unit>& units);
@@ -41,7 +41,7 @@ public:
 
 private:
 	Vector2i m_position;
-	ProjectileSender m_sentFrom;
+	eProjectileSender m_sentFrom;
 	float m_speed;
 	Sprite m_sprite;
 	Vector2f m_direction;
@@ -56,7 +56,7 @@ public:
 
 	bool isActive() const;
 	Vector2i getPosition() const;
-	void setTurret(TurretType turretType, Vector2i position);
+	void setTurret(eTurretType turretType, Vector2i position);
 
 	void damage(int damageValue);
 	void update(float deltaTime, const std::vector<Unit>& units, std::vector<Projectile>& projectiles);
@@ -78,7 +78,7 @@ private:
 class Unit
 {
 public:
-	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, UnitType unitType, GameDifficulty gameDifficulty);
+	Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, eUnitType unitType, eGameDifficulty gameDifficulty);
 
 	Vector2f getMoveDirection() const;
 	Vector2i getPosition() const;
@@ -99,7 +99,7 @@ private:
 	Vector2f m_moveDirection;
 	Timer m_fireTimer;
 	int m_health;
-	UnitType m_unitType;
+	eUnitType m_unitType;
 	int m_damage;
 
 	bool fire(const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles) const;

@@ -6,7 +6,7 @@ Sprite::Sprite()
 	: m_texture(Textures::getInstance().getTexture()),
 	m_position(),
 	m_size(Textures::getInstance().getTexture().getTileSize(), Textures::getInstance().getTexture().getTileSize()),
-	m_tileID(static_cast<int>(TileID::INVALID))
+	m_tileID(static_cast<int>(eTileID::INVALID))
 {}
 
 Sprite::Sprite(Vector2i startingPosition, int tileID)

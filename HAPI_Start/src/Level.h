@@ -19,13 +19,13 @@ struct TileLayer
 class Level
 {
 public:
-	static std::unique_ptr<Level> loadLevel(const std::string& levelName, GameDifficulty gameDifficulty);
+	static std::unique_ptr<Level> loadLevel(const std::string& levelName, eGameDifficulty gameDifficulty);
 	
-	void addTurretAtPosition(Vector2i position, TurretType turretType, int& playerScore);
+	void addTurretAtPosition(Vector2i position, eTurretType turretType, int& playerScore);
 	
 	bool isEnded() const;
 
-	void update(float deltaTime, int& playerScore, GameDifficulty gameDifficulty);
+	void update(float deltaTime, int& playerScore, eGameDifficulty gameDifficulty);
 	void render(Window& window);
 
 private:
@@ -44,7 +44,7 @@ private:
 	int m_tankSpawnRate;
 	int m_planeSpawnRate;
 
-	void spawnNextUnit(GameDifficulty gameDifficulty);
+	void spawnNextUnit(eGameDifficulty gameDifficulty);
 	void handleInactiveEntities();
 	void handleCollisions(int& playerScore);
 	void handleParticles();

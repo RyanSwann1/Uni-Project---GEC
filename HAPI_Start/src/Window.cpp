@@ -66,7 +66,7 @@ bool Window::createWindow()
 
 void Window::render(const Sprite & sprite) const
 {
-	if (sprite.getID() == static_cast<int>(TileID::INVALID))
+	if (sprite.getID() == static_cast<int>(eTileID::INVALID))
 	{
 		return;
 	}

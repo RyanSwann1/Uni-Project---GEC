@@ -30,7 +30,7 @@ constexpr float GAME_DIFFICULTY_MODIFIER_MEDIUM = 1.2f;
 constexpr float GAME_DIFFICULTY_MODIFIER_HARD = 1.4f;
 
 //Projectile
-Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, ProjectileSender sentFrom, 
+Projectile::Projectile(Vector2i startingPosition, Vector2f startingDirection, eProjectileSender sentFrom, 
 	int tileID, float speed, int damage)
 	: m_position(startingPosition),
 	m_sentFrom(sentFrom),
@@ -45,7 +45,7 @@ int Projectile::getDamageValue() const
 	return m_damage;
 }
 
-ProjectileSender Projectile::getSentFrom() const
+eProjectileSender Projectile::getSentFrom() const
 {
 	return m_sentFrom;
 }
@@ -103,7 +103,7 @@ Vector2i Turret::getPosition() const
 	return m_position;
 }
 
-void Turret::setTurret(TurretType turretType, Vector2i position)
+void Turret::setTurret(eTurretType turretType, Vector2i position)
 {
 	m_active = true;
 
@@ -111,14 +111,14 @@ void Turret::setTurret(TurretType turretType, Vector2i position)
 	setPosition(position);
 	switch (turretType)
 	{
-	case TurretType::Cannon:
-		m_baseSprite.setID(static_cast<int>(TileID::TURRET_CANNON_BASE));
-		m_headSprite.setID(static_cast<int>(TileID::TURRET_CANNON_HEAD));
+	case eTurretType::Cannon:
+		m_baseSprite.setID(static_cast<int>(eTileID::TURRET_CANNON_BASE));
+		m_headSprite.setID(static_cast<int>(eTileID::TURRET_CANNON_HEAD));
 		break;
 
-	case TurretType::Missle:
-		m_baseSprite.setID(static_cast<int>(TileID::TURRET_MISSLE_BASE));
-		m_headSprite.setID(static_cast<int>(TileID::TURRET_MISSLE_HEAD));
+	case eTurretType::Missle:
+		m_baseSprite.setID(static_cast<int>(eTileID::TURRET_MISSLE_BASE));
+		m_headSprite.setID(static_cast<int>(eTileID::TURRET_MISSLE_HEAD));
 		break;
 	}
 }
@@ -157,7 +157,7 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 				xOffset += 40;
 			}
 			Vector2f dir = Math::getDirection(m_position, { unit.getPosition().x + xOffset, unit.getPosition().y });
-			projectiles.emplace_back(m_position, dir, ProjectileSender::Turret, static_cast<int>(TileID::PROJECTILE), TURRET_PROJECTLE_SPEED, TURRET_DAMAGE);
+			projectiles.emplace_back(m_position, dir, eProjectileSender::Turret, static_cast<int>(eTileID::PROJECTILE), TURRET_PROJECTLE_SPEED, TURRET_DAMAGE);
 			return true;
 		}
 	}
@@ -173,7 +173,7 @@ void Turret::setPosition(Vector2i position)
 }
 
 //Unit
-Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, UnitType unitType, GameDifficulty gameDifficulty)
+Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, eUnitType unitType, eGameDifficulty gameDifficulty)
 	: m_movementPath(movementPath),
 	m_position(movementPath.back()),
 	m_baseSprite(m_position, baseTileID),
@@ -188,18 +188,18 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 {
 	switch (m_unitType)
 	{
-	case UnitType::Soilder :
+	case eUnitType::Soilder :
 		m_health = SOILDER_MAX_HEALTH;
 		m_speed = SOILDER_MOVEMENT_SPEED;
 		break;
 	
-	case UnitType::Tank :
+	case eUnitType::Tank :
 		m_health = TANK_MAX_HEALTH;
 		m_damage = TANK_DAMAGE_VALUE;
 		m_speed = TANK_MOVEMENT_SPEED;
 		break;
 	
-	case UnitType::Plane :
+	case eUnitType::Plane :
 		m_health = PLANE_MAX_HEALTH;
 		m_speed = PLANE_MOVEMENT_SPEED;
 		break;
@@ -207,15 +207,15 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 
 	switch (gameDifficulty)
 	{
-	case GameDifficulty::NORMAL:
+	case eGameDifficulty::NORMAL:
 		m_speed *= GAME_DIFFICULTY_MODIFIER_EASY;
 		break;
 
-	case GameDifficulty::HARD:
+	case eGameDifficulty::HARD:
 		m_speed *= GAME_DIFFICULTY_MODIFIER_MEDIUM;
 		break;
 
-	case GameDifficulty::EXTREME:
+	case eGameDifficulty::EXTREME:
 		m_speed *= GAME_DIFFICULTY_MODIFIER_HARD;
 		break;
 	}
@@ -252,7 +252,7 @@ void Unit::damage(int damageValue)
 void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles)
 {
 	//Fire Weapon
-	if (m_unitType == UnitType::Tank)
+	if (m_unitType == eUnitType::Tank)
 	{
 		m_fireTimer.update(deltaTime);
 		if (m_fireTimer.isExpired() && (fire(turrets, projectiles)))
@@ -325,7 +325,7 @@ bool Unit::fire(const std::vector<Turret>& turrets, std::vector<Projectile>& pro
 		if (Math::isWithinRange(m_position, turret.getPosition(), m_attackRange) && turret.isActive())
 		{
 			Vector2f dir = Math::getDirection(m_position, turret.getPosition());
-			projectiles.emplace_back(m_position, dir, ProjectileSender::Unit, static_cast<int>(TileID::PROJECTILE), UNIT_PROJECTILE_SPEED, m_damage);
+			projectiles.emplace_back(m_position, dir, eProjectileSender::Unit, static_cast<int>(eTileID::PROJECTILE), UNIT_PROJECTILE_SPEED, m_damage);
 			return true;
 		}
 	}

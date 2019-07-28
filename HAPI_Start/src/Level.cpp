@@ -31,7 +31,7 @@ void TileLayer::render(Window & window, Vector2i levelSize) const
 		for (int x = 0; x < levelSize.x; ++x)
 		{
 			const int tileID = m_tileData[y][x];
-			if (tileID > static_cast<int>(TileID::INVALID))
+			if (tileID > static_cast<int>(eTileID::INVALID))
 			{
 				Vector2i position(x * tileSize, y * tileSize);
 				Sprite sprite(position, tileID);
@@ -55,7 +55,7 @@ Level::Level()
 	m_unitsReachedDestination(0)
 {}
 
-std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, GameDifficulty gameDifficulty)
+std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, eGameDifficulty gameDifficulty)
 {
 	Level level;
 	std::vector<Vector2i> turretPlacementPositions;
@@ -76,13 +76,13 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, GameDiffi
 		assert(level.m_soilderSpawnRate > 0);
 		assert(level.m_tankSpawnRate > 0);
 		assert(level.m_planeSpawnRate > 0);
-		if (gameDifficulty == GameDifficulty::HARD)
+		if (gameDifficulty == eGameDifficulty::HARD)
 		{
 			level.m_soilderSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 			level.m_tankSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 			level.m_planeSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 		}
-		else if (gameDifficulty == GameDifficulty::EXTREME)
+		else if (gameDifficulty == eGameDifficulty::EXTREME)
 		{
 			level.m_soilderSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
 			level.m_tankSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
@@ -97,7 +97,7 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, GameDiffi
 	}
 }
 
-void Level::addTurretAtPosition(Vector2i position, TurretType turretType, int& playerScore)
+void Level::addTurretAtPosition(Vector2i position, eTurretType turretType, int& playerScore)
 {
 	if (playerScore >= TURRET_PLACEMENT_COST)
 	{
@@ -119,7 +119,7 @@ bool Level::isEnded() const
 	return m_spawnedUnitCount == MAX_UNIT_SPAWN_COUNT && m_units.empty();
 }
 
-void Level::update(float deltaTime, int& playerScore, GameDifficulty gameDifficulty)
+void Level::update(float deltaTime, int& playerScore, eGameDifficulty gameDifficulty)
 {
 	for (auto& turret : m_turrets)
 	{
@@ -183,25 +183,25 @@ void Level::render(Window & window)
 	HAPI.RenderText(850, 50, HAPISPACE::HAPI_TColour::WHITE, std::to_string(m_unitsReachedDestination), 26);
 }
 
-void Level::spawnNextUnit(GameDifficulty gameDifficulty)
+void Level::spawnNextUnit(eGameDifficulty gameDifficulty)
 {
 	++m_spawnedUnitCount;
 	if (m_spawnedUnitCount < MAX_UNIT_SPAWN_COUNT)
 	{
 		if (m_spawnedUnitCount % m_tankSpawnRate == 0)
 		{
-			m_units.emplace_back(static_cast<int>(TileID::TANK_BASE), static_cast<int>(TileID::TANK_HEAD), 
-				m_unitMovementPath, UnitType::Tank, gameDifficulty);
+			m_units.emplace_back(static_cast<int>(eTileID::TANK_BASE), static_cast<int>(eTileID::TANK_HEAD), 
+				m_unitMovementPath, eUnitType::Tank, gameDifficulty);
 		}
 		else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
 		{
-			m_units.emplace_back(static_cast<int>(TileID::PLANE), static_cast<int>(TileID::INVALID), 
-				m_unitMovementPath, UnitType::Plane, gameDifficulty);
+			m_units.emplace_back(static_cast<int>(eTileID::PLANE), static_cast<int>(eTileID::INVALID), 
+				m_unitMovementPath, eUnitType::Plane, gameDifficulty);
 		}
 		else
 		{
-			m_units.emplace_back(static_cast<int>(TileID::SOILDER_GREEN), static_cast<int>(TileID::INVALID), 
-				m_unitMovementPath, UnitType::Soilder, gameDifficulty);
+			m_units.emplace_back(static_cast<int>(eTileID::SOILDER_GREEN), static_cast<int>(eTileID::INVALID), 
+				m_unitMovementPath, eUnitType::Soilder, gameDifficulty);
 		}
 	}
 }
@@ -235,7 +235,7 @@ void Level::handleCollisions(int& playerScore)
 
 		bool destroyProjectile = false;
 		//Detect Unit Collisions
-		if (projectile->getSentFrom() == ProjectileSender::Turret)
+		if (projectile->getSentFrom() == eProjectileSender::Turret)
 		{
 			Rectangle projectileAABB(projectile->getPosition().x, tileSize, projectile->getPosition().y, tileSize);
 			for (auto unit = m_units.begin(); unit != m_units.end();)
@@ -266,7 +266,7 @@ void Level::handleCollisions(int& playerScore)
 				if (projectileAABB.intersects(turretAABB))
 				{
 					turret->damage(projectile->getDamageValue());
-					m_particles.emplace_back(turret->getPosition(), static_cast<int>(TileID::PARTICLE));
+					m_particles.emplace_back(turret->getPosition(), static_cast<int>(eTileID::PARTICLE));
 					destroyProjectile = true;
 				}
 

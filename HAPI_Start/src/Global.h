@@ -4,7 +4,7 @@
 const std::string DATA_DIRECTORY = "Data//";
 constexpr int BYTES_PER_PIXEL = 4;
 
-enum class TileID
+enum class eTileID
 {
 	INVALID = -1,
 	TURRET_CANNON_BASE = 180,
@@ -20,7 +20,7 @@ enum class TileID
 	SELECTOR = 15
 };
 
-enum class GameDifficulty
+enum class eGameDifficulty
 {
 	NORMAL = 0,
 	HARD,
