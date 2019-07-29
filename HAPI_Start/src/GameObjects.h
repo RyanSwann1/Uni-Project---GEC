@@ -72,7 +72,6 @@ private:
 	int m_health;
 
 	bool fire(const std::vector<Unit>& units, std::vector<Projectile>& projectiles) const;
-	void setPosition(Vector2f position);
 };
 
 class Unit

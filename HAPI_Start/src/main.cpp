@@ -20,7 +20,11 @@
 //http://www.alanzucconi.com/2016/02/03/2d-rotations/
 //https://gamedev.stackexchange.com/questions/14602/what-are-atan-and-atan2-used-for-in-games
 
+//https://www.youtube.com/watch?v=vElZc6zSIXM
+//https://www.youtube.com/watch?v=8AjRD6mU96s&t=1466s
 constexpr int PLAYER_STARTING_SCORE = 5;
+
+//CLEAR PROJECTILES EXITING WINDOW BOUNDARY
 
 void HAPI_Main()
 {

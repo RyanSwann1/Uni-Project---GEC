@@ -8,6 +8,25 @@
 #include <memory>
 #include "Texture.h"
 
+struct Texture;
+class Textures
+{
+public:
+	static Textures& getInstance()
+	{
+		static Textures instance;
+		return instance;
+	}
+
+	bool loadAllTextures();
+
+	Texture& getTexture();
+
+private:
+	std::unique_ptr<Texture> m_texture;
+	bool m_texturesLoaded = false;
+};
+
 struct Frame
 {
 	Frame(int x, int y, bool alpha = false);
@@ -45,22 +64,4 @@ private:
 	bool isFrameAlpha(int ID) const;
 	void loadInFrames();
 	bool loadTexture(const std::string& xmlFileName, const std::string& textureFileName);
-};
-
-class Textures
-{
-public:
-	static Textures& getInstance()
-	{
-		static Textures instance;
-		return instance;
-	}
-
-	bool loadAllTextures();
-
-	Texture& getTexture();
-
-private:
-	std::unique_ptr<Texture> m_texture;
-	bool m_texturesLoaded = false;
 };

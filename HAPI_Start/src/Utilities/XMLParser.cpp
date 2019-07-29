@@ -9,7 +9,7 @@
 std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, Vector2i levelSize, std::vector<TileLayer>& tileLayers);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, Vector2i levelSize);
 std::vector<Vector2i> parseObjectLayer(const TiXmlElement & rootElement, int tileSize, const std::string& layerName, std::vector<Vector2i>& objects);
-void parseProperties(const TiXmlElement& rootElement, int& soilderSpawnRate, int& tankSpawnRate, int& planeSpawnRate);
+void parseProperties(const TiXmlElement& rootElement, int& tankSpawnRate, int& planeSpawnRate);
 
 void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns, const std::string& fileName)
 {
@@ -35,7 +35,7 @@ void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns,
 
 bool XMLParser::parseLevel(const std::string & levelName, Vector2i & levelSize, std::vector<TileLayer>& tileLayers, 
 	std::vector<Vector2i>& entityPath, std::vector<Vector2i>& buildingPlacementPosition,
-	int& soilderSpawnRate, int& tankSpawnRate, int& planeSpawnRate)
+	int& tankSpawnRate, int& planeSpawnRate)
 {
 	TiXmlDocument file;
 	if (!file.LoadFile(DATA_DIRECTORY + levelName))
@@ -51,7 +51,7 @@ bool XMLParser::parseLevel(const std::string & levelName, Vector2i & levelSize, 
 
 	parseTileLayers(*rootElement, levelSize, tileLayers);
 	parseObjectLayer(*rootElement, tileSize, "Entity Path Layer", entityPath);
-	parseProperties(*rootElement, soilderSpawnRate, tankSpawnRate, planeSpawnRate);
+	parseProperties(*rootElement, tankSpawnRate, planeSpawnRate);
 
 	//Reverse the entity path
 	std::vector<Vector2i> reversedEntityPath;
@@ -95,7 +95,7 @@ std::vector<Vector2i> parseObjectLayer(const TiXmlElement & rootElement, int til
 	return objects;
 }
 
-void parseProperties(const TiXmlElement& rootElement, int & soilderSpawnRate, int & tankSpawnRate, int & planeSpawnRate)
+void parseProperties(const TiXmlElement& rootElement, int & tankSpawnRate, int & planeSpawnRate)
 {
 	for (const auto* xmlElement = rootElement.FirstChildElement(); xmlElement != nullptr; xmlElement = xmlElement->NextSiblingElement())
 	{
@@ -107,11 +107,7 @@ void parseProperties(const TiXmlElement& rootElement, int & soilderSpawnRate, in
 		for (const auto* propertyElement = xmlElement->FirstChildElement(); propertyElement != nullptr; propertyElement = propertyElement->NextSiblingElement())
 		{	
 			std::string propertyName = propertyElement->FirstAttribute()->Value();
-			if (propertyName == "SOILDER_SPAWN_RATE")
-			{
-				propertyElement->Attribute("value", &soilderSpawnRate);
-			}
-			else if (propertyName == "TANK_SPAWN_RATE")
+			if (propertyName == "TANK_SPAWN_RATE")
 			{
 				propertyElement->Attribute("value", &tankSpawnRate);
 			}

@@ -60,7 +60,7 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, eGameDiff
 	Level level;
 	std::vector<Vector2i> turretPlacementPositions;
 	if (XMLParser::parseLevel(levelName, level.m_levelSize, level.m_tileLayers, level.m_unitMovementPath, turretPlacementPositions,
-		level.m_soilderSpawnRate, level.m_tankSpawnRate, level.m_planeSpawnRate))
+		level.m_tankSpawnRate, level.m_planeSpawnRate))
 	{
 		//Initialize all game objects - requiring no memory allocations at run time
 		level.m_turrets.reserve(turretPlacementPositions.size());
@@ -73,18 +73,15 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, eGameDiff
 		level.m_projectiles.reserve(MAX_PROJECTILES_COUNT);
 		level.m_particles.reserve(MAX_PARTICLES_COUNT);
 
-		assert(level.m_soilderSpawnRate > 0);
 		assert(level.m_tankSpawnRate > 0);
 		assert(level.m_planeSpawnRate > 0);
 		if (gameDifficulty == eGameDifficulty::HARD)
 		{
-			level.m_soilderSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 			level.m_tankSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 			level.m_planeSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
 		}
 		else if (gameDifficulty == eGameDifficulty::EXTREME)
 		{
-			level.m_soilderSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
 			level.m_tankSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
 			level.m_planeSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
 		}

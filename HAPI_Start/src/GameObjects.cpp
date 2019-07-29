@@ -103,7 +103,10 @@ void Turret::setTurret(eTurretType turretType, Vector2f position)
 	m_active = true;
 
 	assert(m_position == position);
-	setPosition(position);
+	m_position = position;
+	m_baseSprite.setPosition(position);
+	m_headSprite.setPosition(position);
+
 	switch (turretType)
 	{
 	case eTurretType::Cannon:
@@ -158,13 +161,6 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 	}
 
 	return false;
-}
-
-void Turret::setPosition(Vector2f position)
-{
-	m_position = position;
-	m_baseSprite.setPosition(position);
-	m_headSprite.setPosition(position);
 }
 
 //Unit

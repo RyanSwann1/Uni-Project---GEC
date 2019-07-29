@@ -40,7 +40,6 @@ private:
 	Timer m_spawnTimer;
 	int m_spawnedUnitCount;
 	int m_unitsReachedDestination;
-	int m_soilderSpawnRate;
 	int m_tankSpawnRate;
 	int m_planeSpawnRate;
 

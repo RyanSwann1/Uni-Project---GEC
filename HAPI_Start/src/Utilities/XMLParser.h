@@ -12,5 +12,5 @@ namespace XMLParser
 
 	bool parseLevel(const std::string& levelName, Vector2i& levelSize, std::vector<TileLayer>& tileLayers,
 		std::vector<Vector2i>& entityPath, std::vector<Vector2i>& buildingPlacementPosition,
-		int& soilderSpawnRate, int& tankSpawnRate, int& planeSpawnRate);
+		int& tankSpawnRate, int& planeSpawnRate);
 }
