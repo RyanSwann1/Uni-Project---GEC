@@ -24,8 +24,6 @@
 //https://www.youtube.com/watch?v=8AjRD6mU96s&t=1466s
 constexpr int PLAYER_STARTING_SCORE = 5;
 
-//CLEAR PROJECTILES EXITING WINDOW BOUNDARY
-
 void HAPI_Main()
 {
 	std::unique_ptr<Window> window = Window::create();
@@ -81,11 +79,11 @@ void HAPI_Main()
 		}
 
 		//Update 
-		frameStart = HAPI.GetTime();
+		frameStart = static_cast<float>(HAPI.GetTime());
 		if (!gamePaused)
 		{
-			mouseRectPosition.x = (mouseData.x / tileSize) * tileSize;
-			mouseRectPosition.y = (mouseData.y / tileSize) * tileSize;
+			mouseRectPosition.x = static_cast<float>((mouseData.x / tileSize)) * tileSize;
+			mouseRectPosition.y = static_cast<float>((mouseData.y / tileSize)) * tileSize;
 			mouseRectSprite.setPosition(mouseRectPosition);
 
 			if (mouseData.leftButtonDown)
@@ -94,7 +92,7 @@ void HAPI_Main()
 			}
 
 			deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
-			level->update(deltaTime, playerScore, gameDifficulty);
+			level->update(deltaTime, playerScore, gameDifficulty, window->getSize());
 		}
 
 		//Render

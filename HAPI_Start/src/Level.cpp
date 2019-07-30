@@ -116,7 +116,7 @@ bool Level::isEnded() const
 	return m_spawnedUnitCount >= MAX_UNIT_SPAWN_COUNT && m_units.empty();
 }
 
-void Level::update(float deltaTime, int& playerScore, eGameDifficulty gameDifficulty)
+void Level::update(float deltaTime, int& playerScore, eGameDifficulty gameDifficulty, Vector2i windowSize)
 {
 	for (auto& turret : m_turrets)
 	{
@@ -146,7 +146,7 @@ void Level::update(float deltaTime, int& playerScore, eGameDifficulty gameDiffic
 	}
 
 	handleInactiveEntities();
-	handleCollisions(playerScore);
+	handleCollisions(playerScore, windowSize);
 	handleParticles();
 }
 
@@ -220,22 +220,26 @@ void Level::handleInactiveEntities()
 	}
 }
 
-void Level::handleCollisions(int& playerScore)
+void Level::handleCollisions(int& playerScore, Vector2i windowSize)
 {
 	int tileSize = Textures::getInstance().getTexture().getTileSize();
 	for (auto projectile = m_projectiles.begin(); projectile != m_projectiles.end();)
 	{
-		if (projectile->getPosition().y < 15)
+		Vector2i projectilePosition(static_cast<int>(projectile->getPosition().x), static_cast<int>(projectile->getPosition().y));
+		//Handle projectiles escaping window size
+		if (projectile->getPosition().x < 0 || projectile->getPosition().x > windowSize.x ||
+			projectile->getPosition().y < 15 || projectile->getPosition().y > windowSize.y)
 		{
 			projectile = m_projectiles.erase(projectile);
 			continue;
 		}
 
-		bool destroyProjectile = false;
+
 		//Detect Unit Collisions
+		bool destroyProjectile = false;
 		if (projectile->getSentFrom() == eProjectileSender::Turret)
 		{
-			Rectangle projectileAABB(projectile->getPosition().x, tileSize, projectile->getPosition().y, tileSize);
+			Rectangle projectileAABB(projectilePosition.x, tileSize, projectilePosition.y, tileSize);
 			for (auto unit = m_units.begin(); unit != m_units.end();)
 			{
 				Rectangle unitAABB(unit->getPosition().x, tileSize, unit->getPosition().y, tileSize);
@@ -254,13 +258,15 @@ void Level::handleCollisions(int& playerScore)
 				++unit;
 			}
 		}
+
 		//Detect Turret Collisions
-		else
+		else if(projectile->getSentFrom() == eProjectileSender::Unit)
 		{
 			Rectangle projectileAABB(projectile->getPosition().x, tileSize, projectile->getPosition().y, tileSize);
 			for (auto turret = m_turrets.begin(); turret != m_turrets.end();)
 			{
-				Rectangle turretAABB(turret->getPosition().x, tileSize, turret->getPosition().y, tileSize);
+				Rectangle turretAABB(static_cast<int>(turret->getPosition().x), tileSize, 
+					static_cast<int>(turret->getPosition().y), tileSize);
 				if (projectileAABB.intersects(turretAABB))
 				{
 					turret->damage(projectile->getDamageValue());
@@ -272,7 +278,7 @@ void Level::handleCollisions(int& playerScore)
 			}
 		}
 
-		//Destory Projectile on Collision
+
 		if (destroyProjectile)
 		{
 			projectile = m_projectiles.erase(projectile);

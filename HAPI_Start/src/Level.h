@@ -25,7 +25,7 @@ public:
 	
 	bool isEnded() const;
 
-	void update(float deltaTime, int& playerScore, eGameDifficulty gameDifficulty);
+	void update(float deltaTime, int& playerScore, eGameDifficulty gameDifficulty, Vector2i windowSize);
 	void render(Window& window);
 
 private:
@@ -45,6 +45,7 @@ private:
 
 	void spawnNextUnit(eGameDifficulty gameDifficulty);
 	void handleInactiveEntities();
-	void handleCollisions(int& playerScore);
+	void handleCollisions(int& playerScore, Vector2i windowSize);
 	void handleParticles();
+
 };
