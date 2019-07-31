@@ -11,7 +11,7 @@ std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElem
 std::vector<Vector2i> parseObjectLayer(const TiXmlElement & rootElement, int tileSize, const std::string& layerName, std::vector<Vector2i>& objects);
 void parseProperties(const TiXmlElement& rootElement, int& tankSpawnRate, int& planeSpawnRate);
 
-void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns, const std::string& fileName)
+void XMLParser::parseTexture(Vector2i& tileSize, Vector2i& textureSize, int& columns, const std::string& fileName, const std::string& textureFileName)
 {
 	TiXmlDocument file;
 	bool fileLoaded = file.LoadFile(DATA_DIRECTORY + fileName);
@@ -26,10 +26,14 @@ void XMLParser::parseTexture(int& tileSize, Vector2i& textureSize, int& columns,
 			continue;
 		}
 
-		tileSheetElement->FirstChildElement()->Attribute("width", &textureSize.x);
-		tileSheetElement->FirstChildElement()->Attribute("height", &textureSize.y);
-		tileSheetElement->Attribute("tilewidth", &tileSize);
-		columns = textureSize.x / tileSize;
+		if (tileSheetElement->Attribute("name") == textureFileName)
+		{
+			tileSheetElement->FirstChildElement()->Attribute("width", &textureSize.x);
+			tileSheetElement->FirstChildElement()->Attribute("height", &textureSize.y);
+			tileSheetElement->Attribute("tilewidth", &tileSize.x);
+			tileSheetElement->Attribute("tileheight", &tileSize.y);
+			columns = textureSize.x / tileSize.x;
+		}
 	}
 }
 

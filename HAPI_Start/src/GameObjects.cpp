@@ -29,6 +29,14 @@ constexpr float GAME_DIFFICULTY_MODIFIER_EASY = 1.0f;
 constexpr float GAME_DIFFICULTY_MODIFIER_MEDIUM = 1.2f;
 constexpr float GAME_DIFFICULTY_MODIFIER_HARD = 1.4f;
 
+int getHealthBarSize(int currentHealth, int maxHealth, int originalHealthBarWidth)
+{
+	int healthPercent = (currentHealth / maxHealth) * 100;
+	int healthBarSize = (healthPercent / originalHealthBarWidth) * 100;
+
+	return healthBarSize;
+}
+
 //Projectile
 Projectile::Projectile(Vector2f startingPosition, Vector2f startingDirection, eProjectileSender sentFrom, 
 	int tileID, float speed, int damage)
@@ -73,6 +81,7 @@ Turret::Turret(Vector2f startingPosition)
 	: m_position(startingPosition),
 	m_baseSprite(Textures::getInstance().getTileSheet()),
 	m_headSprite(Textures::getInstance().getTileSheet()),
+	m_healthBarSprite(Textures::getInstance().getHealthBar(), startingPosition, static_cast<int>(eTileID::DEFAULT)),
 	m_attackRange(TURRET_ATTACK_RANGE),
 	m_fireTimer(TIME_BETWEEN_TURRET_SHOT, true),
 	m_active(false),
@@ -85,6 +94,7 @@ void Turret::render(const Window & window) const
 	{
 		window.render(m_baseSprite);
 		window.render(m_headSprite);
+		window.render(m_healthBarSprite);
 	}
 }
 
@@ -124,6 +134,10 @@ void Turret::setTurret(eTurretType turretType, Vector2f position)
 void Turret::damage(int damageValue)
 {
 	m_health -= damageValue;
+	
+	m_healthBarSprite.setSize({ getHealthBarSize(m_health, TURRET_MAX_HEALTH, m_healthBarSprite.getOriginalSize().x),
+		m_healthBarSprite.getSize().y });
+
 	if (m_health <= 0)
 	{
 		m_health = 0;
@@ -169,6 +183,7 @@ Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movement
 	m_position(static_cast<float>(movementPath.back().x), static_cast<float>(movementPath.back().y)),
 	m_baseSprite(Textures::getInstance().getTileSheet(), m_position, baseTileID),
 	m_headSprite(Textures::getInstance().getTileSheet(), m_position, headTileID),
+	m_healthBarSprite(Textures::getInstance().getHealthBar(), m_position, static_cast<int>(eTileID::DEFAULT)),
 	m_active(true),
 	m_speed(0),
 	m_attackRange(UNIT_ATTACK_RANGE),
@@ -241,6 +256,8 @@ bool Unit::isActive() const
 void Unit::damage(int damageValue)
 {
 	m_health -= damageValue;
+	m_healthBarSprite.setSize({ getHealthBarSize(m_health, TURRET_MAX_HEALTH, m_healthBarSprite.getOriginalSize().x),
+	m_healthBarSprite.getSize().y });
 	if (m_health <= 0)
 	{
 		m_health = 0;
@@ -269,8 +286,8 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	
 	if (m_unitType == eUnitType::Aircraft)
 	{
-		int tileSize = m_baseSprite.getTexture().getTileSize();
-		Vector2f newBasePosition(m_position.x + tileSize, m_position.y + tileSize);
+		Vector2i tileSize = m_baseSprite.getTexture().getTileSize();
+		Vector2f newBasePosition(m_position.x + tileSize.x, m_position.y + tileSize.y);
 		m_baseSprite.setPosition(newBasePosition);
 	}
 
@@ -320,6 +337,7 @@ void Unit::render(const Window & window) const
 {
 	window.render(m_baseSprite);
 	window.render(m_headSprite);
+	window.render(m_healthBarSprite);
 }
 
 bool Unit::fire(const std::vector<Turret>& turrets, std::vector<Projectile>& projectiles) const

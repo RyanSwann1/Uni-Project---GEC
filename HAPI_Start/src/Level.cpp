@@ -25,7 +25,7 @@ TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
 
 void TileLayer::render(Window & window, Vector2i levelSize) const 
 {
-	int tileSize = Textures::getInstance().getTileSheet().getTileSize();
+	Vector2i tileSize = Textures::getInstance().getTileSheet().getTileSize();
 	for (int y = 0; y < levelSize.y; ++y)
 	{
 		for (int x = 0; x < levelSize.x; ++x)
@@ -33,7 +33,7 @@ void TileLayer::render(Window & window, Vector2i levelSize) const
 			const int tileID = m_tileData[y][x];
 			if (tileID > static_cast<int>(eTileID::INVALID))
 			{
-				Vector2f position(x * tileSize, y * tileSize);
+				Vector2f position(x * tileSize.x, y * tileSize.y);
 				Sprite sprite(Textures::getInstance().getTileSheet(), position, tileID);
 				window.render(sprite);
 			}
@@ -222,7 +222,7 @@ void Level::handleInactiveEntities()
 
 void Level::handleCollisions(int& playerScore, Vector2i windowSize)
 {
-	int tileSize = Textures::getInstance().getTileSheet().getTileSize();
+	Vector2i tileSize = Textures::getInstance().getTileSheet().getTileSize();
 	for (auto projectile = m_projectiles.begin(); projectile != m_projectiles.end();)
 	{
 		Vector2i projectilePosition(static_cast<int>(projectile->getPosition().x), static_cast<int>(projectile->getPosition().y));
@@ -239,10 +239,10 @@ void Level::handleCollisions(int& playerScore, Vector2i windowSize)
 		bool destroyProjectile = false;
 		if (projectile->getSentFrom() == eProjectileSender::Turret)
 		{
-			Rectangle projectileAABB(projectilePosition.x, tileSize, projectilePosition.y, tileSize);
+			Rectangle projectileAABB(projectilePosition.x, tileSize.x, projectilePosition.y, tileSize.y);
 			for (auto unit = m_units.begin(); unit != m_units.end();)
 			{
-				Rectangle unitAABB(unit->getPosition().x, tileSize, unit->getPosition().y, tileSize);
+				Rectangle unitAABB(unit->getPosition().x, tileSize.x, unit->getPosition().y, tileSize.y);
 				if (projectileAABB.intersects(unitAABB))
 				{
 					destroyProjectile = true;
@@ -262,11 +262,11 @@ void Level::handleCollisions(int& playerScore, Vector2i windowSize)
 		//Detect Turret Collisions
 		else if(projectile->getSentFrom() == eProjectileSender::Unit)
 		{
-			Rectangle projectileAABB(projectile->getPosition().x, tileSize, projectile->getPosition().y, tileSize);
+			Rectangle projectileAABB(projectile->getPosition().x, tileSize.x, projectile->getPosition().y, tileSize.y);
 			for (auto turret = m_turrets.begin(); turret != m_turrets.end();)
 			{
-				Rectangle turretAABB(static_cast<int>(turret->getPosition().x), tileSize, 
-					static_cast<int>(turret->getPosition().y), tileSize);
+				Rectangle turretAABB(static_cast<int>(turret->getPosition().x), tileSize.x, 
+					static_cast<int>(turret->getPosition().y), tileSize.y);
 				if (projectileAABB.intersects(turretAABB))
 				{
 					turret->damage(projectile->getDamageValue());

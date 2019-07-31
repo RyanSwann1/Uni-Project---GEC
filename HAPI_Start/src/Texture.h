@@ -47,11 +47,11 @@ public:
 	Texture(Texture&&);
 	Texture&& operator=(Texture&&) = delete;
 
-	static std::unique_ptr<Texture> load(const std::string& textureFileName);
-	static std::unique_ptr<Texture> load(const std::string& xmlFileName, const std::string& textureFileName);
+	static std::unique_ptr<Texture> load(const std::string& xmlFileName, const std::string& imageName, 
+		const std::string& textureFileName);
 
 	Frame getFrame(int ID) const;
-	int getTileSize() const;
+	Vector2i getTileSize() const;
 	Rectangle getFrameRect(int tileID) const;	
 	HAPISPACE::BYTE* getTexture() const;
 	Vector2i getSize() const;
@@ -62,10 +62,10 @@ private:
 	std::vector<Frame> m_frames;
 	Vector2i m_textureSize;
 	int m_columns;
-	int m_tileSize;
+	Vector2i m_tileSize;
 
 	bool isFrameAlpha(int ID) const;
 	void loadInFrames();
-	bool loadXMLTexture(const std::string& xmlFileName, const std::string& textureFileName);
+	bool loadXMLTexture(const std::string& xmlFileName, const std::string& imageName, const std::string& textureFileName);
 	bool loadTexture(const std::string& textureFileName);
 };

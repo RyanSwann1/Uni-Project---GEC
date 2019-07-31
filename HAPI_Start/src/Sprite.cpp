@@ -5,20 +5,27 @@
 Sprite::Sprite(Texture& texture)
 	: m_tileSheet(texture),
 	m_position(),
-	m_size(texture.getTileSize(), texture.getTileSize()),
+	m_originalSize(texture.getTileSize().x, texture.getTileSize().y),
+	m_size(m_originalSize),
 	m_tileID(static_cast<int>(eTileID::INVALID))
 {}
 
 Sprite::Sprite(Texture& texture, Vector2f startingPosition, int tileID)
 	: m_tileSheet(texture),
 	m_position(startingPosition),
-	m_size(Textures::getInstance().getTileSheet().getTileSize(), Textures::getInstance().getTileSheet().getTileSize()),
+	m_originalSize(texture.getTileSize().x, texture.getTileSize().y),
+	m_size(m_originalSize),
 	m_tileID(tileID)
 {}
 
 int Sprite::getID() const
 {
 	return m_tileID;
+}
+
+Vector2i Sprite::getOriginalSize() const
+{
+	return m_originalSize;
 }
 
 Vector2i Sprite::getSize() const
@@ -63,7 +70,5 @@ void Sprite::setPosition(Vector2f position)
 
 void Sprite::setSize(Vector2i size)
 {
-	assert(size.x <= m_tileSheet.get().getTileSize());
-	assert(size.y <= m_tileSheet.get().getTileSize());
 	m_size = size;
 }

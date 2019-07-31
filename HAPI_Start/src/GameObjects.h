@@ -66,6 +66,7 @@ private:
 	Vector2f m_position;
 	Sprite m_baseSprite;
 	Sprite m_headSprite;
+	Sprite m_healthBarSprite;
 	float m_attackRange;
 	Timer m_fireTimer;
 	bool m_active;
@@ -92,6 +93,7 @@ private:
 	Vector2f m_position;
 	Sprite m_baseSprite;
 	Sprite m_headSprite;
+	Sprite m_healthBarSprite;
 	bool m_active;
 	float m_speed;
 	float m_attackRange;

@@ -58,7 +58,7 @@ void HAPI_Main()
 	bool gamePaused = false;
 	bool resetCurrentGame = false;
 
-	int tileSize = Textures::getInstance().getTileSheet().getTileSize();
+	Vector2i tileSize = Textures::getInstance().getTileSheet().getTileSize();
 	while (HAPI.Update())
 	{	
 		//Handle Input
@@ -82,8 +82,8 @@ void HAPI_Main()
 		frameStart = static_cast<float>(HAPI.GetTime());
 		if (!gamePaused)
 		{
-			mouseRectPosition.x = static_cast<float>((mouseData.x / tileSize)) * tileSize;
-			mouseRectPosition.y = static_cast<float>((mouseData.y / tileSize)) * tileSize;
+			mouseRectPosition.x = static_cast<float>((mouseData.x / tileSize.x)) * tileSize.x;
+			mouseRectPosition.y = static_cast<float>((mouseData.y / tileSize.y)) * tileSize.y;
 			mouseRectSprite.setPosition(mouseRectPosition);
 
 			if (mouseData.leftButtonDown)
