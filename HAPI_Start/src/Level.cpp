@@ -15,8 +15,8 @@ constexpr size_t MAX_PARTICLES_COUNT = 50;
 constexpr int TURRET_PLACEMENT_COST = 5;
 constexpr int UNIT_ELIMINATE_SCORE = 2;
 
-constexpr int DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER = -1;
-constexpr int DIFFICULTY_HARD_SPAWN_RATE_MODIFIER = -2;
+constexpr int DIFFICULTY_HARD_SPAWN_RATE_MODIFIER = -1;
+constexpr int DIFFICULTY_EXTREME_SPAWN_RATE_MODIFIER = -2;
 
 //Tile Layer
 TileLayer::TileLayer(std::vector<std::vector<int>>&& tileData)
@@ -77,13 +77,13 @@ std::unique_ptr<Level> Level::loadLevel(const std::string & levelName, eGameDiff
 		assert(level.m_planeSpawnRate > 0);
 		if (gameDifficulty == eGameDifficulty::HARD)
 		{
-			level.m_tankSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
-			level.m_planeSpawnRate -= DIFFICULTY_MEDIUM_SPAWN_RATE_MODIFIER;
+			level.m_tankSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
+			level.m_planeSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
 		}
 		else if (gameDifficulty == eGameDifficulty::EXTREME)
 		{
-			level.m_tankSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
-			level.m_planeSpawnRate -= DIFFICULTY_HARD_SPAWN_RATE_MODIFIER;
+			level.m_tankSpawnRate -= DIFFICULTY_EXTREME_SPAWN_RATE_MODIFIER;
+			level.m_planeSpawnRate -= DIFFICULTY_EXTREME_SPAWN_RATE_MODIFIER;
 		}
 
 		return std::make_unique<Level>(std::move(level));
