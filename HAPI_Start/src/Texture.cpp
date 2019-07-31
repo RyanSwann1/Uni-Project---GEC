@@ -124,12 +124,7 @@ bool Texture::loadXMLTexture(const std::string & xmlFileName, const std::string 
 
 bool Texture::loadTexture(const std::string & textureFileName)
 {
-	if (!HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y))
-	{
-		return false;
-	}
-
-	return true;
+	return HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y);
 }
 
 bool Texture::isFrameAlpha(int ID) const

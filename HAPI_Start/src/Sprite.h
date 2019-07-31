@@ -8,8 +8,8 @@ struct Frame;
 class Sprite
 {
 public:
-	Sprite();
-	Sprite(Vector2f startingPosition, int tileID);
+	Sprite(Texture& texture);
+	Sprite(Texture& texture, Vector2f startingPosition, int tileID);
 
 	int getID() const;
 	Vector2i getSize() const;

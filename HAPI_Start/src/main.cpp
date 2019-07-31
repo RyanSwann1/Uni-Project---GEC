@@ -46,7 +46,7 @@ void HAPI_Main()
 
 	auto& mouseData = HAPI.GetMouseData();
 	auto& keyboardData = HAPI.GetKeyboardData();
-	Sprite mouseRectSprite(Vector2f(), static_cast<int>(eTileID::SELECTOR));
+	Sprite mouseRectSprite(Textures::getInstance().getTexture(), Vector2f(), static_cast<int>(eTileID::SELECTOR));
 	Vector2f mouseRectPosition;
 
 	float frameStart = HAPI.GetTime();

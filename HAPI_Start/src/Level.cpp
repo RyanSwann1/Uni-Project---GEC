@@ -34,7 +34,7 @@ void TileLayer::render(Window & window, Vector2i levelSize) const
 			if (tileID > static_cast<int>(eTileID::INVALID))
 			{
 				Vector2f position(x * tileSize, y * tileSize);
-				Sprite sprite(position, tileID);
+				Sprite sprite(Textures::getInstance().getTexture(), position, tileID);
 				window.render(sprite);
 			}
 		}

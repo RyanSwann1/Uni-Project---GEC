@@ -35,7 +35,7 @@ Projectile::Projectile(Vector2f startingPosition, Vector2f startingDirection, eP
 	: m_position(startingPosition),
 	m_sentFrom(sentFrom),
 	m_speed(speed),
-	m_sprite(startingPosition, tileID),
+	m_sprite(Textures::getInstance().getTexture(), startingPosition, tileID),
 	m_direction(startingDirection),
 	m_damage(damage)
 {}
@@ -71,8 +71,8 @@ void Projectile::render(const Window & window) const
 //Turret
 Turret::Turret(Vector2f startingPosition)
 	: m_position(startingPosition),
-	m_baseSprite(),
-	m_headSprite(),
+	m_baseSprite(Textures::getInstance().getTexture()),
+	m_headSprite(Textures::getInstance().getTexture()),
 	m_attackRange(TURRET_ATTACK_RANGE),
 	m_fireTimer(TIME_BETWEEN_TURRET_SHOT, true),
 	m_active(false),
@@ -167,8 +167,8 @@ bool Turret::fire(const std::vector<Unit>& units, std::vector<Projectile>& proje
 Unit::Unit(int baseTileID, int headTileID, const std::vector<Vector2i>& movementPath, eUnitType unitType, eGameDifficulty gameDifficulty)
 	: m_movementPath(movementPath),
 	m_position(static_cast<float>(movementPath.back().x), static_cast<float>(movementPath.back().y)),
-	m_baseSprite(m_position, baseTileID),
-	m_headSprite(m_position, headTileID),
+	m_baseSprite(Textures::getInstance().getTexture(), m_position, baseTileID),
+	m_headSprite(Textures::getInstance().getTexture(), m_position, headTileID),
 	m_active(true),
 	m_speed(0),
 	m_attackRange(UNIT_ATTACK_RANGE),

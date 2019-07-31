@@ -2,14 +2,14 @@
 #include "Texture.h"
 #include <assert.h>
 
-Sprite::Sprite()
-	: m_texture(Textures::getInstance().getTexture()),
+Sprite::Sprite(Texture& texture)
+	: m_texture(texture),
 	m_position(),
-	m_size(Textures::getInstance().getTexture().getTileSize(), Textures::getInstance().getTexture().getTileSize()),
+	m_size(texture.getTileSize(), texture.getTileSize()),
 	m_tileID(static_cast<int>(eTileID::INVALID))
 {}
 
-Sprite::Sprite(Vector2f startingPosition, int tileID)
+Sprite::Sprite(Texture& texture, Vector2f startingPosition, int tileID)
 	: m_texture(Textures::getInstance().getTexture()),
 	m_position(startingPosition),
 	m_size(Textures::getInstance().getTexture().getTileSize(), Textures::getInstance().getTexture().getTileSize()),
