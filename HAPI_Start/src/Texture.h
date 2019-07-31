@@ -20,11 +20,11 @@ public:
 
 	bool loadAllTextures();
 
-	Texture& getTexture();
+	Texture& getTileSheet();
 	Texture& getHealthBar();
 
 private:
-	std::unique_ptr<Texture> m_texture;
+	std::unique_ptr<Texture> m_tileSheet;
 	std::unique_ptr<Texture> m_healthBarTexture;
 	bool m_texturesLoaded = false;
 };
@@ -58,7 +58,7 @@ public:
 
 private:
 	Texture();
-	HAPISPACE::BYTE* m_texture;
+	HAPISPACE::BYTE* m_tileSheet;
 	std::vector<Frame> m_frames;
 	Vector2i m_textureSize;
 	int m_columns;

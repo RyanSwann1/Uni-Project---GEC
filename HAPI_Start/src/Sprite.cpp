@@ -3,16 +3,16 @@
 #include <assert.h>
 
 Sprite::Sprite(Texture& texture)
-	: m_texture(texture),
+	: m_tileSheet(texture),
 	m_position(),
 	m_size(texture.getTileSize(), texture.getTileSize()),
 	m_tileID(static_cast<int>(eTileID::INVALID))
 {}
 
 Sprite::Sprite(Texture& texture, Vector2f startingPosition, int tileID)
-	: m_texture(Textures::getInstance().getTexture()),
+	: m_tileSheet(texture),
 	m_position(startingPosition),
-	m_size(Textures::getInstance().getTexture().getTileSize(), Textures::getInstance().getTexture().getTileSize()),
+	m_size(Textures::getInstance().getTileSheet().getTileSize(), Textures::getInstance().getTileSheet().getTileSize()),
 	m_tileID(tileID)
 {}
 
@@ -33,22 +33,22 @@ Vector2f Sprite::getPosition() const
 
 Texture & Sprite::getTexture() const
 {
-	return m_texture.get();
+	return m_tileSheet.get();
 }
 
 bool Sprite::isAlpha() const
 {
-	return m_texture.get().getFrame(m_tileID).alpha;
+	return m_tileSheet.get().getFrame(m_tileID).alpha;
 }
 
 Frame Sprite::getFrame() const
 {
-	return m_texture.get().getFrame(m_tileID);
+	return m_tileSheet.get().getFrame(m_tileID);
 }
 
 Rectangle Sprite::getFrameRect() const
 {
-	return m_texture.get().getFrameRect(m_tileID);
+	return m_tileSheet.get().getFrameRect(m_tileID);
 }
 
 void Sprite::setID(int tileID)
@@ -63,7 +63,7 @@ void Sprite::setPosition(Vector2f position)
 
 void Sprite::setSize(Vector2i size)
 {
-	assert(size.x <= m_texture.get().getTileSize());
-	assert(size.y <= m_texture.get().getTileSize());
+	assert(size.x <= m_tileSheet.get().getTileSize());
+	assert(size.y <= m_tileSheet.get().getTileSize());
 	m_size = size;
 }

@@ -5,7 +5,7 @@
 constexpr float EXPIRATION_TIME = 0.5f;
 
 Particle::Particle(Vector2f startingPosition, int tileID)
-	: m_sprite(Textures::getInstance().getTexture(), startingPosition, tileID),
+	: m_sprite(Textures::getInstance().getTileSheet(), startingPosition, tileID),
 	m_position(startingPosition),
 	m_aliveTimer(EXPIRATION_TIME, true)
 {}

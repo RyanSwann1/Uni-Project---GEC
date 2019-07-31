@@ -12,24 +12,24 @@ Frame::Frame(int x, int y, bool alpha)
 
 //Texture
 Texture::Texture()
-	: m_texture(nullptr),
+	: m_tileSheet(nullptr),
 	m_textureSize(0, 0)
 {}
 
 Texture::~Texture()
 {
-	delete m_texture;
+	delete m_tileSheet;
 }
 
 Texture::Texture(Texture && other)
 {
-	m_texture = other.m_texture;
+	m_tileSheet = other.m_tileSheet;
 	m_frames = std::move(other.m_frames);
 	m_textureSize = other.m_textureSize;
 	m_columns = other.m_columns;
 	m_tileSize = other.m_tileSize;
 
-	other.m_texture = nullptr;
+	other.m_tileSheet = nullptr;
 }
 
 Frame Texture::getFrame(int ID) const
@@ -76,8 +76,8 @@ std::unique_ptr<Texture> Texture::load(const std::string& xmlFileName, const std
 
 HAPISPACE::BYTE * Texture::getTexture() const 
 {
-	assert(m_texture);
-	return m_texture;
+	assert(m_tileSheet);
+	return m_tileSheet;
 }
 
 Vector2i Texture::getSize() const
@@ -93,11 +93,11 @@ void Texture::loadInFrames()
 	{
 		Rectangle frameRect = getFrameRect(frameID);
 		bool frameHasAlpha = false;
-		HAPISPACE::BYTE* currentPixel = m_texture + frameID * m_tileSize * BYTES_PER_PIXEL;
+		HAPISPACE::BYTE* currentPixel = m_tileSheet + frameID * m_tileSize * BYTES_PER_PIXEL;
 
 		for (int i = frameID * m_tileSize; i < frameRect.getRight() * frameRect.getBottom() * BYTES_PER_PIXEL; i += BYTES_PER_PIXEL)
 		{
-			*currentPixel = m_texture[i];
+			*currentPixel = m_tileSheet[i];
 
 			if (currentPixel[3] < 255)
 			{
@@ -113,7 +113,7 @@ void Texture::loadInFrames()
 bool Texture::loadXMLTexture(const std::string & xmlFileName, const std::string & textureFileName)
 {
 	XMLParser::parseTexture(m_tileSize, m_textureSize, m_columns, xmlFileName);
-	if (!HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y))
+	if (!HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_tileSheet, m_textureSize.x, m_textureSize.y))
 	{
 		return false;
 	}
@@ -124,7 +124,7 @@ bool Texture::loadXMLTexture(const std::string & xmlFileName, const std::string 
 
 bool Texture::loadTexture(const std::string & textureFileName)
 {
-	return HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y);
+	return HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_tileSheet, m_textureSize.x, m_textureSize.y);
 }
 
 bool Texture::isFrameAlpha(int ID) const
@@ -137,8 +137,8 @@ bool Texture::isFrameAlpha(int ID) const
 bool Textures::loadAllTextures()
 {
 	assert(!m_texturesLoaded);
-	m_texture = Texture::load("mapOne.tmx", "tilesheet.png");
-	if (!m_texture)
+	m_tileSheet = Texture::load("mapOne.tmx", "tilesheet.png");
+	if (!m_tileSheet)
 	{
 		std::cout << "Tilesheet not loaded\n";
 		return false;
@@ -155,10 +155,10 @@ bool Textures::loadAllTextures()
 	return true;
 }
 
-Texture & Textures::getTexture()
+Texture & Textures::getTileSheet()
 {
-	assert(m_texture);
-	return *m_texture;
+	assert(m_tileSheet);
+	return *m_tileSheet;
 }
 
 Texture & Textures::getHealthBar()

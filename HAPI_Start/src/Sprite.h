@@ -24,7 +24,7 @@ public:
 	void setSize(Vector2i size);
 
 private:
-	std::reference_wrapper<Texture> m_texture;
+	std::reference_wrapper<Texture> m_tileSheet;
 	Vector2f m_position;
 	Vector2i m_size;
 	int m_tileID;
