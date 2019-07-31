@@ -48,10 +48,23 @@ Rectangle Texture::getFrameRect(int tileID) const
 	return Rectangle(tileID % m_columns * m_tileSize, m_tileSize, tileID / m_columns * m_tileSize, m_tileSize);
 }
 
+std::unique_ptr<Texture> Texture::load(const std::string & textureFileName)
+{
+	Texture texture;
+	if (texture.loadTexture(textureFileName))
+	{
+		return std::make_unique<Texture>(std::move(texture));
+	}
+	else
+	{
+		return std::unique_ptr<Texture>();
+	}
+}
+
 std::unique_ptr<Texture> Texture::load(const std::string& xmlFileName, const std::string& textureFileName)
 {
 	Texture texture;
-	if (texture.loadTexture(xmlFileName, textureFileName))
+	if (texture.loadXMLTexture(xmlFileName, textureFileName))
 	{
 		return std::make_unique<Texture>(std::move(texture));
 	}
@@ -97,7 +110,7 @@ void Texture::loadInFrames()
 	}
 }
 
-bool Texture::loadTexture(const std::string & xmlFileName, const std::string & textureFileName)
+bool Texture::loadXMLTexture(const std::string & xmlFileName, const std::string & textureFileName)
 {
 	XMLParser::parseTexture(m_tileSize, m_textureSize, m_columns, xmlFileName);
 	if (!HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y))
@@ -106,6 +119,16 @@ bool Texture::loadTexture(const std::string & xmlFileName, const std::string & t
 	}
 	loadInFrames();
 	
+	return true;
+}
+
+bool Texture::loadTexture(const std::string & textureFileName)
+{
+	if (!HAPI.LoadTexture(DATA_DIRECTORY + textureFileName, &m_texture, m_textureSize.x, m_textureSize.y))
+	{
+		return false;
+	}
+
 	return true;
 }
 

@@ -8,6 +8,7 @@ constexpr int BYTES_PER_PIXEL = 4;
 enum class eTileID
 {
 	INVALID = -1,
+	DEFAULT = 0,
 	TURRET_CANNON_BASE = 180,
 	TURRET_CANNON_HEAD = 249,
 	TURRET_MISSLE_BASE = 181,

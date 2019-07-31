@@ -117,8 +117,8 @@ void Window::blitAlpha(const Sprite & sprite) const
 	Rectangle windowRect(0, m_windowSize.x, 0, m_windowSize.y);
 
 	Vector2i spritePosition(static_cast<int>(sprite.getPosition().x), static_cast<int>(sprite.getPosition().y));
-	Rectangle spriteRect(spritePosition.x, sprite.getTexture().getTileSize(), spritePosition.y, 
-		sprite.getTexture().getTileSize());
+	Rectangle spriteRect(spritePosition.x, sprite.getSize().x, spritePosition.y, 
+		sprite.getSize().y);
 
 	if (!spriteRect.intersects(windowRect))
 	{

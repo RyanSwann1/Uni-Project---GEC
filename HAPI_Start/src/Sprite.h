@@ -21,6 +21,7 @@ public:
 
 	void setID(int tileID);
 	void setPosition(Vector2f position);
+	void setSize(Vector2i size);
 
 private:
 	std::reference_wrapper<Texture> m_texture;

@@ -266,6 +266,14 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	
 	m_baseSprite.setPosition(m_position);
 	m_headSprite.setPosition(m_position);
+	
+	if (m_unitType == eUnitType::Aircraft)
+	{
+		int tileSize = m_baseSprite.getTexture().getTileSize();
+		Vector2f newBasePosition(m_position.x + tileSize, m_position.y + tileSize);
+		m_baseSprite.setPosition(newBasePosition);
+	}
+
 
 	//Check if reached destination
 	bool reachedDestination = false;
@@ -290,13 +298,6 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 		reachedDestination = true;
 	}
 	
-
-	if (m_unitType == eUnitType::Aircraft)
-	{
-		int tileSize = m_baseSprite.getTexture().getTileSize();
-		Vector2f newBasePosition(m_position.x + tileSize, m_position.y + tileSize);
-		m_baseSprite.setPosition(newBasePosition);
-	}
 
 	//Assign new destination
 	if (reachedDestination)

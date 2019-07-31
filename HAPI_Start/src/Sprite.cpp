@@ -60,3 +60,10 @@ void Sprite::setPosition(Vector2f position)
 {
 	m_position = position;
 }
+
+void Sprite::setSize(Vector2i size)
+{
+	assert(size.x <= m_texture.get().getTileSize());
+	assert(size.y <= m_texture.get().getTileSize());
+	m_size = size;
+}

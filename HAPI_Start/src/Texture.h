@@ -45,8 +45,9 @@ public:
 	Texture(Texture&&);
 	Texture&& operator=(Texture&&) = delete;
 
+	static std::unique_ptr<Texture> load(const std::string& textureFileName);
 	static std::unique_ptr<Texture> load(const std::string& xmlFileName, const std::string& textureFileName);
-	
+
 	Frame getFrame(int ID) const;
 	int getTileSize() const;
 	Rectangle getFrameRect(int tileID) const;	
@@ -63,5 +64,6 @@ private:
 
 	bool isFrameAlpha(int ID) const;
 	void loadInFrames();
-	bool loadTexture(const std::string& xmlFileName, const std::string& textureFileName);
+	bool loadXMLTexture(const std::string& xmlFileName, const std::string& textureFileName);
+	bool loadTexture(const std::string& textureFileName);
 };
