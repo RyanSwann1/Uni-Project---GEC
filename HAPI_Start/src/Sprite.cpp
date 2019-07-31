@@ -68,7 +68,7 @@ void Sprite::setPosition(Vector2f position)
 	m_position = position;
 }
 
-void Sprite::setSize(Vector2i size)
+void Sprite::setWidth(int width)
 {
-	m_size = size;
+	m_size.x = width;
 }

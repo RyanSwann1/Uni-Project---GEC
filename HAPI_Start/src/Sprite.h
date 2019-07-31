@@ -22,7 +22,7 @@ public:
 
 	void setID(int tileID);
 	void setPosition(Vector2f position);
-	void setSize(Vector2i size);
+	void setWidth(int width);
 
 private:
 	std::reference_wrapper<Texture> m_tileSheet;
