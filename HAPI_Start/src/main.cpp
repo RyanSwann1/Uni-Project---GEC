@@ -36,7 +36,7 @@ void HAPI_Main()
 	Textures::getInstance().loadAllTextures();
 	
 	eGameDifficulty gameDifficulty = eGameDifficulty::NORMAL;
-	std::string levelName = "mapOne.tmx";
+	std::string levelName = "mapTwo.tmx";
 	std::unique_ptr<Level> level = Level::loadLevel(levelName, gameDifficulty);
 	if (!level)
 	{
