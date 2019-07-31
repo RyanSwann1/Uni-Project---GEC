@@ -142,10 +142,17 @@ bool Texture::isFrameAlpha(int ID) const
 bool Textures::loadAllTextures()
 {
 	assert(!m_texturesLoaded);
-	m_texture = std::move(Texture::load("mapOne.tmx", "tilesheet.png"));
+	m_texture = Texture::load("mapOne.tmx", "tilesheet.png");
 	if (!m_texture)
 	{
 		std::cout << "Tilesheet not loaded\n";
+		return false;
+	}
+
+	m_healthBarTexture = Texture::load("healthbar.png");
+	if (!m_healthBarTexture)
+	{
+		std::cout << "Health bar texture not loaded.";
 		return false;
 	}
 
@@ -157,4 +164,10 @@ Texture & Textures::getTexture()
 {
 	assert(m_texture);
 	return *m_texture;
+}
+
+Texture & Textures::getHealthBar()
+{
+	assert(m_healthBarTexture);
+	return *m_healthBarTexture;
 }

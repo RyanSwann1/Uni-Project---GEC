@@ -21,9 +21,11 @@ public:
 	bool loadAllTextures();
 
 	Texture& getTexture();
+	Texture& getHealthBar();
 
 private:
 	std::unique_ptr<Texture> m_texture;
+	std::unique_ptr<Texture> m_healthBarTexture;
 	bool m_texturesLoaded = false;
 };
 
