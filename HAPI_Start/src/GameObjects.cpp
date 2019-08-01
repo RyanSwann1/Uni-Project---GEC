@@ -7,23 +7,23 @@
 constexpr float TIME_BETWEEN_TURRET_SHOT = 2.5f;
 constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 
-constexpr float TURRET_PROJECTLE_SPEED = 7.5f;
+constexpr float TURRET_PROJECTLE_SPEED = 75.5f;
 constexpr float TURRET_ATTACK_RANGE = 350.f;
 constexpr int TURRET_MAX_HEALTH = 15;
 constexpr int TURRET_DAMAGE = 1;
 
 constexpr float UNIT_ATTACK_RANGE = 250.f;
-constexpr float UNIT_PROJECTILE_SPEED = 2.5f;
+constexpr float UNIT_PROJECTILE_SPEED = 75.5f;
 
 constexpr int TANK_MAX_HEALTH = 3;
 constexpr int TANK_DAMAGE_VALUE = 2;
-constexpr float TANK_MOVEMENT_SPEED = 1.0f;
+constexpr float TANK_MOVEMENT_SPEED = 30.0f;
 
 constexpr int SOILDER_MAX_HEALTH = 1;
-constexpr float SOILDER_MOVEMENT_SPEED = 1.5f;
+constexpr float SOILDER_MOVEMENT_SPEED = 75.5f;
 
 constexpr int PLANE_MAX_HEALTH = 2;
-constexpr float PLANE_MOVEMENT_SPEED = 2.0f;
+constexpr float PLANE_MOVEMENT_SPEED = 90.0f;
 
 constexpr float GAME_DIFFICULTY_MODIFIER_EASY = 1.0f;
 constexpr float GAME_DIFFICULTY_MODIFIER_MEDIUM = 1.2f;
@@ -70,8 +70,8 @@ Vector2f Projectile::getPosition() const
 
 void Projectile::update(float deltaTime, const std::vector<Unit>& units)
 {
-	m_position.x += m_direction.x * m_speed;
-	m_position.y += m_direction.y * m_speed;
+	m_position.x += m_direction.x * m_speed * deltaTime;
+	m_position.y += m_direction.y * m_speed * deltaTime;
 
 	m_sprite.setPosition(m_position);
 }
@@ -284,8 +284,8 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 	}
 
 	//Update Position
-	m_position.x += m_moveDirection.x * m_speed;
-	m_position.y += m_moveDirection.y * m_speed;
+	m_position.x += m_moveDirection.x * m_speed * deltaTime;
+	m_position.y += m_moveDirection.y * m_speed * deltaTime;
 	
 	m_baseSprite.setPosition(m_position);
 	m_headSprite.setPosition(m_position);
