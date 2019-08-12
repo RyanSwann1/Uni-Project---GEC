@@ -13,7 +13,7 @@ constexpr int TURRET_MAX_HEALTH = 15;
 constexpr int TURRET_DAMAGE = 1;
 
 constexpr float UNIT_ATTACK_RANGE = 250.f;
-constexpr float UNIT_PROJECTILE_SPEED = 75.5f;
+constexpr float UNIT_PROJECTILE_SPEED = 175.5f;
 
 constexpr int TANK_MAX_HEALTH = 3;
 constexpr int TANK_DAMAGE_VALUE = 2;
