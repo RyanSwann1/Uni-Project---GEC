@@ -63,11 +63,11 @@ void HAPI_Main()
 	auto& mouseData = HAPI.GetMouseData();
 	auto& keyboardData = HAPI.GetKeyboardData();
 	Sprite mouseRectSprite(Textures::getInstance().getTileSheet(), Vector2f(), static_cast<int>(eTileID::SELECTOR));
-	Vector2f mouseRectPosition;
+	Vector2f turretPlacementPosition;
 	float frameStart = HAPI.GetTime();
 	float lastFrameStart = HAPI.GetTime();
 	float deltaTime = 0;
-	HAPI.load
+
 	int playerScore = PLAYER_STARTING_SCORE;
 	const std::string scoreText("Player Score: ");
 	bool gamePaused = false;
@@ -179,17 +179,34 @@ void HAPI_Main()
 			if (!gamePaused && !mainMenuActive)
 			{
 				Vector2i tileSize = Textures::getInstance().getTileSheet().getTileSize();
-				mouseRectPosition.x = static_cast<float>((mouseData.x / tileSize.x)) * tileSize.x;
-				mouseRectPosition.y = static_cast<float>((mouseData.y / tileSize.y)) * tileSize.y;
-				mouseRectSprite.setPosition(mouseRectPosition);
+				turretPlacementPosition.x = static_cast<float>((mouseData.x / tileSize.x)) * tileSize.x;
+				turretPlacementPosition.y = static_cast<float>((mouseData.y / tileSize.y)) * tileSize.y;
+
+				mouseRectSprite.setPosition(turretPlacementPosition);
 
 				if (mouseData.leftButtonDown)
 				{
-					level->addTurretAtPosition(mouseRectPosition, eTurretType::Cannon, playerScore);
+					level->addTurretAtPosition(turretPlacementPosition, eTurretType::Cannon, playerScore);
 				}
 				else if (controllerData.isAttached)
 				{
+					//Down
+					if (controllerData.digitalButtons[HK_DIGITAL_DPAD_DOWN] && controllerMoveTimer.isExpired())
+					{
 
+					}
+					else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_LEFT] && controllerMoveTimer.isExpired())
+					{
+
+					}
+					else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_RIGHT] && controllerMoveTimer.isExpired())
+					{
+
+					}
+					else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_UP] && controllerMoveTimer.isExpired())
+					{
+
+					}
 				}
 
 				deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
