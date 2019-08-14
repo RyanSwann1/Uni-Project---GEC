@@ -141,7 +141,7 @@ void Level::update(float deltaTime, int& playerScore, eGameDifficulty gameDiffic
 	m_spawnTimer.update(deltaTime);
 	if (m_spawnTimer.isExpired())
 	{
-		m_spawnTimer.reset();
+		m_spawnTimer.resetElaspedTime();
 		spawnNextUnit(gameDifficulty);
 	}
 

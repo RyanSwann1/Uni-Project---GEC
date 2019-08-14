@@ -157,7 +157,7 @@ void Turret::update(float deltaTime, const std::vector<Unit>& units, std::vector
 		m_fireTimer.update(deltaTime);
 		if (m_fireTimer.isExpired() && fire(units, projectiles))
 		{
-			m_fireTimer.reset();
+			m_fireTimer.resetElaspedTime();
 		}
 	}
 }
@@ -279,7 +279,7 @@ void Unit::update(float deltaTime, const std::vector<Turret>& turrets, std::vect
 		m_fireTimer.update(deltaTime);
 		if (m_fireTimer.isExpired() && (fire(turrets, projectiles)))
 		{
-			m_fireTimer.reset();
+			m_fireTimer.resetElaspedTime();
 		}
 	}
 

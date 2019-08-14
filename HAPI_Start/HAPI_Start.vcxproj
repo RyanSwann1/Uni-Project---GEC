@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AudioPlayer.cpp" />
     <ClCompile Include="src\GameObjects.cpp" />
     <ClCompile Include="src\Global.cpp" />
     <ClCompile Include="src\Level.cpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AudioPlayer.h" />
     <ClInclude Include="src\GameObjects.h" />
     <ClInclude Include="src\Global.h" />
     <ClInclude Include="src\Level.h" />

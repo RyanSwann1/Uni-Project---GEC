@@ -10,7 +10,7 @@ public:
 	void deactive();
 	void activate();
 	void update(float deltaTime);
-	void reset();
+	void resetElaspedTime();
 
 private:
 	float m_expirationTime;

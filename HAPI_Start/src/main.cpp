@@ -22,6 +22,7 @@
 //https://gamedev.stackexchange.com/questions/14602/what-are-atan-and-atan2-used-for-in-games
 
 constexpr int PLAYER_STARTING_SCORE = 5;
+constexpr float CONTROLLER_MOVE_TIMEOUT = 0.5f;
 const std::string MAP_ONE_NAME = "mapOne.tmx";
 const std::string MAP_TWO_NAME = "mapTwo.tmx";
 const std::string MAP_THREE_NAME = "mapThree.tmx";
@@ -63,17 +64,20 @@ void HAPI_Main()
 	auto& keyboardData = HAPI.GetKeyboardData();
 	Sprite mouseRectSprite(Textures::getInstance().getTileSheet(), Vector2f(), static_cast<int>(eTileID::SELECTOR));
 	Vector2f mouseRectPosition;
-
 	float frameStart = HAPI.GetTime();
 	float lastFrameStart = HAPI.GetTime();
 	float deltaTime = 0;
-
+	HAPI.load
 	int playerScore = PLAYER_STARTING_SCORE;
 	const std::string scoreText("Player Score: ");
 	bool gamePaused = false;
 	bool resetCurrentGame = false;
 	bool mainMenuActive = true;
 	bool difficultySelected = false;
+
+	//Controller
+	Timer controllerMoveTimer(CONTROLLER_MOVE_TIMEOUT);
+	const auto& controllerData = HAPI.GetControllerData(0);
 
 	while (HAPI.Update())
 	{
@@ -164,6 +168,12 @@ void HAPI_Main()
 		//Update level
 		if (!mainMenuActive)
 		{
+			controllerMoveTimer.update(deltaTime);
+			if (controllerMoveTimer.isExpired())
+			{
+				controllerMoveTimer.resetElaspedTime();
+			}
+
 			assert(level);
 			frameStart = static_cast<float>(HAPI.GetTime());
 			if (!gamePaused && !mainMenuActive)
@@ -176,6 +186,10 @@ void HAPI_Main()
 				if (mouseData.leftButtonDown)
 				{
 					level->addTurretAtPosition(mouseRectPosition, eTurretType::Cannon, playerScore);
+				}
+				else if (controllerData.isAttached)
+				{
+
 				}
 
 				deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
