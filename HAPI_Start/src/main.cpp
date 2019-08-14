@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "Level.h"
 #include <string>
+#include <assert.h>
 
 //BYTE 1 byte, 8 bits
 //WORD 2 bytes, 16 bits
@@ -25,6 +26,20 @@ const std::string MAP_ONE_NAME = "mapOne.tmx";
 const std::string MAP_TWO_NAME = "mapTwo.tmx";
 const std::string MAP_THREE_NAME = "mapThree.tmx";
 
+const std::string levelOneText = "Level one: 'u'";
+const std::string levelTwoText = "Level two: 'i'";
+const std::string levelThreeText = "Level three: 'o'";
+
+const std::string difficultyEasyText = "Normal: 'h'";
+const std::string difficultyMediumText = "Hard: 'j'";
+const std::string difficultyHardText = "Extreme: 'k'";
+
+void reset(std::unique_ptr<Level>& level, int& playerScore)
+{
+	level.reset();
+	playerScore = PLAYER_STARTING_SCORE;
+}
+
 void HAPI_Main()
 {
 	std::unique_ptr<Window> window = Window::create();
@@ -41,7 +56,7 @@ void HAPI_Main()
 	}
 	
 	eGameDifficulty gameDifficulty = eGameDifficulty::NORMAL;
-	std::string levelName = "mapTwo.tmx";
+	std::string levelName;
 	std::unique_ptr<Level> level;
 
 	auto& mouseData = HAPI.GetMouseData();
@@ -59,20 +74,69 @@ void HAPI_Main()
 	bool resetCurrentGame = false;
 	bool mainMenuActive = true;
 	bool difficultySelected = false;
-	const std::string levelOneText = "Level one: 'u'";
-	const std::string levelTwoText = "Level two: 'i'";
-	const std::string levelThreeText = "Level three: 'o'";
 
-	const std::string difficultyEasyText = "Normal: 'h'";
-	const std::string difficultyMediumText = "Hard: 'j'";
-	const std::string difficultyHardText = "Extreme: 'k'";
-
-	Vector2i tileSize = Textures::getInstance().getTileSheet().getTileSize();
 	while (HAPI.Update())
 	{
-		if (!mainMenuActive)
+		//Handle menu input
+		if (mainMenuActive)
 		{
-			//Handle Input
+			//Difficulty Selection
+			if (keyboardData.scanCode['H'] && !difficultySelected)
+			{
+				difficultySelected = true;
+				gameDifficulty = eGameDifficulty::NORMAL;
+			}
+			else if (keyboardData.scanCode['J'] && !difficultySelected)
+			{
+				difficultySelected = true;
+				gameDifficulty = eGameDifficulty::HARD;
+			}
+			else if (keyboardData.scanCode['K'] && !difficultySelected)
+			{
+				difficultySelected = true;
+				gameDifficulty = eGameDifficulty::EXTREME;
+			}
+			//Level Selection
+			else if (keyboardData.scanCode['U'] && difficultySelected)
+			{
+				mainMenuActive = false;
+				difficultySelected = false;
+				levelName = MAP_ONE_NAME;
+				level = Level::loadLevel(levelName, gameDifficulty);
+				if (!level)
+				{
+					std::cerr << "Couldn't load level\n";
+					return;
+				}
+			}
+			else if (keyboardData.scanCode['I'] && difficultySelected)
+			{
+				mainMenuActive = false;
+				difficultySelected = false;
+				levelName = MAP_TWO_NAME;
+				level = Level::loadLevel(levelName, gameDifficulty);
+				if (!level)
+				{
+					std::cerr << "Couldn't load level\n";
+					return;
+				}
+			}
+			else if (keyboardData.scanCode['O'] && difficultySelected)
+			{
+				mainMenuActive = false;
+				difficultySelected = false;
+				levelName = MAP_THREE_NAME;
+				level = Level::loadLevel(levelName, gameDifficulty);
+				if (!level)
+				{
+					std::cerr << "Couldn't load level\n";
+					return;
+				}
+			}
+		}
+		//Handle in-game input
+		else
+		{
 			if (keyboardData.scanCode['P'])
 			{
 				gamePaused = true;
@@ -88,89 +152,48 @@ void HAPI_Main()
 					resetCurrentGame = true;
 				}
 			}
-		}
-
-		//Difficulty Selection
-		else if (keyboardData.scanCode['H'] && !difficultySelected)
-		{
-			difficultySelected = true;
-			gameDifficulty = eGameDifficulty::NORMAL;
-		}
-		else if (keyboardData.scanCode['J'] && !difficultySelected)
-		{
-			difficultySelected = true;
-			gameDifficulty = eGameDifficulty::HARD;
-		}
-		else if (keyboardData.scanCode['K'] && !difficultySelected)
-		{
-			difficultySelected = true;
-			gameDifficulty = eGameDifficulty::EXTREME;
-		}
-		//Level Selection
-		else if (keyboardData.scanCode['U'] && difficultySelected)
-		{
-			mainMenuActive = false;
-			levelName = MAP_ONE_NAME;
-			level = Level::loadLevel(levelName, gameDifficulty);
-			if (!level)
+			else if (keyboardData.scanCode['Q'])
 			{
-				std::cerr << "Couldn't load level\n";
-				return;
-			}
-		}
-		else if (keyboardData.scanCode['I'] && difficultySelected)
-		{
-			mainMenuActive = false;
-			levelName = MAP_TWO_NAME;
-			level = Level::loadLevel(levelName, gameDifficulty);
-			if (!level)
-			{
-				std::cerr << "Couldn't load level\n";
-				return;
-			}
-		}
-		else if (keyboardData.scanCode['O'] && difficultySelected)
-		{
-			mainMenuActive = false;
-			levelName = MAP_THREE_NAME;
-			level = Level::loadLevel(levelName, gameDifficulty);
-			if (!level)
-			{
-				std::cerr << "Couldn't load level\n";
-				return;
+				mainMenuActive = true;
+				playerScore = PLAYER_STARTING_SCORE;
+				level.reset();
+				gamePaused = false;
 			}
 		}
 
-		
-
-
-		//Update 
-		frameStart = static_cast<float>(HAPI.GetTime());
-		if (!gamePaused && !mainMenuActive)
+		//Update level
+		if (!mainMenuActive)
 		{
-			mouseRectPosition.x = static_cast<float>((mouseData.x / tileSize.x)) * tileSize.x;
-			mouseRectPosition.y = static_cast<float>((mouseData.y / tileSize.y)) * tileSize.y;
-			mouseRectSprite.setPosition(mouseRectPosition);
-
-			if (mouseData.leftButtonDown)
+			assert(level);
+			frameStart = static_cast<float>(HAPI.GetTime());
+			if (!gamePaused && !mainMenuActive)
 			{
-				level->addTurretAtPosition(mouseRectPosition, eTurretType::Cannon, playerScore);
-			}
+				Vector2i tileSize = Textures::getInstance().getTileSheet().getTileSize();
+				mouseRectPosition.x = static_cast<float>((mouseData.x / tileSize.x)) * tileSize.x;
+				mouseRectPosition.y = static_cast<float>((mouseData.y / tileSize.y)) * tileSize.y;
+				mouseRectSprite.setPosition(mouseRectPosition);
 
-			deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
-			level->update(deltaTime, playerScore, gameDifficulty, window->getSize());
+				if (mouseData.leftButtonDown)
+				{
+					level->addTurretAtPosition(mouseRectPosition, eTurretType::Cannon, playerScore);
+				}
+
+				deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
+				level->update(deltaTime, playerScore, gameDifficulty, window->getSize());
+			}
 		}
+
 
 		//Render
 		window->clearToBlack();
-		if (mainMenuActive)
+		if (!mainMenuActive)
 		{
+			assert(level);
 			level->render(*window);
 			window->render(mouseRectSprite);
 		}
 		
-		//ui
-		HAPI.RenderText(500, 50, HAPISPACE::HAPI_TColour::WHITE, scoreText + std::to_string(playerScore), 26);
+		//Main-Menu UI
 		if (mainMenuActive)
 		{
 			if (difficultySelected)
@@ -189,9 +212,14 @@ void HAPI_Main()
 			}
 
 		}
+		//InGame UI
+		else
+		{
+			HAPI.RenderText(500, 50, HAPISPACE::HAPI_TColour::WHITE, scoreText + std::to_string(playerScore), 26);
+		}
 
 		//Handle Events
-		if (resetCurrentGame || level->isEnded())
+		if (resetCurrentGame || level && level->isEnded())
 		{
 			resetCurrentGame = false;
 			gamePaused = false;

@@ -7,7 +7,7 @@
 constexpr float TIME_BETWEEN_TURRET_SHOT = 2.5f;
 constexpr float TIME_BETWEEN_UNIT_SHOT = 1.0f;
 
-constexpr float TURRET_PROJECTLE_SPEED = 75.5f;
+constexpr float TURRET_PROJECTLE_SPEED = 150.0f;
 constexpr float TURRET_ATTACK_RANGE = 350.f;
 constexpr int TURRET_MAX_HEALTH = 15;
 constexpr int TURRET_DAMAGE = 1;
@@ -19,7 +19,7 @@ constexpr int TANK_MAX_HEALTH = 3;
 constexpr int TANK_DAMAGE_VALUE = 2;
 constexpr float TANK_MOVEMENT_SPEED = 30.0f;
 
-constexpr int SOILDER_MAX_HEALTH = 1;
+constexpr int SOILDER_MAX_HEALTH = 3;
 constexpr float SOILDER_MOVEMENT_SPEED = 75.5f;
 
 constexpr int PLANE_MAX_HEALTH = 2;
