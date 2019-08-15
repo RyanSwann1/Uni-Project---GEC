@@ -19,6 +19,8 @@ AudioPlayer::AudioClip::AudioClip(bool loop, float volume)
 	}
 }
 
+//Commented out due to the fact that I didn't want to go about finding appropriate sounds for the game
+
 bool AudioPlayer::loadAllSounds()
 {
 	//assert(m_audioClips.empty());
@@ -33,6 +35,8 @@ bool AudioPlayer::loadAllSounds()
 
 
 	//HAPI.LoadSound(DATA_DIRECTORY + 'AUDIO CLIP NAME'
+
+	return true;
 }
 
 void AudioPlayer::playSound(const std::string & audioClipName)

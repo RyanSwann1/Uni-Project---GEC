@@ -4,6 +4,7 @@
 #include <string>
 
 //Alows audio clips to be played throughout the codebase
+//Commented out due to the fact that I didn't want to go about finding appropriate sounds for the game
 
 class AudioPlayer
 {

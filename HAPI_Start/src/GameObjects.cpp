@@ -19,7 +19,7 @@ constexpr int TANK_MAX_HEALTH = 3;
 constexpr int TANK_DAMAGE_VALUE = 2;
 constexpr float TANK_MOVEMENT_SPEED = 30.0f;
 
-constexpr int SOILDER_MAX_HEALTH = 3;
+constexpr int SOILDER_MAX_HEALTH = 1;
 constexpr float SOILDER_MOVEMENT_SPEED = 75.5f;
 
 constexpr int PLANE_MAX_HEALTH = 2;

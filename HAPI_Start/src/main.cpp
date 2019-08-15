@@ -62,7 +62,7 @@ void HAPI_Main()
 
 	auto& mouseData = HAPI.GetMouseData();
 	auto& keyboardData = HAPI.GetKeyboardData();
-	Sprite mouseRectSprite(Textures::getInstance().getTileSheet(), Vector2f(), static_cast<int>(eTileID::SELECTOR));
+	Sprite turretPlacementSprite(Textures::getInstance().getTileSheet(), Vector2f(), static_cast<int>(eTileID::SELECTOR));
 	Vector2f turretPlacementPosition;
 	float frameStart = HAPI.GetTime();
 	float lastFrameStart = HAPI.GetTime();
@@ -165,8 +165,10 @@ void HAPI_Main()
 			}
 		}
 
+		frameStart = static_cast<float>(HAPI.GetTime());
+
 		//Update level
-		if (!mainMenuActive)
+		if (!mainMenuActive && !gamePaused)
 		{
 			controllerMoveTimer.update(deltaTime);
 			if (controllerMoveTimer.isExpired())
@@ -174,44 +176,71 @@ void HAPI_Main()
 				controllerMoveTimer.resetElaspedTime();
 			}
 
-			assert(level);
-			frameStart = static_cast<float>(HAPI.GetTime());
-			if (!gamePaused && !mainMenuActive)
+			assert(level);	
+
+			Vector2i tileSize = Textures::getInstance().getTileSheet().getTileSize();
+			turretPlacementPosition.x = static_cast<float>((mouseData.x / tileSize.x)) * tileSize.x;
+			turretPlacementPosition.y = static_cast<float>((mouseData.y / tileSize.y)) * tileSize.y;
+
+			turretPlacementSprite.setPosition(turretPlacementPosition);
+
+			if (mouseData.leftButtonDown)
 			{
-				Vector2i tileSize = Textures::getInstance().getTileSheet().getTileSize();
-				turretPlacementPosition.x = static_cast<float>((mouseData.x / tileSize.x)) * tileSize.x;
-				turretPlacementPosition.y = static_cast<float>((mouseData.y / tileSize.y)) * tileSize.y;
-
-				mouseRectSprite.setPosition(turretPlacementPosition);
-
-				if (mouseData.leftButtonDown)
+				level->addTurretAtPosition(turretPlacementPosition, eTurretType::Cannon, playerScore);
+			}
+			else if (controllerData.isAttached)
+			{
+				//Down
+				if (controllerData.digitalButtons[HK_DIGITAL_DPAD_DOWN] && controllerMoveTimer.isExpired())
+				{
+					controllerMoveTimer.resetElaspedTime();
+					turretPlacementPosition.y += tileSize.y;
+					if (turretPlacementPosition.y < 0)
+					{
+						turretPlacementPosition.y = 0;
+					}
+				}
+				//left
+				else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_LEFT] && controllerMoveTimer.isExpired())
+				{
+					controllerMoveTimer.resetElaspedTime();
+					turretPlacementPosition.x -= tileSize.x;
+					if (turretPlacementPosition.x < 0)
+					{
+						turretPlacementPosition.x = 0;
+					}
+				}
+				//Right
+				else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_RIGHT] && controllerMoveTimer.isExpired())
+				{
+					controllerMoveTimer.resetElaspedTime();
+					turretPlacementPosition.x += tileSize.x;
+					if (turretPlacementPosition.x > window->getSize().x)
+					{
+						turretPlacementPosition.x = window->getSize().x - tileSize.x;
+					}
+				}
+				//Up
+				else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_UP] && controllerMoveTimer.isExpired())
+				{
+					controllerMoveTimer.resetElaspedTime();
+					turretPlacementPosition.y -= tileSize.y;
+					if(turretPlacementPosition.y > window->getSize().y)
+					{
+						turretPlacementPosition.y = window->getSize().y - tileSize.y;
+					}
+				}
+				//Place turret
+				else if (controllerData.digitalButtons[HK_DIGITAL_A])
 				{
 					level->addTurretAtPosition(turretPlacementPosition, eTurretType::Cannon, playerScore);
 				}
-				else if (controllerData.isAttached)
-				{
-					//Down
-					if (controllerData.digitalButtons[HK_DIGITAL_DPAD_DOWN] && controllerMoveTimer.isExpired())
-					{
 
-					}
-					else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_LEFT] && controllerMoveTimer.isExpired())
-					{
-
-					}
-					else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_RIGHT] && controllerMoveTimer.isExpired())
-					{
-
-					}
-					else if (controllerData.digitalButtons[HK_DIGITAL_DPAD_UP] && controllerMoveTimer.isExpired())
-					{
-
-					}
-				}
-
-				deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
-				level->update(deltaTime, playerScore, gameDifficulty, window->getSize());
+				turretPlacementSprite.setPosition(turretPlacementPosition);
 			}
+
+			deltaTime = static_cast<float>(frameStart - lastFrameStart) / 1000.f;
+			level->update(deltaTime, playerScore, gameDifficulty, window->getSize());
 		}
 
 
@@ -221,7 +250,7 @@ void HAPI_Main()
 		{
 			assert(level);
 			level->render(*window);
-			window->render(mouseRectSprite);
+			window->render(turretPlacementSprite);
 		}
 		
 		//Main-Menu UI

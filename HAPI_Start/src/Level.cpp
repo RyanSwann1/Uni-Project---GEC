@@ -6,6 +6,8 @@
 #include <assert.h>
 #include "Utilities/XMLParser.h"
 
+const std::string UNIT_REACHED_END_TEXT = "Units Reached End: ";
+
 constexpr float TIME_BETWEEN_ENTITY_SPAWN = 3.5f;
 constexpr int MAX_UNIT_SPAWN_COUNT = 10;
 
@@ -177,7 +179,7 @@ void Level::render(Window & window)
 		particle.render(window);
 	}
 
-	HAPI.RenderText(850, 50, HAPISPACE::HAPI_TColour::WHITE, std::to_string(m_unitsReachedDestination), 26);
+	HAPI.RenderText(850, 50, HAPISPACE::HAPI_TColour::WHITE, UNIT_REACHED_END_TEXT + std::to_string(m_unitsReachedDestination), 26);
 }
 
 void Level::spawnNextUnit(eGameDifficulty gameDifficulty)
@@ -188,13 +190,11 @@ void Level::spawnNextUnit(eGameDifficulty gameDifficulty)
 
 		if (m_spawnedUnitCount % m_tankSpawnRate == 0)
 		{
-			++m_spawnedUnitCount;
 			m_units.emplace_back(static_cast<int>(eTileID::TANK_BASE), static_cast<int>(eTileID::TANK_HEAD), 
 				m_unitMovementPath, eUnitType::Vechile, gameDifficulty);
 		}
 		else if (m_spawnedUnitCount % m_planeSpawnRate == 0)
 		{
-			++m_spawnedUnitCount;
 			m_units.emplace_back(static_cast<int>(eTileID::PLANE_SHADOW), static_cast<int>(eTileID::PLANE),
 				m_unitMovementPath, eUnitType::Aircraft, gameDifficulty);
 		}
